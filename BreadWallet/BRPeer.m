@@ -41,7 +41,7 @@
 #define MAX_MSG_LENGTH     0x02000000
 #define MAX_GETDATA_HASHES 50000
 #define ENABLED_SERVICES   0     // we don't provide full blocks to remote nodes
-#define PROTOCOL_VERSION   70003
+#define PROTOCOL_VERSION   60003
 #define MIN_PROTO_VERSION  70001 // peers earlier than this protocol version not supported (SPV mode required)
 #define LOCAL_HOST         0x7f000001
 #define ZERO_HASH          @"0000000000000000000000000000000000000000000000000000000000000000".hexToData
@@ -573,7 +573,7 @@ services:(uint64_t)services
                                                                  sizeof(uint32_t)*2 + 20));
         
         // if address time is more than 1 min in the future or older than reference date, set to 5 days old
-        if (timestamp > now + 1*60 || timestamp < 0) timestamp = now - 5*24*60*60;
+        if (timestamp > now + 2*60 || timestamp < 0) timestamp = now - 5*24*60*60;
 
         // subtract two hours and add it to the list
         [peers addObject:[[BRPeer alloc] initWithAddress:address port:port timestamp:timestamp - 2*60*60

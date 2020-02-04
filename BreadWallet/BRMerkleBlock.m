@@ -30,12 +30,9 @@
 #import "NSData+Hash.h"
 #import <openssl/bn.h>
 
-#define MAX_TIME_DRIFT        (2*60*60)     // the furthest in the future a block is allowed to be timestamped
-#define MAX_PROOF_OF_WORK      0x1e0fffff   // highest value for difficulty target (higher values are less difficult)
-#define TARGET_TIMESPAN       (4*60*60)     // the targeted timespan between difficulty target adjustments
-#define TARGET_TIMESPAN_NEW   60            // the new targeted timespan between difficulty target adjustments
-#define TARGET_SPACING        60
-#define DIFF_CHANGE_TARGET    145000
+#define MAX_TIME_DRIFT    (2*60*60)     // the furthest in the future a block is allowed to be timestamped    #define MAX_TIME_DRIFT        (2*60*60)     // the furthest in the future a block is allowed to be timestamped
+#define MAX_PROOF_OF_WORK 0x1d00ffffu   // highest value for difficulty target (higher values are less difficult)    #define MAX_PROOF_OF_WORK      0x1e0fffff   // highest value for difficulty target (higher values are less difficult)
+#define TARGET_TIMESPAN   (14*24*60*60) // the targeted timespan between difficulty target adjustments
 
 
 #define BLOCK_VERSION_AUXPOW_AUXBLOCK 0x00620102
@@ -304,21 +301,12 @@ parentBlock:(NSData*)parentBlock
 // targeted time between transitions (14*24*60*60 seconds). If the new difficulty is more than 4x or less than 1/4 of
 // the previous difficulty, the change is limited to either 4x or 1/4. There is also a minimum difficulty value
 // intuitively named MAX_PROOF_OF_WORK... since larger values are less difficult.
-- (BOOL)verifyDifficultyFromPreviousBlock:(BRMerkleBlock *)previous andTransitionTime:(NSTimeInterval)time andStoredBlocks:(NSMutableDictionary *)blocks
+- (BOOL)verifyDifficultyFromPreviousBlock:(BRMerkleBlock *)previous andTransitionTime:(NSTimeInterval)time
 {
 
-    int32_t retargetTimespan = TARGET_TIMESPAN;
-    int32_t retargetInterval = BLOCK_DIFFICULTY_INTERVAL;
-    int32_t nHeight = previous.height + 1;
+    if (! [_prevBlock isEqual:previous.blockHash] || _height != previous.height + 1) return NO;
+    if ((_height % BLOCK_DIFFICULTY_INTERVAL) == 0 && time == 0) return NO;
 
-    bool newDifficultyProtocol = nHeight >= DIFF_CHANGE_TARGET;
-
-    if (newDifficultyProtocol) {
-        retargetInterval = TARGET_TIMESPAN_NEW / TARGET_SPACING;
-        retargetTimespan = TARGET_TIMESPAN_NEW;
-    }
-
-    if (_height != nHeight) return NO;
 
 #if BITCOIN_TESTNET
     //TODO: implement testnet difficulty rule check
@@ -327,61 +315,23 @@ parentBlock:(NSData*)parentBlock
 
     // Dogecoin: This fixes an issue where a 51% attack can change difficulty at will.
     // Go back the full period unless it's the first retarget after genesis. Code courtesy of Art Forz
-    int blockstogoback = retargetInterval - 1;
-
-    if ((nHeight+1) != retargetInterval)
-        blockstogoback = retargetInterval;
-
-    BRMerkleBlock *cursor = blocks[self.prevBlock];
-
-    for (int i = 0; cursor && i < blockstogoback; i++) {
-        assert(cursor);
-        cursor = blocks[cursor.prevBlock];
-    }
-
-    if (cursor == nil) return YES; // hit checkpoint
-
-    int32_t nModulatedTimespan = (int32_t)((int64_t)previous.timestamp - (int64_t)cursor.timestamp);
-
-    if (newDifficultyProtocol) {
-        nModulatedTimespan = retargetTimespan + (nModulatedTimespan - retargetTimespan)/8;
-
-        if (nModulatedTimespan < (retargetTimespan - (retargetTimespan/4))) {
-          nModulatedTimespan = (retargetTimespan - (retargetTimespan/4));
-        }
-        if (nModulatedTimespan > (retargetTimespan + (retargetTimespan/2))) {
-            nModulatedTimespan = (retargetTimespan + (retargetTimespan/2));
-        }
-
-    } else {
-      int32_t timespan = (int32_t)((int64_t)self.timestamp - (int64_t)time);
-      if (nHeight > 10000) {
-        if (nModulatedTimespan < timespan/4) nModulatedTimespan = timespan/4;
-        if (nModulatedTimespan > timespan*4) nModulatedTimespan = timespan*4;
-      } else if (nHeight > 5000) {
-        if (nModulatedTimespan < timespan/8) nModulatedTimespan = timespan/8;
-        if (nModulatedTimespan > timespan*4) nModulatedTimespan = timespan*4;
-      } else {
-        if (nModulatedTimespan < timespan/16) nModulatedTimespan = timespan/16;
-        if (nModulatedTimespan > timespan*4) nModulatedTimespan = timespan*4;
-      }
-    }
+    if ((_height % BLOCK_DIFFICULTY_INTERVAL) != 0) return (_target == previous.target) ? YES : NO;
 
     BN_CTX *ctx = BN_CTX_new();
 
     BN_CTX_start(ctx);
 
-    BIGNUM target;
-    BIGNUM *maxTarget = BN_CTX_get(ctx);
-    BIGNUM *span = BN_CTX_get(ctx);
-    BIGNUM *targetSpan = BN_CTX_get(ctx);
-    BIGNUM *bn = BN_CTX_get(ctx);
+    int32_t timespan = (int32_t)((int64_t)previous.timestamp - (int64_t)time);
+    BIGNUM target, *maxTarget = BN_CTX_get(ctx), *span = BN_CTX_get(ctx), *targetSpan = BN_CTX_get(ctx), *bn = BN_CTX_get(ctx);
+    if (timespan < TARGET_TIMESPAN/4) timespan = TARGET_TIMESPAN/4;
+    if (timespan > TARGET_TIMESPAN*4) timespan = TARGET_TIMESPAN*4;
+    
 
     BN_init(&target);
     setCompact(&target, previous.target);
     setCompact(maxTarget, MAX_PROOF_OF_WORK);
-    BN_set_word(span, nModulatedTimespan);
-    BN_set_word(targetSpan, retargetTimespan);
+    BN_set_word(span, timespan);
+    BN_set_word(targetSpan, TARGET_TIMESPAN);
     BN_mul(bn, &target, span, ctx);
     BN_div(&target, NULL, bn, targetSpan, ctx);
     if (BN_cmp(&target, maxTarget) > 0) BN_copy(&target, maxTarget); // limit to MAX_PROOF_OF_WORK

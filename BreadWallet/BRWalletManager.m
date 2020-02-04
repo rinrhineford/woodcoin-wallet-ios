@@ -145,7 +145,7 @@ static NSData *getKeychainData(NSString *key)
     self.format.negativeFormat = [self.format.positiveFormat
                                   stringByReplacingCharactersInRange:[self.format.positiveFormat rangeOfString:@"#"]
                                   withString:@"-#"];
-    self.format.currencyCode = @"DOGE";
+    self.format.currencyCode = @"LOG";
     self.format.currencySymbol = BTC NARROW_NBSP;
     self.format.internationalCurrencySymbol = self.format.currencySymbol;
     self.format.minimumFractionDigits = 0; // iOS 8 bug, minimumFractionDigits now has to be set after currencySymbol

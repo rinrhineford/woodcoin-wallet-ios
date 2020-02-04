@@ -78,13 +78,13 @@ static const char *dns_seeds[] = {
 
 #else // main net
 
-#define GENESIS_BLOCK_HASH @"1a91e3dace36e2be3bf030a65679fe821aa1d6ef92e7c9902eb318182c355691".hexToData.reverse
+#define GENESIS_BLOCK_HASH @"30758383eae55ae5c7752b73388c1c85bdfbe930ad25ad877252841ed1e734a4".hexToData.reverse
 
 #define GENESIS_BLOCK [[BRMerkleBlock alloc] initWithBlockHash:GENESIS_BLOCK_HASH version:1\
     prevBlock:@"0000000000000000000000000000000000000000000000000000000000000000".hexToData\
-    merkleRoot:@"5b2a3f53f605d62c53e62932dac6925e3d74afa5a4b459745c36d42d0ed26a69".hexToData\
-    timestamp:1386325540.0 - NSTimeIntervalSince1970 target:0x1e0ffff0L nonce:99943u totalTransactions:1\
-    hashes:@"5b2a3f53f605d62c53e62932dac6925e3d74afa5a4b459745c36d42d0ed26a69".hexToData flags:@"00".hexToData height:0\
+    merkleRoot:@"d508b7916ec00595c1f8e1c767dc3b37392a5e68adf98118bca80a2ed58331d6".hexToData\
+    timestamp:1413817324.0 - NSTimeIntervalSince1970 target:0x1e0ffff0L nonce:1591189u totalTransactions:1\
+    hashes:@"d508b7916ec00595c1f8e1c767dc3b37392a5e68adf98118bca80a2ed58331d6".hexToData flags:@"00".hexToData height:0\
     parentBlock:nil]
 
 // blockchain checkpoints, these are also used as starting points for partial chain downloads, so they need to be at
@@ -357,9 +357,7 @@ static const struct { uint32_t height; char *hash; time_t timestamp; uint32_t ta
 };
 
 static const char *dns_seeds[] = {
-    "seed.dogecoin.com",
-    "seed.mophides.com",
-    "seed.dogechain.info",
+    "dnsseed.woodcoin.org"
 };
 
 #endif
@@ -735,16 +733,16 @@ static const char *dns_seeds[] = {
 {
     if (! [transaction isSigned]) {
         if (completion) {
-            completion([NSError errorWithDomain:@"DoughWallet" code:401 userInfo:@{NSLocalizedDescriptionKey:
-                        NSLocalizedString(@"dogecoin transaction not signed", nil)}]);
+            completion([NSError errorWithDomain:@"LogWallet" code:401 userInfo:@{NSLocalizedDescriptionKey:
+                        NSLocalizedString(@"woodcoin transaction not signed", nil)}]);
         }
         return;
     }
 
     if (! self.connected) {
         if (completion) {
-            completion([NSError errorWithDomain:@"DoughWallet" code:-1009 userInfo:@{NSLocalizedDescriptionKey:
-                        NSLocalizedString(@"not connected to the dogecoin network", nil)}]);
+            completion([NSError errorWithDomain:@"LogWallet" code:-1009 userInfo:@{NSLocalizedDescriptionKey:
+                        NSLocalizedString(@"not connected to the woodcoin network", nil)}]);
         }
         return;
     }
@@ -778,10 +776,10 @@ static const char *dns_seeds[] = {
 // BUG: this just doesn't work very well... we need to start storing tx metadata
 - (NSTimeInterval)timestampForBlockHeight:(uint32_t)blockHeight
 {
-    if (blockHeight == TX_UNCONFIRMED) return [NSDate timeIntervalSinceReferenceDate] + 30; // average confirm time
+    if (blockHeight == TX_UNCONFIRMED) return [NSDate timeIntervalSinceReferenceDate] + 60; // average confirm time
 
     if (blockHeight > self.lastBlockHeight) { // future block, assume 1 minute per block after last block
-        return self.lastBlock.timestamp + (blockHeight - self.lastBlockHeight)*1*60;
+        return self.lastBlock.timestamp + (blockHeight - self.lastBlockHeight)*2*60;
     }
 
     if (_blocks.count > 0) {
@@ -905,9 +903,9 @@ static const char *dns_seeds[] = {
 
 - (void)sortPeers
 {
-    [_peers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        if ([obj1 timestamp] > [obj2 timestamp]) return NSOrderedAscending;
-        if ([obj1 timestamp] < [obj2 timestamp]) return NSOrderedDescending;
+    [_peers sortUsingComparator:^NSComparisonResult(BRPeer *obj1, BRPeer *obj2) {
+        if (obj1.timestamp > obj2.timestamp) return NSOrderedAscending;
+        if (obj1.timestamp < obj2.timestamp) return NSOrderedDescending;
         return NSOrderedSame;
     }];
 }
@@ -1097,7 +1095,7 @@ static const char *dns_seeds[] = {
     NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate] - 3*60*60;
 
     // remove peers more than 3 hours old, or until there are only 1000 left
-    while (self.peers.count > 1000 && [self.peers.lastObject timestamp] < t) {
+    while (self.peers.count > 1000 && ((BRPeer *)self.peers.lastObject).timestamp < t) {
         [self.peers removeObject:self.peers.lastObject];
     }
 
@@ -1249,7 +1247,7 @@ static const char *dns_seeds[] = {
     }
 
     // verify block difficulty
-    if (! [block verifyDifficultyFromPreviousBlock:prev andTransitionTime:transitionTime andStoredBlocks:self.blocks]) {
+    if (! [block verifyDifficultyFromPreviousBlock:prev andTransitionTime:transitionTime]) {
         NSLog(@"%@:%d relayed block with invalid difficulty target %x, blockHash: %@", peer.host, peer.port,
               block.target, block.blockHash);
         [self peerMisbehavin:peer];

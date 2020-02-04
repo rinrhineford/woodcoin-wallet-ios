@@ -78,7 +78,7 @@ seed:(NSData *(^)())seed;
 // true if no previous wallet transaction spends any of the given transaction's inputs, and no input tx is invalid
 - (BOOL)transactionIsValid:(BRTransaction *)transaction;
 
-// returns true if transaction won't be valid by blockHeight + 1 or within the next 1 minutes
+// returns true if transaction won't be valid by blockHeight + 1 or within the next 2 minutes
 - (BOOL)transactionIsPostdated:(BRTransaction *)transaction atBlockHeight:(uint32_t)blockHeight;
 
 // set the block heights for the given transactions

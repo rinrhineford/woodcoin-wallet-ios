@@ -40,10 +40,10 @@
 #import "NSMutableData+Bitcoin.h"
 #import "NSData+Hash.h"
 
-#define SCAN_TIP      NSLocalizedString(@"Scan someone else's QR code to get their dogecoin address. "\
+#define SCAN_TIP      NSLocalizedString(@"Scan someone else's QR code to get their woodcoin address. "\
                                          "You can send a payment to anyone with an address.", nil)
-#define CLIPBOARD_TIP NSLocalizedString(@"Dogecoin addresses can also be copied to the clipboard. "\
-                                         "A dogecoin address always starts with 'D'.", nil)
+#define CLIPBOARD_TIP NSLocalizedString(@"Woodcoin addresses can also be copied to the clipboard. "\
+                                         "A woodcoin address always starts with 'D'.", nil)
 
 #define LOCK @"\xF0\x9F\x94\x92" // unicode lock symbol U+1F512 (utf-8)
 #define REDX @"\xE2\x9D\x8C"     // unicode cross mark U+274C, red x emoji (utf-8)
@@ -122,7 +122,7 @@ static NSString *sanitizeString(NSString *s)
 - (void)handleURL:(NSURL *)url
 {
     //TODO: XXX custom url splash image per: "Providing Launch Images for Custom URL Schemes."
-    if ([url.scheme isEqual:@"dogecoin"]) {
+    if ([url.scheme isEqual:@"woodcoin"]) {
         [self confirmRequest:[BRPaymentRequest requestWithURL:url]];
     }
     else {
@@ -152,7 +152,7 @@ static NSString *sanitizeString(NSString *s)
                 
                 if (error) {
                     [[[UIAlertView alloc]
-                      initWithTitle:NSLocalizedString(@"couldn't transmit payment to dogecoin network", nil)
+                      initWithTitle:NSLocalizedString(@"couldn't transmit payment to woodcoin network", nil)
                       message:error.localizedDescription delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
                       otherButtonTitles:nil] show];
                 }
@@ -205,7 +205,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
            [m localCurrencyStringForAmount:amount - fee]];
 
     if (fee > 0) {
-        msg = [msg stringByAppendingFormat:NSLocalizedString(@"\ndogecoin network fee +%@ (%@)", nil),
+        msg = [msg stringByAppendingFormat:NSLocalizedString(@"\nwoodcoin network fee +%@ (%@)", nil),
                [m stringForAmount:fee], [m localCurrencyStringForAmount:fee]];
     }
 
@@ -223,7 +223,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
             [self confirmSweep:request.paymentAddress];
         }
         else {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"not a valid dogecoin address", nil)
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"not a valid woodcoin address", nil)
               message:request.paymentAddress delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
               otherButtonTitles:nil] show];
             [self cancel:nil];
@@ -263,7 +263,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         self.request = request;
         self.okAddress = request.paymentAddress;
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
-          message:NSLocalizedString(@"\nADDRESS ALREADY USED\n\ndogecoin addresses are intented for single use only\n\n"
+          message:NSLocalizedString(@"\nADDRESS ALREADY USED\n\nwoodcoin addresses are intented for single use only\n\n"
                                     "re-use reduces privacy for both you and the recipient and can result in loss if "
                                     "the recipient doesn't directly control the address", nil)
           delegate:self cancelButtonTitle:nil
@@ -282,7 +282,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     }
     else if (request.amount < TX_MIN_OUTPUT_AMOUNT) {
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
-          message:[NSString stringWithFormat:NSLocalizedString(@"dogecoin payments can't be less than %@", nil),
+          message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin payments can't be less than %@", nil),
                    [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]] delegate:nil
           cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
         [self cancel:nil];
@@ -339,7 +339,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         self.protocolRequest = protoReq;
         self.okAddress = address;
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
-          message:NSLocalizedString(@"\nADDRESS ALREADY USED\n\ndogecoin addresses are intented for single use only\n\n"
+          message:NSLocalizedString(@"\nADDRESS ALREADY USED\n\nwoodcoin addresses are intented for single use only\n\n"
                                     "re-use reduces privacy for both you and the recipient and can result in loss if "
                                     "the recipient doesn't directly control the address", nil)
           delegate:self cancelButtonTitle:nil
@@ -368,14 +368,14 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     }
     else if (amount > 0 && amount < TX_MIN_OUTPUT_AMOUNT) {
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
-          message:[NSString stringWithFormat:NSLocalizedString(@"dogecoin payments can't be less than %@", nil),
+          message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin payments can't be less than %@", nil),
                    [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]] delegate:nil
           cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
         [self cancel:nil];
     }
     else if (amount > 0 && outputTooSmall) {
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
-          message:[NSString stringWithFormat:NSLocalizedString(@"dogecoin transaction outputs can't be less than %@",
+          message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin transaction outputs can't be less than %@",
                                                                nil), [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]]
           delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
         [self cancel:nil];
@@ -459,7 +459,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
             [[[UIAlertView alloc] initWithTitle:nil message:[NSString
               stringWithFormat:NSLocalizedString(@"Send %@ (%@) from this private key into your wallet? "
-                                                 "The dogecoin network will receive a fee of %@ (%@).", nil),
+                                                 "The woodcoin network will receive a fee of %@ (%@).", nil),
               [m stringForAmount:amount], [m localCurrencyStringForAmount:amount], [m stringForAmount:fee],
               [m localCurrencyStringForAmount:fee]] delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil)
               otherButtonTitles:[NSString stringWithFormat:@"%@ (%@)", [m stringForAmount:amount],
@@ -598,7 +598,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         }
     }
     
-    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"clipboard doesn't contain a valid dogecoin address", nil)
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"clipboard doesn't contain a valid woodcoin address", nil)
       message:nil delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
     [self performSelector:@selector(cancel:) withObject:self afterDelay:0.1];
 }
@@ -655,12 +655,12 @@ fromConnection:(AVCaptureConnection *)connection
             [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resetQRGuide) object:nil];
             self.scanController.cameraGuide.image = [UIImage imageNamed:@"cameraguide-red"];
 
-            if ([s hasPrefix:@"dogecoin:"] || [request.paymentAddress hasPrefix:@"D"]) {
+            if ([s hasPrefix:@"woodcoin:"] || [request.paymentAddress hasPrefix:@"D"]) {
                 self.scanController.message.text = [NSString stringWithFormat:@"%@\n%@",
-                                                    NSLocalizedString(@"not a valid dogecoin address", nil),
+                                                    NSLocalizedString(@"not a valid woodcoin address", nil),
                                                     request.paymentAddress];
             }
-            else self.scanController.message.text = NSLocalizedString(@"not a dogecoin QR code", nil);
+            else self.scanController.message.text = NSLocalizedString(@"not a woodcoin QR code", nil);
 
             [self performSelector:@selector(resetQRGuide) withObject:nil afterDelay:0.35];
         }
@@ -769,7 +769,7 @@ fromConnection:(AVCaptureConnection *)connection
     //TODO: don't sign on main thread
     if (! [m.wallet signTransaction:self.tx]) {
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
-          message:NSLocalizedString(@"error signing dogecoin transaction", nil) delegate:nil
+          message:NSLocalizedString(@"error signing woodcoin transaction", nil) delegate:nil
           cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
         [self cancel:nil];
         return;

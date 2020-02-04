@@ -491,7 +491,7 @@ seed:(NSData *(^)())seed
     return YES;
 }
 
-// returns true if transaction won't be valid by blockHeight + 1 or within the next 1 minute
+// returns true if transaction won't be valid by blockHeight + 1 or within the next 2 minute
 - (BOOL)transactionIsPostdated:(BRTransaction *)transaction atBlockHeight:(uint32_t)blockHeight
 {
     if (transaction.blockHeight <= blockHeight + 1) return NO; // confirmed transactions are not pending
@@ -503,7 +503,7 @@ seed:(NSData *(^)())seed
     if (transaction.lockTime <= blockHeight + 1) return NO;
 
     if (transaction.lockTime >= TX_MAX_LOCK_HEIGHT &&
-        transaction.lockTime < [NSDate timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970 + 1*60) return NO;
+        transaction.lockTime < [NSDate timeIntervalSinceReferenceDate] + NSTimeIntervalSince1970 + 2*60) return NO;
 
     for (NSNumber *sequence in transaction.inputSequences) { // lockTime is ignored if all sequence numbers are final
         if (sequence.unsignedIntValue < UINT32_MAX) return YES;
