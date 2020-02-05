@@ -210,8 +210,8 @@
         if ([MFMailComposeViewController canSendMail]) {
             MFMailComposeViewController *c = [MFMailComposeViewController new];
             
-            [c setSubject:NSLocalizedString(@"Dogecoin address", nil)];
-            [c setMessageBody:[@"dogecoin:" stringByAppendingString:self.paymentAddress] isHTML:NO];
+            [c setSubject:NSLocalizedString(@"Woodcoin address", nil)];
+            [c setMessageBody:[@"woodcoin:" stringByAppendingString:self.paymentAddress] isHTML:NO];
             c.mailComposeDelegate = self;
             [self.navigationController presentViewController:c animated:YES completion:nil];
             c.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wallpaper-default"]];
@@ -225,7 +225,7 @@
         if ([MFMessageComposeViewController canSendText]) {
             MFMessageComposeViewController *c = [MFMessageComposeViewController new];
             
-            c.body = [@"dogecoin:" stringByAppendingString:self.paymentAddress];
+            c.body = [@"woodcoin:" stringByAppendingString:self.paymentAddress];
             c.messageComposeDelegate = self;
             [self.navigationController presentViewController:c animated:YES completion:nil];
             c.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wallpaper-default"]];

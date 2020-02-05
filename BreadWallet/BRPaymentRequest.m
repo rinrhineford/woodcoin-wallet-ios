@@ -80,7 +80,7 @@
     NSURL *url = [NSURL URLWithString:s];
     
     if (! url || ! url.scheme) {
-        url = [NSURL URLWithString:[NSString stringWithFormat:@"dogecoin://%@", s]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"woodcoin://%@", s]];
     }
     else if (! url.host && url.resourceSpecifier) {
         url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", url.scheme, url.resourceSpecifier]];
@@ -115,7 +115,7 @@
 {
     if (! self.paymentAddress) return nil;
 
-    NSMutableString *s = [NSMutableString stringWithFormat:@"dogecoin:%@", self.paymentAddress];
+    NSMutableString *s = [NSMutableString stringWithFormat:@"woodcoin:%@", self.paymentAddress];
     NSMutableArray *q = [NSMutableArray array];
     
     if (self.amount > 0) {
@@ -214,7 +214,7 @@ completion:(void (^)(BRPaymentProtocolACK *ack, NSError *error))completion
     NSURL *u = [NSURL URLWithString:paymentURL];
 
     if (! u || [u.scheme isEqual:@"http"]) { // must be https rather than http
-        completion(nil, [NSError errorWithDomain:@"DoughWallet" code:417 userInfo:@{NSLocalizedDescriptionKey:
+        completion(nil, [NSError errorWithDomain:@"LogWallet" code:417 userInfo:@{NSLocalizedDescriptionKey:
                          NSLocalizedString(@"bad payment URL", nil)}]);
     }
 
@@ -243,7 +243,7 @@ completion:(void (^)(BRPaymentProtocolACK *ack, NSError *error))completion
         BRPaymentProtocolACK *ack = [BRPaymentProtocolACK ackWithData:data];
         
         if (! ack) {
-            completion(nil, [NSError errorWithDomain:@"DoughWallet" code:417 userInfo:@{NSLocalizedDescriptionKey:
+            completion(nil, [NSError errorWithDomain:@"LogWallet" code:417 userInfo:@{NSLocalizedDescriptionKey:
                              [NSString stringWithFormat:NSLocalizedString(@"unexpected response from %@", nil), u.host]
                             }]);
             return;
