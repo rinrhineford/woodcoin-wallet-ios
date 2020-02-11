@@ -24,6 +24,7 @@
 //  THE SOFTWARE.
 
 #include "BRSocketHelpers.h"
+#include <sys/time.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/socket.h>

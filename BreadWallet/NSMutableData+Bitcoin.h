@@ -26,9 +26,9 @@
 #import <Foundation/Foundation.h>
 
 #if BITCOIN_TESTNET
-#define BITCOIN_MAGIC_NUMBER 0x0709110bu
+#define BITCOIN_MAGIC_NUMBER 0xdbb8c0fbu
 #else
-#define BITCOIN_MAGIC_NUMBER 0xd9b4bef9u
+#define BITCOIN_MAGIC_NUMBER 0xddb7d9fcu
 #endif
 
 CF_IMPLICIT_BRIDGING_ENABLED

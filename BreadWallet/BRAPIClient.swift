@@ -516,6 +516,9 @@ func buildRequestSigningString(_ r: URLRequest) -> String {
     }
     
     open func featureEnabled(_ flag: BRFeatureFlags) -> Bool {
+        if flag == BRFeatureFlags.buyBitcoin || flag == BRFeatureFlags.earlyAccess {
+            return false
+        }
         #if Testflight || Debug
             return true
         #else

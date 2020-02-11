@@ -43,7 +43,7 @@
 #define CIRCLE  @"\xE2\x97\x8C" // dotted circle (utf-8)
 #define DOT     @"\xE2\x97\x8F" // black circle (utf-8)
 
-#define UNSPENT_URL          @"https://api.breadwallet.com/q/addrs/utxo"
+#define UNSPENT_URL          @"http://192.168.254.107:8000/unspent"
 #define UNSPENT_FAILOVER_URL @"https://insight.bitpay.com/api/addrs/utxo"
 #define FEE_PER_KB_URL       @"https://api.breadwallet.com/fee-per-kb"
 #define TICKER_URL           @"https://api.breadwallet.com/rates"
@@ -239,7 +239,7 @@ static NSDictionary *getKeychainDict(NSString *key, NSError **error)
     self.format.negativeFormat = [self.format.positiveFormat
                                   stringByReplacingCharactersInRange:[self.format.positiveFormat rangeOfString:@"#"]
                                   withString:@"-#"];
-    self.format.currencyCode = @"XBT";
+    self.format.currencyCode = @"LOG";
     self.format.currencySymbol = BITS NARROW_NBSP;
     self.format.maximumFractionDigits = 2;
     self.format.minimumFractionDigits = 0; // iOS 8 bug, minimumFractionDigits now has to be set after currencySymbol
