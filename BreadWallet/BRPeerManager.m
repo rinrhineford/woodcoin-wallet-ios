@@ -69,29 +69,28 @@ static const char *dns_seeds[] = {
 // blockchain checkpoints, these are also used as starting points for partial chain downloads, so they need to be at
 // difficulty transition boundaries in order to verify the block difficulty at the immediately following transition
 static const struct { uint32_t height; char *hash; time_t timestamp; uint32_t target; } checkpoint_array[] = {
-    {      0, "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f", 1231006505, 0x1d00ffffu },
-    {  20160, "000000000f1aef56190aee63d33a373e6487132d522ff4cd98ccfc96566d461e", 1248481816, 0x1d00ffffu },
-    {  40320, "0000000045861e169b5a961b7034f8de9e98022e7a39100dde3ae3ea240d7245", 1266191579, 0x1c654657u },
-    {  60480, "000000000632e22ce73ed38f46d5b408ff1cff2cc9e10daaf437dfd655153837", 1276298786, 0x1c0eba64u },
-    {  80640, "0000000000307c80b87edf9f6a0697e2f01db67e518c8a4d6065d1d859a3a659", 1284861847, 0x1b4766edu },
-    { 100800, "000000000000e383d43cc471c64a9a4a46794026989ef4ff9611d5acb704e47a", 1294031411, 0x1b0404cbu },
-    { 120960, "0000000000002c920cf7e4406b969ae9c807b5c4f271f490ca3de1b0770836fc", 1304131980, 0x1b0098fau },
-    { 141120, "00000000000002d214e1af085eda0a780a8446698ab5c0128b6392e189886114", 1313451894, 0x1a094a86u },
-    { 161280, "00000000000005911fe26209de7ff510a8306475b75ceffd434b68dc31943b99", 1326047176, 0x1a0d69d7u },
-    { 181440, "00000000000000e527fc19df0992d58c12b98ef5a17544696bbba67812ef0e64", 1337883029, 0x1a0a8b5fu },
-    { 201600, "00000000000003a5e28bef30ad31f1f9be706e91ae9dda54179a95c9f9cd9ad0", 1349226660, 0x1a057e08u },
-    { 221760, "00000000000000fc85dd77ea5ed6020f9e333589392560b40908d3264bd1f401", 1361148470, 0x1a04985cu },
-    { 241920, "00000000000000b79f259ad14635739aaf0cc48875874b6aeecc7308267b50fa", 1371418654, 0x1a00de15u },
-    { 262080, "000000000000000aa77be1c33deac6b8d3b7b0757d02ce72fffddc768235d0e2", 1381070552, 0x1916b0cau },
-    { 282240, "0000000000000000ef9ee7529607286669763763e0c46acfdefd8a2306de5ca8", 1390570126, 0x1901f52cu },
-    { 302400, "0000000000000000472132c4daaf358acaf461ff1c3e96577a74e5ebf91bb170", 1400928750, 0x18692842u },
-    { 322560, "000000000000000002df2dd9d4fe0578392e519610e341dd09025469f101cfa1", 1411680080, 0x181FB893u },
-    { 342720, "00000000000000000f9cfece8494800d3dcbf9583232825da640c8703bcd27e7", 1423496415, 0x1818BB87u }
+    { 0, "30758383eae55ae5c7752b73388c1c85bdfbe930ad25ad877252841ed1e734a4", 1413817324, 0x1e0ffff0u },
+    { 20160, "a28e838f13025cac74d6832e4506bc53073854bc021db3e961b877f5048cc9e7", 1416417215, 0x1d008497u },
+    { 40320, "b250793ca221dcfacfa2fea4949bd5c3c49edb23a308e579d8d3667243b16f26", 1419056223, 0x1d008828u },
+    { 60480, "e15afe3b7bdabdac8fdc7671db188a37963ec2303776894699e9c74499e5d795", 1421591600, 0x1d020a44u },
+    { 80640, "0a803a4a3c603b49975edff8a56c1fe5546809747b4d67ce62afc8c29bc084ea", 1424084655, 0x1d00854fu },
+    { 100800, "dfa5fd477e522d3c9070c16710b3fb946c96e8022bccb997e6d29d8304aca8f1", 1426590543, 0x1c2b257du },
+    { 120960, "e36e9c55485eb702d9cfc5376deb9936bc491bf02de506e79ed55be01a6a0c95", 1429141852, 0x1c373926u },
+    { 141120, "3a14975f342e9991c5494719be7656aedc6cc4f5755357add11b03134f6df9ef", 1431702967, 0x1c2a24cau },
+    { 161280, "37692ed996b6f801edb1f0635521e1efdf594346bccb320bed3c22478e8a4b41", 1434520025, 0x1c1dbd3bu },
+    { 181440, "4ef56d388d08dbf1716aae1599c9fcde709927ce3265d8683344929a58f2c2e2", 1437143635, 0x1c1ad9d5u },
+    { 201600, "92ab4f934217d6232523a96caf678876988eb2ecaab8ba4b30fc23283005aff0", 1439653089, 0x1c0dceceu },
+    { 221760, "d44b41ad667053505ba4dc3295bcf38f1eca3fc193c6141526a26adc0c76df6f", 1442189539, 0x1c22f529u },
+    { 241920, "092a3019b3294cf6422a21d5e8a69e3c1c37eb5785cb8f307142e66ed4a24d2c", 1444700540, 0x1c103f0cu },
+    { 262080, "1a69b58a11e3092c4b981f8e60a1ca3fd95937aba931579613f5890e95746724", 1447231020, 0x1c1ba055u },
+    { 282240, "0f01a1d71b3275b93923499d0aec93fd4e4560693193890d24db60a930e04532", 1450615078, 0x1c085a6bu },
+    { 302400, "16adffbdeb0ac9453bce1c0e0e41852b357f4b504f03bcf47d0438926671949e", 1455619662, 0x1c0d5e96u },
+    { 322560, "cce75a5b99dde4e0a7c5513e5b67544e3b372d8622f601c8f1e01bada049f0ed", 1461711898, 0x1c113d34u },
+    { 342720, "60fb81627055becd54a6ad03f4c322770b8973e6325e266dbc6f72e92a96c72d", 1466766381, 0x1c0d6737u }
 };
 
 static const char *dns_seeds[] = {
-    "seed.bitcoin.sipa.be", "dnsseed.bluematt.me", "dnsseed.bitcoin.dashjr.org", "seed.bitcoinstats.com",
-    "seed.bitnodes.io"
+    "207.246.126.39", "67.207.91.29", "207.180.254.241"
 };
 
 #endif
@@ -211,7 +210,7 @@ static const char *dns_seeds[] = {
 
         [self sortPeers];
 
-        if (_peers.count < PEER_MAX_CONNECTIONS || [_peers[PEER_MAX_CONNECTIONS - 1] timestamp] < now - 3*24*60*60) {
+        if (_peers.count < PEER_MAX_CONNECTIONS || ((BRPeer *)_peers[PEER_MAX_CONNECTIONS - 1]).timestamp < now - 3*24*60*60) {
             for (int i = 0; i < sizeof(dns_seeds)/sizeof(*dns_seeds); i++) { // DNS peer discovery
                 struct hostent *h = gethostbyname(dns_seeds[i]);
 
@@ -721,9 +720,9 @@ static const char *dns_seeds[] = {
 
 - (void)sortPeers
 {
-    [_peers sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        if ([obj1 timestamp] > [obj2 timestamp]) return NSOrderedAscending;
-        if ([obj1 timestamp] < [obj2 timestamp]) return NSOrderedDescending;
+    [_peers sortUsingComparator:^NSComparisonResult(BRPeer *obj1, BRPeer *obj2) {
+        if (obj1.timestamp > obj2.timestamp) return NSOrderedAscending;
+        if (obj1.timestamp < obj2.timestamp) return NSOrderedDescending;
         return NSOrderedSame;
     }];
 }
@@ -904,10 +903,10 @@ static const char *dns_seeds[] = {
     // limit total to 2500 peers
     if (self.peers.count > 2500) [self.peers removeObjectsInRange:NSMakeRange(2500, self.peers.count - 2500)];
 
-    NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate] - 3*60*60;
+    NSTimeInterval t = [NSDate timeIntervalSinceReferenceDate];
 
     // remove peers more than 3 hours old, or until there are only 1000 left
-    while (self.peers.count > 1000 && [self.peers.lastObject timestamp] < t) {
+    while (self.peers.count > 1000 && ((BRPeer *)self.peers.lastObject).timestamp + 3*60*60 < t) {
         [self.peers removeObject:self.peers.lastObject];
     }
 

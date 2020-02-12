@@ -26,9 +26,9 @@
 #import <Foundation/Foundation.h>
 
 #if BITCOIN_TESTNET
-#define BITCOIN_STANDARD_PORT          18333
+#define BITCOIN_STANDARD_PORT          18338
 #else
-#define BITCOIN_STANDARD_PORT          8333
+#define BITCOIN_STANDARD_PORT          8338
 #endif
 
 #define BITCOIN_TIMEOUT_CODE           1001

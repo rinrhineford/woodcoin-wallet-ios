@@ -554,6 +554,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		651A257123F3828A00FFD4EB /* breadwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = breadwallet.entitlements; path = breadwallet/breadwallet.entitlements; sourceTree = "<group>"; };
 		7525B617192453840041C0F2 /* BRNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRNavigationBar.h; sourceTree = "<group>"; };
 		7525B618192453840041C0F2 /* BRNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRNavigationBar.m; sourceTree = "<group>"; };
 		752E2899192349CE00DB5A3C /* BreadWallet.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BreadWallet.xcdatamodel; sourceTree = "<group>"; };
@@ -2216,6 +2217,7 @@
 		75D5F3B5191EC270004AB296 = {
 			isa = PBXGroup;
 			children = (
+				651A257123F3828A00FFD4EB /* breadwallet.entitlements */,
 				75D5F3C7191EC270004AB296 /* BreadWallet */,
 				75D5F3EC191EC270004AB296 /* BreadWalletTests */,
 				75D5F3C0191EC270004AB296 /* Frameworks */,
@@ -2466,7 +2468,7 @@
 						CreatedOnToolsVersion = 6.1;
 					};
 					75D5F3BD191EC270004AB296 = {
-						DevelopmentTeam = 4R7S6N88W9;
+						DevelopmentTeam = 4RAS67SFYH;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -3183,8 +3185,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = breadwallet/breadwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 4RAS67SFYH;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BreadWallet/BreadWallet-Prefix.pch";
 				GCC_WARN_PEDANTIC = YES;
@@ -3194,6 +3198,7 @@
 					"$(SRCROOT)/openssl/include",
 				);
 				INFOPLIST_FILE = "BreadWallet/BreadWallet-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = org.vermont.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -3373,8 +3378,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = breadwallet/breadwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 4RAS67SFYH;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BreadWallet/BreadWallet-Prefix.pch";
 				GCC_WARN_PEDANTIC = YES;
@@ -3384,6 +3391,7 @@
 					"$(SRCROOT)/openssl/include",
 				);
 				INFOPLIST_FILE = "BreadWallet/BreadWallet-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = org.vermont.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -3395,8 +3403,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = breadwallet/breadwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 4RAS67SFYH;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BreadWallet/BreadWallet-Prefix.pch";
 				GCC_WARN_PEDANTIC = YES;
@@ -3406,6 +3416,7 @@
 					"$(SRCROOT)/openssl/include",
 				);
 				INFOPLIST_FILE = "BreadWallet/BreadWallet-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = org.vermont.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
