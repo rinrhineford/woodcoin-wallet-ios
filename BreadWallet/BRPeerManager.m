@@ -85,8 +85,7 @@ static const struct { uint32_t height; char *hash; time_t timestamp; uint32_t ta
     { 262080, "1a69b58a11e3092c4b981f8e60a1ca3fd95937aba931579613f5890e95746724", 1447231020, 0x1c1ba055u },
     { 282240, "0f01a1d71b3275b93923499d0aec93fd4e4560693193890d24db60a930e04532", 1450615078, 0x1c085a6bu },
     { 302400, "16adffbdeb0ac9453bce1c0e0e41852b357f4b504f03bcf47d0438926671949e", 1455619662, 0x1c0d5e96u },
-    { 322560, "cce75a5b99dde4e0a7c5513e5b67544e3b372d8622f601c8f1e01bada049f0ed", 1461711898, 0x1c113d34u },
-    { 342720, "60fb81627055becd54a6ad03f4c322770b8973e6325e266dbc6f72e92a96c72d", 1466766381, 0x1c0d6737u }
+
 };
 
 static const char *dns_seeds[] = {
@@ -524,10 +523,10 @@ static const char *dns_seeds[] = {
 // BUG: this just doesn't work very well... we need to start storing tx metadata
 - (NSTimeInterval)timestampForBlockHeight:(uint32_t)blockHeight
 {
-    if (blockHeight == TX_UNCONFIRMED) return self.lastBlock.timestamp + 10*60; // assume next block
+    if (blockHeight == TX_UNCONFIRMED) return self.lastBlock.timestamp + 15; // assume next block
 
     if (blockHeight > self.lastBlockHeight) { // future block, assume 10 minutes per block after last block
-        return self.lastBlock.timestamp + (blockHeight - self.lastBlockHeight)*10*60;
+        return self.lastBlock.timestamp + (blockHeight - self.lastBlockHeight)*2*60;
     }
 
     if (_blocks.count > 0) {

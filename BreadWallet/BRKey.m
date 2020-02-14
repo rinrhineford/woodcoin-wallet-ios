@@ -85,7 +85,7 @@ static NSData *hmac_drbg(NSData *entropy, NSData *nonce)
 {
     if (! (self = [super init])) return nil;
     
-    _key = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+    _key = EC_KEY_new_by_curve_name(NID_secp256k1);
     
     return _key ? self : nil;
 }

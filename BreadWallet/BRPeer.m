@@ -580,7 +580,7 @@ services:(uint64_t)services
                                                                  sizeof(uint32_t)*2 + 20));
         
         // if address time is more than 10 min in the future or older than reference date, set to 5 days old
-        if (timestamp > now + 10*60 || timestamp < 0) timestamp = now - 5*24*60*60;
+        if (timestamp > now + 2*60 || timestamp < 0) timestamp = now - 5*24*60*60;
 
         // subtract two hours and add it to the list
         [peers addObject:[[BRPeer alloc] initWithAddress:address port:port timestamp:timestamp - 2*60*60
