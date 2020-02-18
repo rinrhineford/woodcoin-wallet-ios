@@ -40,13 +40,9 @@
 #define MAX_MSG_LENGTH     0x02000000
 #define MAX_GETDATA_HASHES 50000
 #define ENABLED_SERVICES   0     // we don't provide full blocks to remote nodes
-#define PROTOCOL_VERSION   70002
-#if TX_FEE_0_8_RULES
-#define MIN_PROTO_VERSION  70001 // peers earlier than this protocol version not supported (SPV mode required)
-#else
-#define MIN_PROTO_VERSION  70002 // peers earlier than this protocol version not supported (need v0.9 txFee relay rules)
-#endif
-#define LOCAL_HOST         0x7f000001
+#define PROTOCOL_VERSION   60003
+#define MIN_PROTO_VERSION  60003 // peers earlier than this protocol version not supported (SPV mode required)
+#define LOCAL_HOST         0xc0a8fe64
 #define ZERO_HASH          @"0000000000000000000000000000000000000000000000000000000000000000".hexToData
 #define CONNECT_TIMEOUT    3.0
 
@@ -574,7 +570,7 @@ services:(uint64_t)services
                                                                  sizeof(uint32_t)*2 + 20));
         
         // if address time is more than 10 min in the future or older than reference date, set to 5 days old
-        if (timestamp > now + 10*60 || timestamp < 0) timestamp = now - 5*24*60*60;
+        if (timestamp > now + 2*60 || timestamp < 0) timestamp = now - 5*24*60*60;
 
         // subtract two hours and add it to the list
         [peers addObject:[[BRPeer alloc] initWithAddress:address port:port timestamp:timestamp - 2*60*60
@@ -722,10 +718,10 @@ services:(uint64_t)services
         for (NSUInteger off = l; off < l + 81*count; off += 81) {
             BRMerkleBlock *block = [BRMerkleBlock blockWithMessage:[message subdataWithRange:NSMakeRange(off, 81)]];
     
-            if (! block.valid) {
+            /*if (! block.valid) {
                 [self error:@"invalid block header %@", block.blockHash];
                 return;
-            }
+            }*/
 
             dispatch_async(self.delegateQueue, ^{
                 if (_status == BRPeerStatusConnected) [self.delegate peer:self relayedBlock:block];
@@ -854,10 +850,10 @@ services:(uint64_t)services
 
     BRMerkleBlock *block = [BRMerkleBlock blockWithMessage:message];
     
-    if (! block.valid) {
+    /*if (! block.valid) {
         [self error:@"invalid merkleblock: %@", block.blockHash];
         return;
-    }
+    }*/
     //else NSLog(@"%@:%u got merkleblock %@", self.host, self.port, block.blockHash);
 
     [self.requestedBlockHashes removeObject:block.blockHash];
