@@ -60,7 +60,7 @@ static void CKD(NSMutableData *k, NSMutableData *c, uint32_t i)
     NSMutableData *I = [NSMutableData secureDataWithLength:CC_SHA512_DIGEST_LENGTH];
     NSMutableData *data = [NSMutableData secureDataWithCapacity:33 + sizeof(i)];
     BIGNUM *order = BN_CTX_get(ctx), *Ilbn = BN_CTX_get(ctx), *kbn = BN_CTX_get(ctx);
-    EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_secp256k1);
+    EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
 
     if (i & BIP32_PRIME) {
         data.length = 33 - k.length;
@@ -115,7 +115,7 @@ static void CKDPrime(NSMutableData *K, NSMutableData *c, uint32_t i)
     NSMutableData *data = [NSMutableData secureDataWithData:K];
     uint8_t form = POINT_CONVERSION_COMPRESSED;
     BIGNUM *Ilbn = BN_CTX_get(ctx);
-    EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_secp256k1);
+    EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
     EC_POINT *pubKeyPoint = EC_POINT_new(group), *IlPoint = EC_POINT_new(group);
 
     i = CFSwapInt32HostToBig(i);

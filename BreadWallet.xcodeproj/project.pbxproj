@@ -3198,6 +3198,7 @@
 					"$(SRCROOT)/openssl/include",
 				);
 				INFOPLIST_FILE = "BreadWallet/BreadWallet-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				PRODUCT_BUNDLE_IDENTIFIER = org.vermont.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -3391,6 +3392,7 @@
 					"$(SRCROOT)/openssl/include",
 				);
 				INFOPLIST_FILE = "BreadWallet/BreadWallet-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				PRODUCT_BUNDLE_IDENTIFIER = org.vermont.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -3416,6 +3418,7 @@
 					"$(SRCROOT)/openssl/include",
 				);
 				INFOPLIST_FILE = "BreadWallet/BreadWallet-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				PRODUCT_BUNDLE_IDENTIFIER = org.vermont.log;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

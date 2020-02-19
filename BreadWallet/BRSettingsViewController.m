@@ -284,7 +284,7 @@
             return nil;
 
         case 2:
-            return NSLocalizedString(@"bitcoin network fees are only optional for high priority transactions "
+            return NSLocalizedString(@"woodcoin network fees are only optional for high priority transactions "
                                      "(removal may cause delays)", nil);            
     }
     
@@ -384,7 +384,7 @@
                 case 1: // recovery phrase
                     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
                       message:NSLocalizedString(@"\nDO NOT let anyone see your recovery phrase or they can spend your "
-                                                "bitcoins.\n\nNEVER type your recovery phrase into password managers "
+                                                "woodcoins.\n\nNEVER type your recovery phrase into password managers "
                                                 "or elsewhere. Other devices may be infected.\n", nil) delegate:self
                       cancelButtonTitle:NSLocalizedString(@"cancel", nil)
                       otherButtonTitles:NSLocalizedString(@"show", nil), nil] show];

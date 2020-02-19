@@ -39,10 +39,10 @@
 #import "NSMutableData+Bitcoin.h"
 #import "NSData+Hash.h"
 
-#define SCAN_TIP      NSLocalizedString(@"Scan someone else's QR code to get their bitcoin address. "\
+#define SCAN_TIP      NSLocalizedString(@"Scan someone else's QR code to get their woodcoin address. "\
                                          "You can send a payment to anyone with an address.", nil)
-#define CLIPBOARD_TIP NSLocalizedString(@"Bitcoin addresses can also be copied to the clipboard. "\
-                                         "A bitcoin address always starts with '1' or '3'.", nil)
+#define CLIPBOARD_TIP NSLocalizedString(@"Woodcoin addresses can also be copied to the clipboard. "\
+                                         "A woodcoin address always starts with 'W'.", nil)
 
 #define LOCK @"\xF0\x9F\x94\x92" // unicode lock symbol U+1F512 (utf-8)
 #define REDX @"\xE2\x9D\x8C"     // unicode cross mark U+274C, red x emoji (utf-8)
@@ -155,7 +155,7 @@ static NSString *sanitizeString(NSString *s)
                 
                 if (error) {
                     [[[UIAlertView alloc]
-                      initWithTitle:NSLocalizedString(@"couldn't transmit payment to bitcoin network", nil)
+                      initWithTitle:NSLocalizedString(@"couldn't transmit payment to woodcoin network", nil)
                       message:error.localizedDescription delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
                       otherButtonTitles:nil] show];
                 }
@@ -202,7 +202,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
               [m localCurrencyStringForAmount:amount - fee]];
 
     if (fee > 0) {
-        prompt = [prompt stringByAppendingFormat:NSLocalizedString(@"\nbitcoin network fee +%@ (%@)", nil),
+        prompt = [prompt stringByAppendingFormat:NSLocalizedString(@"\nwoodcoin network fee +%@ (%@)", nil),
                   [m stringForAmount:fee], [m localCurrencyStringForAmount:fee]];
         prompt = [prompt stringByAppendingFormat:NSLocalizedString(@"\ntotal %@ (%@)", nil),
                   [m stringForAmount:amount], [m localCurrencyStringForAmount:amount]];
@@ -218,7 +218,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
             [self confirmSweep:request.paymentAddress];
         }
         else {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"not a valid bitcoin address", nil)
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"not a valid woodcoin address", nil)
               message:request.paymentAddress delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
               otherButtonTitles:nil] show];
             [self cancel:nil];
@@ -278,7 +278,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         self.request = protoReq;
         self.okAddress = address;
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
-          message:NSLocalizedString(@"\nADDRESS ALREADY USED\n\nbitcoin addresses are intended for single use only\n\n"
+          message:NSLocalizedString(@"\nADDRESS ALREADY USED\n\nwoodcoin addresses are intended for single use only\n\n"
                                     "re-use reduces privacy for both you and the recipient and can result in loss if "
                                     "the recipient doesn't directly control the address", nil)
           delegate:self cancelButtonTitle:nil
@@ -309,7 +309,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     }
     else if (amount < TX_MIN_OUTPUT_AMOUNT) {
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
-          message:[NSString stringWithFormat:NSLocalizedString(@"bitcoin payments can't be less than %@", nil),
+          message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin payments can't be less than %@", nil),
                    [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]] delegate:nil
           cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
         [self cancel:nil];
@@ -317,7 +317,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     }
     else if (outputTooSmall) {
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
-          message:[NSString stringWithFormat:NSLocalizedString(@"bitcoin transaction outputs can't be less than %@",
+          message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin transaction outputs can't be less than %@",
                                                                nil), [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]]
           delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
         [self cancel:nil];
@@ -339,8 +339,8 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
     if (tx && [m.wallet blockHeightUntilFree:tx] <= [[BRPeerManager sharedInstance] lastBlockHeight] + 1 &&
         ! self.didAskFee && [[NSUserDefaults standardUserDefaults] boolForKey:SETTINGS_SKIP_FEE_KEY]) {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"bitcoin network fee", nil)
-          message:[NSString stringWithFormat:NSLocalizedString(@"the standard bitcoin network fee for this transaction "
+        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"woodcoin network fee", nil)
+          message:[NSString stringWithFormat:NSLocalizedString(@"the standard woodcoin network fee for this transaction "
                                                                "is %@ (%@)\n\nremoving this fee may delay confirmation",
                                                                nil),
                    [m stringForAmount:[m.wallet feeForTxSize:tx.size]],
@@ -404,7 +404,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                                   34];
             
                 [[[UIAlertView alloc]
-                  initWithTitle:NSLocalizedString(@"insufficient funds for bitcoin network fee", nil)
+                  initWithTitle:NSLocalizedString(@"insufficient funds for woodcoin network fee", nil)
                   message:[NSString stringWithFormat:NSLocalizedString(@"reduce payment amount by\n%@ (%@)?", nil),
                            [m stringForAmount:self.amount - amount],
                            [m localCurrencyStringForAmount:self.amount - amount]] delegate:self
@@ -425,7 +425,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     
     if (! [m.wallet signTransaction:tx withPrompt:prompt]) {
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
-          message:NSLocalizedString(@"error signing bitcoin transaction", nil) delegate:nil
+          message:NSLocalizedString(@"error signing woodcoin transaction", nil) delegate:nil
           cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
     }
     
@@ -545,7 +545,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
             [[[UIAlertView alloc] initWithTitle:nil message:[NSString
               stringWithFormat:NSLocalizedString(@"Send %@ (%@) from this private key into your wallet? "
-                                                 "The bitcoin network will receive a fee of %@ (%@).", nil),
+                                                 "The woodcoin network will receive a fee of %@ (%@).", nil),
               [m stringForAmount:amount], [m localCurrencyStringForAmount:amount], [m stringForAmount:fee],
               [m localCurrencyStringForAmount:fee]] delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil)
               otherButtonTitles:[NSString stringWithFormat:@"%@ (%@)", [m stringForAmount:amount],
@@ -694,7 +694,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         }
     }
     
-    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"clipboard doesn't contain a valid bitcoin address", nil)
+    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"clipboard doesn't contain a valid woodcoin address", nil)
       message:nil delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
     [self performSelector:@selector(cancel:) withObject:self afterDelay:0.1];
 }
@@ -747,10 +747,10 @@ fromConnection:(AVCaptureConnection *)connection
 
             if ([s hasPrefix:@"bitcoin:"] || [request.paymentAddress hasPrefix:@"1"]) {
                 self.scanController.message.text = [NSString stringWithFormat:@"%@\n%@",
-                                                    NSLocalizedString(@"not a valid bitcoin address", nil),
+                                                    NSLocalizedString(@"not a valid woodcoin address", nil),
                                                     request.paymentAddress];
             }
-            else self.scanController.message.text = NSLocalizedString(@"not a bitcoin QR code", nil);
+            else self.scanController.message.text = NSLocalizedString(@"not a woodcoin QR code", nil);
 
             [self performSelector:@selector(resetQRGuide) withObject:nil afterDelay:0.35];
         }

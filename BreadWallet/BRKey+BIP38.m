@@ -171,7 +171,7 @@ static NSData *derive_key(NSData *passpoint, uint32_t addresshash, uint64_t entr
 static NSData *point_multiply(NSData *point, const BIGNUM *factor, BOOL compressed, BN_CTX *ctx)
 {
     NSMutableData *d = [NSMutableData secureData];
-    EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_secp256k1);
+    EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
     EC_POINT *r = EC_POINT_new(group), *p;
     point_conversion_form_t form = (compressed) ? POINT_CONVERSION_COMPRESSED : POINT_CONVERSION_UNCOMPRESSED;
 
@@ -438,7 +438,7 @@ confirmationCode:(NSString **)confcode;
         NSData *derived = derive_key(passpoint, addresshash, entropy);
         const uint64_t *derived1 = (const uint64_t *)derived.bytes, *derived2 = &derived1[4];
         NSMutableData *seedb = [NSMutableData secureDataWithLength:24], *o = [NSMutableData secureDataWithLength:16];
-        EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_secp256k1);
+        EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
 
         [encrypted1 appendBytes:(const uint8_t *)d.bytes + 15 length:8];
         encrypted1.length = 16;

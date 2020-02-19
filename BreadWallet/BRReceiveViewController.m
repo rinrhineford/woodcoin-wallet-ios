@@ -30,9 +30,9 @@
 #import "BRTransaction.h"
 #import "BRBubbleView.h"
 
-#define QR_TIP      NSLocalizedString(@"Let others scan this QR code to get your bitcoin address. Anyone can send "\
-                    "bitcoins to your wallet by transferring them to your address.", nil)
-#define ADDRESS_TIP NSLocalizedString(@"This is your bitcoin address. Tap to copy it or send it by email or sms. The "\
+#define QR_TIP      NSLocalizedString(@"Let others scan this QR code to get your woodcoin address. Anyone can send "\
+                    "woodcoins to your wallet by transferring them to your address.", nil)
+#define ADDRESS_TIP NSLocalizedString(@"This is your woodcoin address. Tap to copy it or send it by email or sms. The "\
                     "address will change each time you receive funds, but old addresses always work.", nil)
 
 @interface BRReceiveViewController ()
@@ -173,7 +173,7 @@
     BOOL req = (_paymentRequest) ? YES : NO;
     UIActionSheet *a = [UIActionSheet new];
 
-    a.title = [NSString stringWithFormat:NSLocalizedString(@"Receive bitcoins at this address: %@", nil),
+    a.title = [NSString stringWithFormat:NSLocalizedString(@"Receive woodcoins at this address: %@", nil),
                self.paymentAddress];
     a.delegate = self;
     [a addButtonWithTitle:(req) ? NSLocalizedString(@"copy request to clipbaord", nil) :
@@ -225,7 +225,7 @@
         if ([MFMailComposeViewController canSendMail]) {
             MFMailComposeViewController *c = [MFMailComposeViewController new];
             
-            [c setSubject:NSLocalizedString(@"Bitcoin address", nil)];
+            [c setSubject:NSLocalizedString(@"Woodcoin address", nil)];
             [c setMessageBody:self.paymentRequest.string isHTML:NO];
             c.mailComposeDelegate = self;
             [self.navigationController presentViewController:c animated:YES completion:nil];
@@ -283,7 +283,7 @@ error:(NSError *)error
         BRWalletManager *m = [BRWalletManager sharedInstance];
     
         [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"amount too small", nil)
-          message:[NSString stringWithFormat:NSLocalizedString(@"bitcoin payments can't be less than %@", nil),
+          message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin payments can't be less than %@", nil),
                    [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]] delegate:nil
           cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
         return;
