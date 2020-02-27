@@ -495,7 +495,7 @@
                                      "or are having trouble sending (rescaning can take several minutes)", nil);
 
         case 4:
-            return NSLocalizedString(@"bitcoin network fees are only optional for high priority transactions "
+            return NSLocalizedString(@"woodcoin network fees are only optional for high priority transactions "
                                      "(removal may cause delays)", nil);
 
         default:
@@ -645,7 +645,7 @@
                 case 1: // backup phrase
                     [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
                       message:NSLocalizedString(@"\nDO NOT let anyone see your backup phrase or they can spend your "
-                                                "bitcoins.\n\nDO NOT take a screenshot. Screenshots are visible to "
+                                                "woodcoins.\n\nDO NOT take a screenshot. Screenshots are visible to "
                                                 "other apps and devices.\n", nil) delegate:self
                       cancelButtonTitle:NSLocalizedString(@"cancel", nil)
                       otherButtonTitles:NSLocalizedString(@"show", nil), nil] show];

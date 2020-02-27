@@ -58,9 +58,9 @@
 #define DEFAULT_CURRENCY_PRICE  500.0
 #define DEFAULT_CURRENCY_CODE   @"USD"
 
-#define BASE_URL    @"https://blockchain.info"
+#define BASE_URL    @"https://api.coingecko.com/api/v3/coins/woodcoin"
 #define UNSPENT_URL BASE_URL "/unspent?active="
-#define TICKER_URL  BASE_URL "/ticker"
+#define TICKER_URL  BASE_URL "/tickers"
 
 static BOOL setKeychainData(NSData *data, NSString *key)
 {
@@ -419,11 +419,12 @@ static NSData *getKeychainData(NSString *key)
         NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
         NSError *error = nil;
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-
+        NSArray *items = [json valueForKeyPath:@"tickers.converted_last"];
+        NSLog(@"json test: %@", items[0][@"usd"]);
         _localCurrencyCode = [defs stringForKey:LOCAL_CURRENCY_CODE_KEY];
         if (! self.localCurrencyCode) _localCurrencyCode = [[NSLocale currentLocale] objectForKey:NSLocaleCurrencyCode];
 
-        if (error || ! [json isKindOfClass:[NSDictionary class]] ||
+        /*if (error || ! [json isKindOfClass:[NSDictionary class]] ||
             ! [json[DEFAULT_CURRENCY_CODE] isKindOfClass:[NSDictionary class]] ||
             ! [json[DEFAULT_CURRENCY_CODE][@"last"] isKindOfClass:[NSNumber class]] ||
             ([json[self.localCurrencyCode] isKindOfClass:[NSDictionary class]] &&
@@ -432,7 +433,7 @@ static NSData *getKeychainData(NSString *key)
             NSLog(@"unexpected response from %@:\n%@", req.URL.host,
                   [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             return;
-        }
+         }*/
 
         // if local currency is missing, use default
         if (! [json[self.localCurrencyCode] isKindOfClass:[NSDictionary class]]) {
@@ -443,7 +444,8 @@ static NSData *getKeychainData(NSString *key)
             self.localFormat.currencyCode = self.localCurrencyCode;
         }
 
-        _localCurrencyPrice = [json[self.localCurrencyCode][@"last"] doubleValue];
+        //_localCurrencyPrice = [json[self.localCurrencyCode][@"last"] doubleValue];
+        _localCurrencyPrice = [items[0][@"usd"] doubleValue];
         self.localFormat.maximum = @((MAX_MONEY/SATOSHIS)*self.localCurrencyPrice);
         _currencyCodes = [NSArray arrayWithArray:json.allKeys];
         
