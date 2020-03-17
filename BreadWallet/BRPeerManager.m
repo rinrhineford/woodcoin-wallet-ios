@@ -2624,11 +2624,24 @@ static const char *dns_seeds[] = {
         [self.txRejections[txHash] addObject:peer];
 
         if ([self.txRejections[txHash] count] > 1 || self.peerCount < 3) {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"transaction rejected", nil)
+            /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"transaction rejected", nil)
               message:NSLocalizedString(@"Your wallet may be out of sync.\n"
                                         "This can often be fixed by rescaning the blockchain.", nil) delegate:self
               cancelButtonTitle:NSLocalizedString(@"cancel", nil)
-              otherButtonTitles:NSLocalizedString(@"rescan", nil), nil] show];
+              otherButtonTitles:NSLocalizedString(@"rescan", nil), nil] show];*/
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"transaction rejected" message:@"Your wallet may be out of sync.\n"
+                                        "This can often be fixed by rescaning the blockchain." preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+            
+            UIAlertAction* rescanAction = [UIAlertAction actionWithTitle:@"rescan" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                [self rescan];
+            }];
+            [alert addAction:cancelAction];
+            [alert addAction:rescanAction];
+            UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+            NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alert.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:viewController.view.frame.size.height*2.0f];
+            [alert.view addConstraint:constraint];
+            [viewController presentViewController:alert animated:YES completion:^{}];
         }
     }
 }
@@ -2841,10 +2854,10 @@ static const char *dns_seeds[] = {
 
 #pragma mark - UIAlertViewDelegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+/*- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == alertView.cancelButtonIndex) return;
     [self rescan];
-}
+}*/
 
 @end

@@ -65,11 +65,16 @@
     self.moreTx = ([BRWalletManager sharedInstance].wallet.recentTransactions.count > 5) ? YES : NO;
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
 
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+    //[UIViewController preferredStatusBarStyle];
     
     BRWalletManager *m = [BRWalletManager sharedInstance];
     NSArray *a = m.wallet.recentTransactions;
@@ -643,12 +648,30 @@
                     break;
                     
                 case 1: // backup phrase
-                    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
+                    /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
                       message:NSLocalizedString(@"\nDO NOT let anyone see your backup phrase or they can spend your "
                                                 "woodcoins.\n\nDO NOT take a screenshot. Screenshots are visible to "
                                                 "other apps and devices.\n", nil) delegate:self
                       cancelButtonTitle:NSLocalizedString(@"cancel", nil)
-                      otherButtonTitles:NSLocalizedString(@"show", nil), nil] show];
+                      otherButtonTitles:NSLocalizedString(@"show", nil), nil] show];*/
+                   {
+                       UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"\nDO NOT let anyone see your backup phrase or they can spend your "
+                                                "woodcoins.\n\nDO NOT take a screenshot. Screenshots are visible to "
+                                                 "other apps and devices." preferredStyle:UIAlertControllerStyleAlert];
+                       UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+                       
+                       UIAlertAction* showAction = [UIAlertAction actionWithTitle:@"show" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                           self.pinNav = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
+                           [self.pinNav.viewControllers.firstObject setAppeared:YES];
+                           [self.pinNav.viewControllers.firstObject setCancelable:YES];
+                           self.pinNav.transitioningDelegate = self;
+                           [self.navigationController presentViewController:self.pinNav animated:YES completion:nil];
+                       }];
+                       
+                       [alert addAction:cancelAction];
+                       [alert addAction:showAction];
+                       [self presentViewController:alert animated:YES completion:nil];
+                   }
                     break;
 
                 default:
@@ -729,7 +752,7 @@
 
 #pragma mark - UIAlertViewDelegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+/*- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == alertView.cancelButtonIndex) {
         [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
@@ -741,7 +764,7 @@
     [self.pinNav.viewControllers.firstObject setCancelable:YES];
     self.pinNav.transitioningDelegate = self;
     [self.navigationController presentViewController:self.pinNav animated:YES completion:nil];
-}
+}*/
 
 #pragma mark - UIViewControllerAnimatedTransitioning
 

@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>NSCameraUsageDescription</key>
+	<string>LogWallet requires to access camera for taking QR code picture</string>
 	<key>CFBundleDisplayName</key>
 	<string>LogWallet</string>
 	<key>CFBundleDocumentTypes</key>

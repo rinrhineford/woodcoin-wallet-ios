@@ -172,25 +172,82 @@
 {
     if ([self nextTip]) return;
 
-    UIActionSheet *a = [UIActionSheet new];
+   /* UIActionSheet *a = [UIActionSheet new];
 
     a.title = [NSString stringWithFormat:NSLocalizedString(@"Receive woodcoins at this address: %@", nil),
                self.paymentAddress];
     a.delegate = self;
-    [a addButtonWithTitle:NSLocalizedString(@"copy to clipboard", nil)];
-    if ([MFMailComposeViewController canSendMail]) [a addButtonWithTitle:NSLocalizedString(@"send as email", nil)];
-#if ! TARGET_IPHONE_SIMULATOR
-    if ([MFMessageComposeViewController canSendText]) [a addButtonWithTitle:NSLocalizedString(@"send as message", nil)];
-#endif
-    [a addButtonWithTitle:NSLocalizedString(@"cancel", nil)];
-    a.cancelButtonIndex = a.numberOfButtons - 1;
+    [a addButtonWithTitle:NSLocalizedString(@"copy to clipboard", nil)];*/
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:(@"Receive woodcoins at this: %@", self.paymentAddress) preferredStyle:UIAlertControllerStyleActionSheet];
     
-    [a showInView:[[UIApplication sharedApplication] keyWindow]];
+    UIAlertAction * copyClipboard= [UIAlertAction actionWithTitle:@"copy to clipboard" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+        [[UIPasteboard generalPasteboard] setString:self.paymentAddress];
+        
+        [self.view
+         addSubview:[[[BRBubbleView viewWithText:NSLocalizedString(@"copied", nil)
+                                          center:CGPointMake(self.view.bounds.size.width/2.0, self.view.bounds.size.height/2.0 - 130.0)]
+                      popIn] popOutAfterDelay:2.0]];
+
+    }];
+    
+    if ([MFMailComposeViewController canSendMail]) {
+        UIAlertAction * sendEmail = [UIAlertAction actionWithTitle:@"send as email" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+            if ([MFMailComposeViewController canSendMail]) {
+                MFMailComposeViewController *c = [MFMailComposeViewController new];
+                
+                [c setSubject:NSLocalizedString(@"Woodcoin address", nil)];
+                [c setMessageBody:[@"bitcoin:" stringByAppendingString:self.paymentAddress] isHTML:NO];
+                c.mailComposeDelegate = self;
+                [self.navigationController presentViewController:c animated:YES completion:nil];
+                c.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wallpaper-default"]];
+            }
+            else {
+                [[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"email not configured", nil) delegate:nil
+                                  cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+            }
+        }];
+       [alertController addAction:sendEmail];
+    }
+        //[a addButtonWithTitle:NSLocalizedString(@"send as email", nil)];
+#if ! TARGET_IPHONE_SIMULATOR
+    if ([MFMessageComposeViewController canSendText]) {
+        UIAlertAction * sendMessage = [UIAlertAction actionWithTitle:@"send as message" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+            if ([MFMessageComposeViewController canSendText]) {
+                MFMessageComposeViewController *c = [MFMessageComposeViewController new];
+                
+                c.body = [@"bitcoin:" stringByAppendingString:self.paymentAddress];
+                c.messageComposeDelegate = self;
+                [self.navigationController presentViewController:c animated:YES completion:nil];
+                c.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wallpaper-default"]];
+            }
+            else {
+                [[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"sms not currently available", nil)
+                                           delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+            }
+        }];
+        
+        [alertController addAction:sendMessage];
+    }
+        
+        //[a addButtonWithTitle:NSLocalizedString(@"send as message", nil)];
+#endif
+    //[a addButtonWithTitle:NSLocalizedString(@"cancel", nil)];
+   // a.cancelButtonIndex = a.numberOfButtons - 1;
+    UIAlertAction * cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * action){
+    }];
+       // [a showInView:[[UIApplication sharedApplication] keyWindow]];
+    
+    [alertController addAction:copyClipboard];
+    [alertController addAction:cancelAction];
+    UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:viewController.view.frame.size.height*2.0f];
+    [alertController.view addConstraint:constraint];
+    [viewController presentViewController:alertController animated:YES completion:^{}];
 }
 
 #pragma mark - UIActionSheetDelegate
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+/*- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSString *title = [actionSheet buttonTitleAtIndex:buttonIndex];
 
@@ -235,7 +292,7 @@
               delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
         }
     }    
-}
+}*/
 
 #pragma mark - MFMessageComposeViewControllerDelegate
 

@@ -97,16 +97,19 @@
             self.amount = ([value doubleValue] + DBL_EPSILON)*SATOSHIS;
         }
         else if ([pair[0] isEqual:@"label"]) {
+            NSCharacterSet *set = [NSCharacterSet URLHostAllowedCharacterSet];
             self.label = [[value stringByReplacingOccurrencesOfString:@"+" withString:@"%20"]
-                          stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                          stringByAddingPercentEncodingWithAllowedCharacters:set];
         }
         else if ([pair[0] isEqual:@"message"]) {
+            NSCharacterSet *set = [NSCharacterSet URLHostAllowedCharacterSet];
             self.message = [[value stringByReplacingOccurrencesOfString:@"+" withString:@"%20"]
-                            stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                            stringByAddingPercentEncodingWithAllowedCharacters:set];
         }
         else if ([pair[0] isEqual:@"r"]) {
+            NSCharacterSet *set = [NSCharacterSet URLHostAllowedCharacterSet];
             self.r = [[value stringByReplacingOccurrencesOfString:@"+" withString:@"%20"]
-                      stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                      stringByAddingPercentEncodingWithAllowedCharacters:set];
         }
     }
 }
@@ -123,21 +126,32 @@
     }
 
     if (self.label.length > 0) {
+        NSString *labvalue = self.label;
+        labvalue = [labvalue stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
         [q addObject:[NSString stringWithFormat:@"label=%@",
-         CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.label, NULL, CFSTR("&="),
-                                                                   kCFStringEncodingUTF8))]];
+         /*CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.label, NULL, CFSTR("&="),
+            
+                                                                   kCFStringEncodingUTF8)*/
+                      labvalue
+                           ]];
     }
     
     if (self.message.length > 0) {
+        NSString *messagevalue = self.message;
+        messagevalue = [messagevalue stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
         [q addObject:[NSString stringWithFormat:@"message=%@",
-         CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.message, NULL, CFSTR("&="),
-                                                                   kCFStringEncodingUTF8))]];
+         /*CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.message, NULL, CFSTR("&="),
+                                                                   kCFStringEncodingUTF8))*/
+                      messagevalue ]];
     }
 
     if (self.r.length > 0) {
+        NSString *rvalue = self.message;
+        rvalue = [rvalue stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
         [q addObject:[NSString stringWithFormat:@"r=%@",
-         CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.r, NULL, CFSTR("&="),
-                                                                   kCFStringEncodingUTF8))]];
+         /*CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.r, NULL, CFSTR("&="),
+                                                                   kCFStringEncodingUTF8))*/
+                      rvalue ]];
     }
     
     if (q.count > 0) {
@@ -171,14 +185,22 @@ completion:(void (^)(BRPaymentProtocolRequest *req, NSError *error))completion
 
     NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL:u
                                 cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:timeout];
+    //NSURLRequest *req = [NSURLRequest requestWithURL:u];
 
     [req addValue:@"application/woodcoin-paymentrequest" forHTTPHeaderField:@"Accept"];
 
-    [NSURLConnection sendAsynchronousRequest:req queue:[NSOperationQueue currentQueue]
+    /*[NSURLConnection sendAsynchronousRequest:req queue:[NSOperationQueue currentQueue]
     completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
         if (! [response.MIMEType.lowercaseString isEqual:@"application/woodcoin-paymentrequest"] || data.length > 50000){
             completion(nil, [NSError errorWithDomain:@"BreadWallet" code:417 userInfo:@{NSLocalizedDescriptionKey:
                              [NSString stringWithFormat:NSLocalizedString(@"unexpected response from %@", nil), u.host]
+                            }]);
+            return;
+        }*/
+    [[NSURLSession sharedSession] dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *connectionError) {
+        if (! [response.MIMEType.lowercaseString isEqual:@"application/woodcoin-paymentrequest"] || data.length > 50000){
+            completion(nil, [NSError errorWithDomain:@"BreadWallet" code:417 userInfo:@{NSLocalizedDescriptionKey:
+                            [NSString stringWithFormat:NSLocalizedString(@"unexpected response from %@", nil), u.host]
                             }]);
             return;
         }

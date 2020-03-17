@@ -150,7 +150,7 @@ static NSData *getKeychainData(NSString *key)
     self.format.currencySymbol = BITS NARROW_NBSP;
     self.format.internationalCurrencySymbol = self.format.currencySymbol;
     self.format.minimumFractionDigits = 0; // iOS 8 bug, minimumFractionDigits now has to be set after currencySymbol
-    self.format.maximumFractionDigits = 1;
+    self.format.maximumFractionDigits = 3;
 //    self.format.currencySymbol = BTC NARROW_NBSP;
 //    self.format.maximumFractionDigits = 8;
 
@@ -262,10 +262,18 @@ static NSData *getKeychainData(NSString *key)
         
         if (! setKeychainData(seed, SEED_KEY)) {
             NSLog(@"error setting wallet seed");
-            [[[UIAlertView alloc] initWithTitle:@"couldn't create wallet"
+            /*[[[UIAlertView alloc] initWithTitle:@"couldn't create wallet"
               message:@"error adding master private key to iOS keychain, make sure app has keychain entitlements"
               delegate:self cancelButtonTitle:@"abort" otherButtonTitles:nil] show];
-            return;
+            return;*/
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"couldn't create wallet" message:@"error adding master private key to iOS keychain, make sure app has keychain entitlements" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"abort" style:UIAlertActionStyleCancel handler:nil];
+            
+            [alert addAction:cancelAction];
+            UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+            NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alert.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:viewController.view.frame.size.height*2.0f];
+            [alert.view addConstraint:constraint];
+            [viewController presentViewController:alert animated:YES completion:^{}];
         }
 
         _wallet = nil;
