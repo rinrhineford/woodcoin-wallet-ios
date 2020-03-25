@@ -100,17 +100,32 @@
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationUserDidTakeScreenshotNotification
         object:nil queue:nil usingBlock:^(NSNotification *note) {
             if ([[[BRWalletManager sharedInstance] wallet] balance] == 0) {
-                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
+                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
                   message:NSLocalizedString(@"Screenshots are visible to other apps and devices. "
                                             "Generate a new backup phrase and keep it secret.", nil)
                   delegate:self cancelButtonTitle:NSLocalizedString(@"ignore", nil)
-                  otherButtonTitles:NSLocalizedString(@"new phrase", nil), nil] show];
+                  otherButtonTitles:NSLocalizedString(@"new phrase", nil), nil] show];*/
+                UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"Screenshots are visible to other apps and devices. "
+                                            "Generate a new backup phrase and keep it secret." preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertAction* showAction = [UIAlertAction actionWithTitle:@"show" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                     [self refresh:nil];
+                }];
+                [alert addAction:cancelAction];
+                [alert addAction:showAction];
+                [self presentViewController:alert animated:YES completion:nil];
+
             }
             else {
-                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
+                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
                   message:NSLocalizedString(@"Screenshots are visible to other apps and devices. "
                                             "Your funds are at risk. Transfer your balance to another wallet.", nil)
-                  delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                  delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
+                UIAlertController* alertS = [UIAlertController alertControllerWithTitle:@"Warning" message:@"Screenshots are visible to other apps and devices. "
+                                             "Your funds are at risk. Transfer your balance to another wallet." preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+                [alertS addAction:cancelAction];
+                [self presentViewController:alertS animated:YES completion:nil];
             }
         }];
 }
@@ -223,7 +238,7 @@
 
 #pragma mark - UIAlertViewDelegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+/*- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == alertView.cancelButtonIndex) return;
 
@@ -231,6 +246,6 @@
         [[alertView buttonTitleAtIndex:buttonIndex] isEqual:NSLocalizedString(@"new phrase", nil)]) {
         [self refresh:nil];
     }
-}
+}*/
 
 @end

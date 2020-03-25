@@ -169,10 +169,17 @@ static NSString *normalize_phrase(NSString *phrase)
         else if (incorrect) {
             textView.selectedRange = [[textView.text lowercaseString] rangeOfString:incorrect];
         
-            [[[UIAlertView alloc] initWithTitle:nil
+            /*[[[UIAlertView alloc] initWithTitle:nil
               message:[NSString stringWithFormat:NSLocalizedString(@"\"%@\" is not a backup phrase word", nil),
                        incorrect] delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil]
-             show];
+             show];*/
+            NSString *backStr = @"is not a backup phrase word";
+            NSString *strIncorrect = incorrect;
+            NSString *str = [strIncorrect stringByAppendingString:backStr];
+            UIAlertController *alertIncorrect = [UIAlertController alertControllerWithTitle:nil message:str preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+            [alertIncorrect addAction:cancelAction];
+            [self presentViewController:alertIncorrect animated:YES completion:nil];
         }
         else if (a.count != PHRASE_LENGTH) {
             [[[UIAlertView alloc] initWithTitle:nil

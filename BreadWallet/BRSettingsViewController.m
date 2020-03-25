@@ -241,7 +241,10 @@
 
 - (IBAction)about:(id)sender
 {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://breadwallet.com"]];
+    /*[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://breadwallet.com"]];*/
+    UIApplication *application = [UIApplication sharedApplication];
+    NSURL *URL = [NSURL URLWithString:@"https://woodcoin.org"];
+    [application openURL:URL options:@{} completionHandler:nil];
 }
 
 #pragma mark - UITableViewDataSource

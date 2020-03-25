@@ -178,7 +178,8 @@
                self.paymentAddress];
     a.delegate = self;
     [a addButtonWithTitle:NSLocalizedString(@"copy to clipboard", nil)];*/
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:(@"Receive woodcoins at this: %@", self.paymentAddress) preferredStyle:UIAlertControllerStyleActionSheet];
+    NSString *str = [@"Receive woodcoins at this:" stringByAppendingString:self.paymentAddress];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:str preferredStyle:UIAlertControllerStyleActionSheet];
     
     UIAlertAction * copyClipboard= [UIAlertAction actionWithTitle:@"copy to clipboard" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
         [[UIPasteboard generalPasteboard] setString:self.paymentAddress];
@@ -187,8 +188,9 @@
          addSubview:[[[BRBubbleView viewWithText:NSLocalizedString(@"copied", nil)
                                           center:CGPointMake(self.view.bounds.size.width/2.0, self.view.bounds.size.height/2.0 - 130.0)]
                       popIn] popOutAfterDelay:2.0]];
-
     }];
+    
+    [alertController addAction:copyClipboard];
     
     if ([MFMailComposeViewController canSendMail]) {
         UIAlertAction * sendEmail = [UIAlertAction actionWithTitle:@"send as email" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
@@ -202,8 +204,12 @@
                 c.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wallpaper-default"]];
             }
             else {
-                [[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"email not configured", nil) delegate:nil
-                                  cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                /*[[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"email not configured", nil) delegate:nil
+                                  cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
+                UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil message:@"email not configured" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                [alert addAction:cancelAction];
+                [self presentViewController:alert animated:YES completion:nil];
             }
         }];
        [alertController addAction:sendEmail];
@@ -221,8 +227,12 @@
                 c.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"wallpaper-default"]];
             }
             else {
-                [[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"sms not currently available", nil)
-                                           delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                /*[[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"sms not currently available", nil)
+                                           delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
+                UIAlertController* alertsms = [UIAlertController alertControllerWithTitle:nil message:@"sms not currently available" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                [alertsms addAction:cancelAction];
+                [self presentViewController:alertsms animated:YES completion:nil];
             }
         }];
         
@@ -237,7 +247,6 @@
     }];
        // [a showInView:[[UIApplication sharedApplication] keyWindow]];
     
-    [alertController addAction:copyClipboard];
     [alertController addAction:cancelAction];
     UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:viewController.view.frame.size.height*2.0f];
