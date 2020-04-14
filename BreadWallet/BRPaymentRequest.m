@@ -248,7 +248,7 @@ completion:(void (^)(BRPaymentProtocolACK *ack, NSError *error))completion
     [req setHTTPMethod:@"POST"];
     [req setHTTPBody:payment.data];
 
-    [NSURLConnection sendAsynchronousRequest:req queue:[NSOperationQueue currentQueue]
+    /*[NSURLConnection sendAsynchronousRequest:req queue:[NSOperationQueue currentQueue]
     completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
         if (connectionError) {
             completion(nil, connectionError);
@@ -259,6 +259,13 @@ completion:(void (^)(BRPaymentProtocolACK *ack, NSError *error))completion
             completion(nil, [NSError errorWithDomain:@"BreadWallet" code:417 userInfo:@{NSLocalizedDescriptionKey:
                              [NSString stringWithFormat:NSLocalizedString(@"unexpected response from %@", nil), u.host]
                             }]);
+            return;
+        }*/
+    [[NSURLSession sharedSession] dataTaskWithRequest:req completionHandler:^(NSData *data, NSURLResponse *response, NSError *connectionError) {
+        if (! [response.MIMEType.lowercaseString isEqual:@"application/woodcoin-paymentack"] || data.length > 50000){
+            completion(nil, [NSError errorWithDomain:@"BreadWallet" code:417 userInfo:@{NSLocalizedDescriptionKey:
+                                                                                            [NSString stringWithFormat:NSLocalizedString(@"unexpected response from %@", nil), u.host]
+                                                                                        }]);
             return;
         }
 

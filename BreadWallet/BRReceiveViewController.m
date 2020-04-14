@@ -229,10 +229,7 @@
             else {
                 /*[[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"sms not currently available", nil)
                                            delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
-                UIAlertController* alertsms = [UIAlertController alertControllerWithTitle:nil message:@"sms not currently available" preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
-                [alertsms addAction:cancelAction];
-                [self presentViewController:alertsms animated:YES completion:nil];
+                
             }
         }];
         

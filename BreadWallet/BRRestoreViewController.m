@@ -173,7 +173,7 @@ static NSString *normalize_phrase(NSString *phrase)
               message:[NSString stringWithFormat:NSLocalizedString(@"\"%@\" is not a backup phrase word", nil),
                        incorrect] delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil]
              show];*/
-            NSString *backStr = @"is not a backup phrase word";
+            NSString *backStr = @" is not a backup phrase word";
             NSString *strIncorrect = incorrect;
             NSString *str = [strIncorrect stringByAppendingString:backStr];
             UIAlertController *alertIncorrect = [UIAlertController alertControllerWithTitle:nil message:str preferredStyle:UIAlertControllerStyleAlert];
@@ -182,14 +182,23 @@ static NSString *normalize_phrase(NSString *phrase)
             [self presentViewController:alertIncorrect animated:YES completion:nil];
         }
         else if (a.count != PHRASE_LENGTH) {
-            [[[UIAlertView alloc] initWithTitle:nil
+            /*[[[UIAlertView alloc] initWithTitle:nil
               message:[NSString stringWithFormat:NSLocalizedString(@"backup phrase must have %d words", nil),
                        PHRASE_LENGTH] delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
-              otherButtonTitles:nil] show];
+              otherButtonTitles:nil] show];*/
+            NSMutableString *phraseL = [NSMutableString stringWithFormat:@"backup phrase must have %d words", PHRASE_LENGTH];
+            UIAlertController *alertPhrase = [UIAlertController alertControllerWithTitle:nil message:phraseL preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+            [alertPhrase addAction:cancelAction];
+            [self presentViewController:alertPhrase animated:YES completion:nil];
         }
         else if (! [[BRBIP39Mnemonic sharedInstance] phraseIsValid:phrase]) {
-            [[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"bad backup phrase", nil) delegate:nil
-              cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+            /*[[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"bad backup phrase", nil) delegate:nil
+              cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
+            UIAlertController *alertInvalidPhrase = [UIAlertController alertControllerWithTitle:nil message:@"bad backup phrase" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+            [alertInvalidPhrase addAction:cancelAction];
+            [self presentViewController:alertInvalidPhrase animated:YES completion:nil];
         }
         else if (m.wallet) {
             if ([phrase isEqual:normalize_phrase(m.seedPhrase)]) {

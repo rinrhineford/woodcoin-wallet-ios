@@ -126,8 +126,12 @@ static NSString *sanitizeString(NSString *s)
         [self confirmRequest:[BRPaymentRequest requestWithURL:url]];
     }
     else {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"unsupported url", nil) message:url.absoluteString
-          delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+        /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"unsupported url", nil) message:url.absoluteString
+          delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
+        UIAlertController* alertUrl = [UIAlertController alertControllerWithTitle:@"unsupported url" message:url.absoluteString preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+        [alertUrl addAction:cancelAction];
+        [self presentViewController:alertUrl animated:YES completion:nil];
     }
 }
 
@@ -151,10 +155,14 @@ static NSString *sanitizeString(NSString *s)
                 [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
                 
                 if (error) {
-                    [[[UIAlertView alloc]
+                    /*[[[UIAlertView alloc]
                       initWithTitle:NSLocalizedString(@"couldn't transmit payment to woodcoin network", nil)
                       message:error.localizedDescription delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
-                      otherButtonTitles:nil] show];
+                      otherButtonTitles:nil] show];*/
+                    UIAlertController* alertTransmit = [UIAlertController alertControllerWithTitle:@"couldn't transmit payment to woodcoin network" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                    [alertTransmit addAction:cancelAction];
+                    [self presentViewController:alertTransmit animated:YES completion:nil];
                 }
 
                 [self.view addSubview:[[[BRBubbleView
@@ -179,8 +187,12 @@ static NSString *sanitizeString(NSString *s)
         return;
     }
 
-    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"unsupported or corrupted document", nil) message:nil
-      delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+    /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"unsupported or corrupted document", nil) message:nil
+      delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
+    UIAlertController* alertCorrupt = [UIAlertController alertControllerWithTitle:@"unsupported or corrupted document" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+    [alertCorrupt addAction:cancelAction];
+    [self presentViewController:alertCorrupt animated:YES completion:nil];
 }
 
 - (void)confirmAmount:(uint64_t)amount fee:(uint64_t)fee address:(NSString *)address name:(NSString *)name
@@ -212,8 +224,114 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     self.okAddress = nil;
 
     //TODO: XXX full screen dialog with clean transitions
-    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"confirm payment", nil) message:msg delegate:self
-      cancelButtonTitle:NSLocalizedString(@"cancel", nil) otherButtonTitles:amountStr, nil] show];
+    /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"confirm payment", nil) message:msg delegate:self
+      cancelButtonTitle:NSLocalizedString(@"cancel", nil) otherButtonTitles:amountStr, nil] show];*/
+    UIAlertController* alertConfirm = [UIAlertController alertControllerWithTitle:@"confirm payment" message:msg preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction* sendAction = [UIAlertAction actionWithTitle:amountStr style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        BRWalletManager *m = [BRWalletManager sharedInstance];
+        BRPaymentProtocolRequest *protoReq = self.protocolRequest;
+        
+        if (! self.tx) {
+            /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"insufficient funds", nil) message:nil delegate:nil
+             cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+             [self cancel:nil];
+             return;*/
+            UIAlertController* alertInsufficient = [UIAlertController alertControllerWithTitle:@"insufficient funds" message:nil preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+            [alertInsufficient addAction:cancelAction];
+            [self presentViewController:alertInsufficient animated:YES completion:nil];
+        }
+        
+        if (self.navigationController.topViewController != self.parentViewController.parentViewController) {
+            [self.navigationController popToRootViewControllerAnimated:YES];
+        }
+        
+        NSLog(@"signing transaction");
+        [(id)self.parentViewController.parentViewController startActivityWithTimeout:30.0];
+        
+        //TODO: don't sign on main thread
+        if (! [m.wallet signTransaction:self.tx]) {
+            /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+             message:NSLocalizedString(@"error signing woodcoin transaction", nil) delegate:nil
+             cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+             [self cancel:nil];
+             return;*/
+            UIAlertController* alertPayment = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:@"error signing woodcoin transaction" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+            [alertPayment addAction:cancelAction];
+            [self presentViewController:alertPayment animated:YES completion:nil];
+        }
+        
+        NSLog(@"signed transaction:\n%@", [NSString hexWithData:self.tx.data]);
+        [[BRPeerManager sharedInstance] publishTransaction:self.tx completion:^(NSError *error) {
+            if (protoReq.details.paymentURL.length > 0) return;
+            [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
+            if (error) {
+                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+                 message:error.localizedDescription delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
+                 otherButtonTitles:nil] show];
+                 [self cancel:nil];*/
+                UIAlertController* alertPaymentS = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:@"error signing woodcoin transaction" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                [alertPaymentS addAction:cancelAction];
+                [self presentViewController:alertPaymentS animated:YES completion:nil];
+            }
+            else {
+                //TODO: XXXX show full screen sent dialog with tx info, "you sent b10,000 to bob"
+                [self.view addSubview:[[[BRBubbleView viewWithText:NSLocalizedString(@"sent!", nil)
+                                                            center:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)]
+                                        popIn] popOutAfterDelay:2.0]];
+                [self reset:nil];
+            }
+        }];
+        if (protoReq.details.paymentURL.length > 0) {
+            uint64_t refundAmount = 0;
+            NSMutableData *refundScript = [NSMutableData data];
+            
+            // use the payment transaction's change address as the refund address, which prevents the same address being
+            // used in other transactions in the event no refund is ever issued
+            [refundScript appendScriptPubKeyForAddress:m.wallet.changeAddress];
+            
+            for (NSNumber *amount in protoReq.details.outputAmounts) {
+                refundAmount += [amount unsignedLongLongValue];
+            }
+            // TODO: keep track of commonName/memo to associate them with outputScripts
+            BRPaymentProtocolPayment *payment =
+            [[BRPaymentProtocolPayment alloc] initWithMerchantData:protoReq.details.merchantData
+                                                      transactions:@[self.tx] refundToAmounts:@[@(refundAmount)] refundToScripts:@[refundScript] memo:nil];
+            
+            NSLog(@"posting payment to: %@", protoReq.details.paymentURL);
+            
+            [BRPaymentRequest postPayment:payment to:protoReq.details.paymentURL timeout:20.0
+                    completion:^(BRPaymentProtocolACK *ack, NSError *error) {
+                       [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
+                       
+                       if (error && ! [m.wallet transactionIsRegistered:self.tx.txHash]) {
+                           /*[[[UIAlertView alloc] initWithTitle:nil message:error.localizedDescription delegate:nil
+                                             cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                           [self cancel:nil];*/
+                           UIAlertController* alertError = [UIAlertController alertControllerWithTitle:nil message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+                           UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                           [alertError addAction:cancelAction];
+                           [self presentViewController:alertError animated:YES completion:nil];
+                       }
+                       else {
+                           [self.view
+                            addSubview:[[[BRBubbleView
+                                          viewWithText:(ack.memo.length > 0 ? ack.memo : NSLocalizedString(@"sent!", nil))
+                                          center:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)] popIn]
+                                        popOutAfterDelay:(ack.memo.length > 10 ? 3.0 : 2.0)]];
+                           [self reset:nil];
+                           
+                           if (error) NSLog(@"%@", error.localizedDescription); // transaction was sent despite pay protocol error
+                       }
+                   }];
+        }
+    }];
+    [alertConfirm addAction:cancelAction];
+    [alertConfirm addAction:sendAction];
+    [self presentViewController:alertConfirm animated:YES completion:nil];
 }
 
 - (void)confirmRequest:(BRPaymentRequest *)request
@@ -223,10 +341,14 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
             [self confirmSweep:request.paymentAddress];
         }
         else {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"not a valid woodcoin address", nil)
+            /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"not a valid woodcoin address", nil)
               message:request.paymentAddress delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
               otherButtonTitles:nil] show];
-            [self cancel:nil];
+            [self cancel:nil];*/
+            UIAlertController* alertNotValid = [UIAlertController alertControllerWithTitle:@"not a valid woodcoin address" message:request.paymentAddress preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+            [alertNotValid addAction:cancelAction];
+            [self presentViewController:alertNotValid animated:YES completion:nil];
         }
 
         return;
@@ -239,10 +361,14 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
             [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
 
             if (error) {
-                [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
                   message:error.localizedDescription delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
                   otherButtonTitles:nil] show];
-                [self cancel:nil];
+                [self cancel:nil];*/
+                UIAlertController* alertCouldnt = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                [alertCouldnt addAction:cancelAction];
+                [self presentViewController:alertCouldnt animated:YES completion:nil];
             }
             else [self confirmProtocolRequest:req];
         }];
@@ -253,21 +379,38 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     BRWalletManager *m = [BRWalletManager sharedInstance];
 
     if ([m.wallet containsAddress:request.paymentAddress]) {
-        [[[UIAlertView alloc] initWithTitle:nil
+        /*[[[UIAlertView alloc] initWithTitle:nil
           message:NSLocalizedString(@"this payment address is already in your wallet", nil)
           delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
-        [self cancel:nil];
+        [self cancel:nil];*/
+        UIAlertController* alertAlready = [UIAlertController alertControllerWithTitle:nil message:@"this payment address is already in your wallet" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+        [alertAlready addAction:cancelAction];
+        [self presentViewController:alertAlready animated:YES completion:nil];
     }
     else if (! [self.okAddress isEqual:request.paymentAddress] && [m.wallet addressIsUsed:request.paymentAddress] &&
              [[[UIPasteboard generalPasteboard] string] isEqual:request.paymentAddress]) {
         self.request = request;
         self.okAddress = request.paymentAddress;
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
+        /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
           message:NSLocalizedString(@"\nADDRESS ALREADY USED\n\nwoodcoin addresses are intented for single use only\n\n"
                                     "re-use reduces privacy for both you and the recipient and can result in loss if "
                                     "the recipient doesn't directly control the address", nil)
           delegate:self cancelButtonTitle:nil
-          otherButtonTitles:NSLocalizedString(@"ignore", nil), NSLocalizedString(@"cancel", nil), nil] show];
+          otherButtonTitles:NSLocalizedString(@"ignore", nil), NSLocalizedString(@"cancel", nil), nil] show];*/
+        UIAlertController* alertUsed = [UIAlertController alertControllerWithTitle:@"WARNING" message:@"\nADDRESS ALREADY USED\n\nwoodcoin addresses are intented for single use only\n\n"
+                                        "re-use reduces privacy for both you and the recipient and can result in loss if "
+                                        "the recipient doesn't directly control the address" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ignoreAction = [UIAlertAction actionWithTitle:@"ignore" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+            if (self.protocolRequest) [self confirmProtocolRequest:self.protocolRequest];
+            else if (self.request) [self confirmRequest:self.request];
+        }];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+            [alertUsed dismissViewControllerAnimated:YES completion:nil];
+        }];
+        [alertUsed addAction:ignoreAction];
+        [alertUsed addAction:cancelAction];
+        [self presentViewController:alertUsed animated:YES completion:nil];
     }
     else if (request.amount == 0) {
         BRAmountViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"AmountViewController"];
@@ -281,11 +424,18 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         [self.navigationController pushViewController:c animated:YES];
     }
     else if (request.amount < TX_MIN_OUTPUT_AMOUNT) {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+        /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
           message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin payments can't be less than %@", nil),
                    [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]] delegate:nil
           cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
-        [self cancel:nil];
+        [self cancel:nil];*/
+        NSString *str1 = @"woodcoin payments can't be less than";
+        NSString *str2 = [m stringForAmount:TX_MIN_OUTPUT_AMOUNT];
+        NSString *str3 = [str1 stringByAppendingString:str2];
+        UIAlertController* alertLess = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:str3 preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+        [alertLess addAction:cancelAction];
+        [self presentViewController:alertLess animated:YES completion:nil];
     }
     else {
         self.request = request;
@@ -297,14 +447,128 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
         if (self.tx && [m.wallet blockHeightUntilFree:self.tx] <= [[BRPeerManager sharedInstance] lastBlockHeight] +1 &&
             ! self.didAskFee && [[NSUserDefaults standardUserDefaults] boolForKey:SETTINGS_SKIP_FEE_KEY]) {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"woodcoin network fee", nil)
+            /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"woodcoin network fee", nil)
               message:[NSString stringWithFormat:NSLocalizedString(@"the standard woodcoin network fee for this "
                                                                    "transaction is %@ (%@)\n\nremoving this fee may "
                                                                    "delay confirmation", nil),
                        [m stringForAmount:self.tx.standardFee], [m localCurrencyStringForAmount:self.tx.standardFee]]
               delegate:self cancelButtonTitle:nil
               otherButtonTitles:NSLocalizedString(@"remove fee", nil), NSLocalizedString(@"continue", nil), nil] show];
-            return;
+            return;*/
+            UIAlertController* alertLess = [UIAlertController alertControllerWithTitle:@"woodcoin network fee" message:[NSString stringWithFormat:NSLocalizedString(@"the standard woodcoin network fee for this "
+                                                                                                                                                                    "transaction is %@ (%@)\n\nremoving this fee may "
+                                                                                                                                                                    "delay confirmation", nil),
+                                                                                                                        [m stringForAmount:self.tx.standardFee], [m localCurrencyStringForAmount:self.tx.standardFee]] preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* sendAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                BRWalletManager *m = [BRWalletManager sharedInstance];
+                BRPaymentProtocolRequest *protoReq = self.protocolRequest;
+                
+                if (! self.tx) {
+                    /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"insufficient funds", nil) message:nil delegate:nil
+                     cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                     [self cancel:nil];
+                     return;*/
+                    UIAlertController* alertInsufficient = [UIAlertController alertControllerWithTitle:@"insufficient funds" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                    [alertInsufficient addAction:cancelAction];
+                    [self presentViewController:alertInsufficient animated:YES completion:nil];
+                }
+                
+                if (self.navigationController.topViewController != self.parentViewController.parentViewController) {
+                    [self.navigationController popToRootViewControllerAnimated:YES];
+                }
+                
+                NSLog(@"signing transaction");
+                [(id)self.parentViewController.parentViewController startActivityWithTimeout:30.0];
+                
+                //TODO: don't sign on main thread
+                if (! [m.wallet signTransaction:self.tx]) {
+                    /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+                     message:NSLocalizedString(@"error signing woodcoin transaction", nil) delegate:nil
+                     cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                     [self cancel:nil];
+                     return;*/
+                    UIAlertController* alertPayment = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:@"error signing woodcoin transaction" preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                    [alertPayment addAction:cancelAction];
+                    [self presentViewController:alertPayment animated:YES completion:nil];
+                }
+                
+                NSLog(@"signed transaction:\n%@", [NSString hexWithData:self.tx.data]);
+                [[BRPeerManager sharedInstance] publishTransaction:self.tx completion:^(NSError *error) {
+                    if (protoReq.details.paymentURL.length > 0) return;
+                    [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
+                    if (error) {
+                        /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+                         message:error.localizedDescription delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
+                         otherButtonTitles:nil] show];
+                         [self cancel:nil];*/
+                        UIAlertController* alertPaymentS = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:@"error signing woodcoin transaction" preferredStyle:UIAlertControllerStyleAlert];
+                        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                        [alertPaymentS addAction:cancelAction];
+                        [self presentViewController:alertPaymentS animated:YES completion:nil];
+                    }
+                    else {
+                        //TODO: XXXX show full screen sent dialog with tx info, "you sent b10,000 to bob"
+                        [self.view addSubview:[[[BRBubbleView viewWithText:NSLocalizedString(@"sent!", nil)
+                                                                    center:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)]
+                                                popIn] popOutAfterDelay:2.0]];
+                        [self reset:nil];
+                    }
+                }];
+                if (protoReq.details.paymentURL.length > 0) {
+                    uint64_t refundAmount = 0;
+                    NSMutableData *refundScript = [NSMutableData data];
+                    
+                    // use the payment transaction's change address as the refund address, which prevents the same address being
+                    // used in other transactions in the event no refund is ever issued
+                    [refundScript appendScriptPubKeyForAddress:m.wallet.changeAddress];
+                    
+                    for (NSNumber *amount in protoReq.details.outputAmounts) {
+                        refundAmount += [amount unsignedLongLongValue];
+                    }
+                    // TODO: keep track of commonName/memo to associate them with outputScripts
+                    BRPaymentProtocolPayment *payment =
+                    [[BRPaymentProtocolPayment alloc] initWithMerchantData:protoReq.details.merchantData
+                                                              transactions:@[self.tx] refundToAmounts:@[@(refundAmount)] refundToScripts:@[refundScript] memo:nil];
+                    
+                    NSLog(@"posting payment to: %@", protoReq.details.paymentURL);
+                    
+                    [BRPaymentRequest postPayment:payment to:protoReq.details.paymentURL timeout:20.0
+                                       completion:^(BRPaymentProtocolACK *ack, NSError *error) {
+                                           [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
+                                           
+                                           if (error && ! [m.wallet transactionIsRegistered:self.tx.txHash]) {
+                                               /*[[[UIAlertView alloc] initWithTitle:nil message:error.localizedDescription delegate:nil
+                                                cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                                                [self cancel:nil];*/
+                                               UIAlertController* alertError = [UIAlertController alertControllerWithTitle:nil message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+                                               UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                                               [alertError addAction:cancelAction];
+                                               [self presentViewController:alertError animated:YES completion:nil];
+                                           }
+                                           else {
+                                               [self.view
+                                                addSubview:[[[BRBubbleView
+                                                              viewWithText:(ack.memo.length > 0 ? ack.memo : NSLocalizedString(@"sent!", nil))
+                                                              center:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)] popIn]
+                                                            popOutAfterDelay:(ack.memo.length > 10 ? 3.0 : 2.0)]];
+                                               [self reset:nil];
+                                               
+                                               if (error) NSLog(@"%@", error.localizedDescription); // transaction was sent despite pay protocol error
+                                           }
+                                       }];
+                }
+            }];
+
+            UIAlertAction* removeAction = [UIAlertAction actionWithTitle:@"remove fee" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                self.didAskFee = YES;
+                if (self.protocolRequest) [self confirmProtocolRequest:self.protocolRequest];
+                else if (self.request) [self confirmRequest:self.request];
+            }];
+            [alertLess addAction:sendAction];
+            [alertLess addAction:removeAction];
+            [self presentViewController:alertLess animated:YES completion:nil];
         }
 
         if (! self.removeFee) {
@@ -330,9 +594,13 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     BOOL valid = [protoReq isValid], outputTooSmall = NO;
 
     if (! valid && [protoReq.errorMessage isEqual:NSLocalizedString(@"request expired", nil)]) {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"bad payment request", nil) message:protoReq.errorMessage
+        /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"bad payment request", nil) message:protoReq.errorMessage
           delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
-        [self cancel:nil];
+        [self cancel:nil];*/
+        UIAlertController* alertBad = [UIAlertController alertControllerWithTitle:@"bad payment request" message:protoReq.errorMessage preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+        [alertBad addAction:cancelAction];
+        [self presentViewController:alertBad animated:YES completion:nil];
         return;
     }
 
@@ -344,21 +612,38 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     }
 
     if ([m.wallet containsAddress:address]) {
-        [[[UIAlertView alloc] initWithTitle:nil
+        /*[[[UIAlertView alloc] initWithTitle:nil
           message:NSLocalizedString(@"this payment address is already in your wallet", nil)
           delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
-        [self cancel:nil];
+        [self cancel:nil];*/
+        UIAlertController* alertAddress = [UIAlertController alertControllerWithTitle:nil message:@"this payment address is already in your wallet" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+        [alertAddress addAction:cancelAction];
+        [self presentViewController:alertAddress animated:YES completion:nil];
     }
     else if (! [self.okAddress isEqual:address] && [m.wallet addressIsUsed:address] &&
              [[[UIPasteboard generalPasteboard] string] isEqual:address]) {
         self.protocolRequest = protoReq;
         self.okAddress = address;
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
+        /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
           message:NSLocalizedString(@"\nADDRESS ALREADY USED\n\nwoodcoin addresses are intented for single use only\n\n"
                                     "re-use reduces privacy for both you and the recipient and can result in loss if "
                                     "the recipient doesn't directly control the address", nil)
           delegate:self cancelButtonTitle:nil
-          otherButtonTitles:NSLocalizedString(@"ignore", nil), NSLocalizedString(@"cancel", nil), nil] show];
+          otherButtonTitles:NSLocalizedString(@"ignore", nil), NSLocalizedString(@"cancel", nil), nil] show];*/
+        UIAlertController* alertIn = [UIAlertController alertControllerWithTitle:@"WARNING" message:@"\nADDRESS ALREADY USED\n\nwoodcoin addresses are intented for single use only\n\n"
+                                        "re-use reduces privacy for both you and the recipient and can result in loss if "
+                                        "the recipient doesn't directly control the address" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+        UIAlertAction* ignoreAction = [UIAlertAction actionWithTitle:@"ignore" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+            self.didAskFee = YES;
+            if (self.protocolRequest) [self confirmProtocolRequest:self.protocolRequest];
+            else if (self.request) [self confirmRequest:self.request];
+        }];
+        [alertIn addAction:cancelAction];
+        [alertIn addAction:ignoreAction];
+        [self presentViewController:alertIn animated:YES completion:nil];
+
     }
     else if (amount == 0 && self.protoReqAmount == 0) {
         BRAmountViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"AmountViewController"];
@@ -382,18 +667,28 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         [self.navigationController pushViewController:c animated:YES];
     }
     else if (amount > 0 && amount < TX_MIN_OUTPUT_AMOUNT) {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+/*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
           message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin payments can't be less than %@", nil),
                    [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]] delegate:nil
           cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
-        [self cancel:nil];
+        [self cancel:nil];*/
+        UIAlertController* alertCant = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin payments can't be less than %@", nil),
+                                                                                                                     [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]] preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+        [alertCant addAction:cancelAction];
+        [self presentViewController:alertCant animated:YES completion:nil];
     }
     else if (amount > 0 && outputTooSmall) {
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+        /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
           message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin transaction outputs can't be less than %@",
                                                                nil), [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]]
           delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
-        [self cancel:nil];
+        [self cancel:nil];*/
+        UIAlertController* alertOut = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:[NSString stringWithFormat:NSLocalizedString(@"woodcoin transaction outputs can't be less than %@",
+                                                                                                                                                                nil), [m stringForAmount:TX_MIN_OUTPUT_AMOUNT]] preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+        [alertOut addAction:cancelAction];
+        [self presentViewController:alertOut animated:YES completion:nil];
     }
     else {
         self.protocolRequest = protoReq;
@@ -409,13 +704,26 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
         if (self.tx && [m.wallet blockHeightUntilFree:self.tx] <= [[BRPeerManager sharedInstance] lastBlockHeight] +1 &&
             ! self.didAskFee && [[NSUserDefaults standardUserDefaults] boolForKey:SETTINGS_SKIP_FEE_KEY]) {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"woodcoin network fee", nil)
+            /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"woodcoin network fee", nil)
               message:[NSString stringWithFormat:NSLocalizedString(@"the standard woodcoin network fee for this "
                                                                    "transaction is %@ (%@)\n\nremoving this fee may "
                                                                    "delay confirmation", nil),
                        [m stringForAmount:self.tx.standardFee], [m localCurrencyStringForAmount:self.tx.standardFee]]
               delegate:self cancelButtonTitle:nil
-              otherButtonTitles:NSLocalizedString(@"remove fee", nil), NSLocalizedString(@"continue", nil), nil] show];
+              otherButtonTitles:NSLocalizedString(@"remove fee", nil), NSLocalizedString(@"continue", nil), nil] show];*/
+            UIAlertController* alertLess = [UIAlertController alertControllerWithTitle:@"woodcoin network fee" message:[NSString stringWithFormat:NSLocalizedString(@"the standard woodcoin network fee for this "
+                                                                                                                                                                    "transaction is %@ (%@)\n\nremoving this fee may "
+                                                                                                                                                                    "delay confirmation", nil),
+                                                                                                                        [m stringForAmount:self.tx.standardFee], [m localCurrencyStringForAmount:self.tx.standardFee]] preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+            UIAlertAction* removeAction = [UIAlertAction actionWithTitle:@"remove fee" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+                self.didAskFee = YES;
+                if (self.protocolRequest) [self confirmProtocolRequest:self.protocolRequest];
+                else if (self.request) [self confirmRequest:self.request];
+            }];
+            [alertLess addAction:cancelAction];
+            [alertLess addAction:removeAction];
+            [self presentViewController:alertLess animated:YES completion:nil];
             return;
         }
 
@@ -472,9 +780,13 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         [v popOut];
 
         if (error) {
-            [[[UIAlertView alloc] initWithTitle:nil message:error.localizedDescription delegate:self
+            /*[[[UIAlertView alloc] initWithTitle:nil message:error.localizedDescription delegate:self
               cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
-            [self cancel:nil];
+            [self cancel:nil];*/
+            UIAlertController* alertErr = [UIAlertController alertControllerWithTitle:nil message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+            [alertErr addAction:cancelAction];
+            [self presentViewController:alertErr animated:YES completion:nil];
         }
         else if (tx) {
             uint64_t fee = tx.standardFee, amount = fee;
@@ -485,13 +797,124 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
             self.sweepTx = tx;
 
-            [[[UIAlertView alloc] initWithTitle:nil message:[NSString
+            /*[[[UIAlertView alloc] initWithTitle:nil message:[NSString
               stringWithFormat:NSLocalizedString(@"Send %@ (%@) from this private key into your wallet? "
                                                  "The woodcoin network will receive a fee of %@ (%@).", nil),
               [m stringForAmount:amount], [m localCurrencyStringForAmount:amount], [m stringForAmount:fee],
               [m localCurrencyStringForAmount:fee]] delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil)
               otherButtonTitles:[NSString stringWithFormat:@"%@ (%@)", [m stringForAmount:amount],
-                                 [m localCurrencyStringForAmount:amount]], nil] show];
+                                 [m localCurrencyStringForAmount:amount]], nil] show];*/
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil message:[NSString
+                                                                                                stringWithFormat:NSLocalizedString(@"Send %@ (%@) from this private key into your wallet? "
+                                                                                                                                   "The woodcoin network will receive a fee of %@ (%@).", nil),
+                                                                                                [m stringForAmount:amount], [m localCurrencyStringForAmount:amount], [m stringForAmount:fee],
+                                                                                                [m localCurrencyStringForAmount:fee]] preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleDefault handler:nil];
+            UIAlertAction* sendAction = [UIAlertAction actionWithTitle:[NSString stringWithFormat:@"%@ (%@)", [m stringForAmount:amount],
+                                                                        [m localCurrencyStringForAmount:amount]] style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+                BRWalletManager *m = [BRWalletManager sharedInstance];
+                BRPaymentProtocolRequest *protoReq = self.protocolRequest;
+                
+                if (! self.tx) {
+                    /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"insufficient funds", nil) message:nil delegate:nil
+                     cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                     [self cancel:nil];
+                     return;*/
+                    UIAlertController* alertInsufficient = [UIAlertController alertControllerWithTitle:@"insufficient funds" message:nil preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                    [alertInsufficient addAction:cancelAction];
+                    [self presentViewController:alertInsufficient animated:YES completion:nil];
+                }
+                
+                if (self.navigationController.topViewController != self.parentViewController.parentViewController) {
+                    [self.navigationController popToRootViewControllerAnimated:YES];
+                }
+                
+                NSLog(@"signing transaction");
+                [(id)self.parentViewController.parentViewController startActivityWithTimeout:30.0];
+                
+                //TODO: don't sign on main thread
+                if (! [m.wallet signTransaction:self.tx]) {
+                    /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+                     message:NSLocalizedString(@"error signing woodcoin transaction", nil) delegate:nil
+                     cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                     [self cancel:nil];
+                     return;*/
+                    UIAlertController* alertPayment = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:@"error signing woodcoin transaction" preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                    [alertPayment addAction:cancelAction];
+                    [self presentViewController:alertPayment animated:YES completion:nil];
+                }
+                
+                NSLog(@"signed transaction:\n%@", [NSString hexWithData:self.tx.data]);
+                [[BRPeerManager sharedInstance] publishTransaction:self.tx completion:^(NSError *error) {
+                    if (protoReq.details.paymentURL.length > 0) return;
+                    [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
+                    if (error) {
+                        /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+                         message:error.localizedDescription delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
+                         otherButtonTitles:nil] show];
+                         [self cancel:nil];*/
+                        UIAlertController* alertPaymentS = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:@"error signing woodcoin transaction" preferredStyle:UIAlertControllerStyleAlert];
+                        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                        [alertPaymentS addAction:cancelAction];
+                        [self presentViewController:alertPaymentS animated:YES completion:nil];
+                    }
+                    else {
+                        //TODO: XXXX show full screen sent dialog with tx info, "you sent b10,000 to bob"
+                        [self.view addSubview:[[[BRBubbleView viewWithText:NSLocalizedString(@"sent!", nil)
+                                                                    center:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)]
+                                                popIn] popOutAfterDelay:2.0]];
+                        [self reset:nil];
+                    }
+                }];
+                if (protoReq.details.paymentURL.length > 0) {
+                    uint64_t refundAmount = 0;
+                    NSMutableData *refundScript = [NSMutableData data];
+                    
+                    // use the payment transaction's change address as the refund address, which prevents the same address being
+                    // used in other transactions in the event no refund is ever issued
+                    [refundScript appendScriptPubKeyForAddress:m.wallet.changeAddress];
+                    
+                    for (NSNumber *amount in protoReq.details.outputAmounts) {
+                        refundAmount += [amount unsignedLongLongValue];
+                    }
+                    // TODO: keep track of commonName/memo to associate them with outputScripts
+                    BRPaymentProtocolPayment *payment =
+                    [[BRPaymentProtocolPayment alloc] initWithMerchantData:protoReq.details.merchantData
+                                                              transactions:@[self.tx] refundToAmounts:@[@(refundAmount)] refundToScripts:@[refundScript] memo:nil];
+                    
+                    NSLog(@"posting payment to: %@", protoReq.details.paymentURL);
+                    
+                    [BRPaymentRequest postPayment:payment to:protoReq.details.paymentURL timeout:20.0
+                                       completion:^(BRPaymentProtocolACK *ack, NSError *error) {
+                                           [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
+                                           
+                                           if (error && ! [m.wallet transactionIsRegistered:self.tx.txHash]) {
+                                               /*[[[UIAlertView alloc] initWithTitle:nil message:error.localizedDescription delegate:nil
+                                                cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                                                [self cancel:nil];*/
+                                               UIAlertController* alertError = [UIAlertController alertControllerWithTitle:nil message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+                                               UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                                               [alertError addAction:cancelAction];
+                                               [self presentViewController:alertError animated:YES completion:nil];
+                                           }
+                                           else {
+                                               [self.view
+                                                addSubview:[[[BRBubbleView
+                                                              viewWithText:(ack.memo.length > 0 ? ack.memo : NSLocalizedString(@"sent!", nil))
+                                                              center:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)] popIn]
+                                                            popOutAfterDelay:(ack.memo.length > 10 ? 3.0 : 2.0)]];
+                                               [self reset:nil];
+                                               
+                                               if (error) NSLog(@"%@", error.localizedDescription); // transaction was sent despite pay protocol error
+                                           }
+                                       }];
+                }
+            }];
+            [alert addAction:cancelAction];
+            [alert addAction:sendAction];
+            [self presentViewController:alert animated:YES completion:nil];
         }
         else [self cancel:nil];
     }];
@@ -626,8 +1049,12 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
         }
     }
     
-    [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"clipboard doesn't contain a valid woodcoin address", nil)
-      message:nil delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+    /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"clipboard doesn't contain a valid woodcoin address", nil)
+      message:nil delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
+    UIAlertController* alertNotAddress = [UIAlertController alertControllerWithTitle:@"clipboard doesn't contain a valid woodcoin address" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+    [alertNotAddress addAction:cancelAction];
+    [self presentViewController:alertNotAddress animated:YES completion:nil];
     [self performSelector:@selector(cancel:) withObject:self afterDelay:0.1];
 }
 
@@ -703,10 +1130,14 @@ fromConnection:(AVCaptureConnection *)connection
                     if (error) request.r = nil;
                     
                     if (error && ! [request isValid]) {
-                        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
+                        /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
                           message:error.localizedDescription delegate:nil
                           cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
-                        [self cancel:nil];
+                        [self cancel:nil];*/
+                        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"couldn't make payment" message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+                        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                        [alert addAction:cancelAction];
+                        [self presentViewController:alert animated:YES completion:nil];
                         return;
                     }
 
@@ -734,9 +1165,8 @@ fromConnection:(AVCaptureConnection *)connection
     }
 }
 
-#pragma mark - UIAlertViewDelegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+/*- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == alertView.cancelButtonIndex) {
         [self cancel:nil];
@@ -873,8 +1303,8 @@ fromConnection:(AVCaptureConnection *)connection
                 if (error) NSLog(@"%@", error.localizedDescription); // transaction was sent despite pay protocol error
             }
         }];
-    }
-}
+     }
+};*/
 
 #pragma mark UITextViewDelegate
 
@@ -1011,3 +1441,4 @@ presentingController:(UIViewController *)presenting sourceController:(UIViewCont
 }
 
 @end
+                                 

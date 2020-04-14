@@ -43,7 +43,7 @@
     UIPageControl.appearance.pageIndicatorTintColor = [UIColor lightGrayColor];
     UIPageControl.appearance.currentPageIndicatorTintColor = [UIColor blackColor];
 
-    [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil]
+    [[UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[[UINavigationBar class]]]
      setTitleTextAttributes:@{NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue-Light" size:17.0]}
      forState:UIControlStateNormal];
 
@@ -79,12 +79,18 @@
     return YES;
 }
 
+#define ROOTVIEW [[[UIApplication sharedApplication] keyWindow] rootViewController]
+
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication
 annotation:(id)annotation
 {
     if (! [url.scheme isEqual:@"bitcoin"] && ! [url.scheme isEqual:@"bread"]) {
-        [[[UIAlertView alloc] initWithTitle:@"Not a bitcoin URL" message:url.absoluteString delegate:nil
-          cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+        /*[[[UIAlertView alloc] initWithTitle:@"Not a bitcoin URL" message:url.absoluteString delegate:nil
+          cancelButtonTitle:@"OK" otherButtonTitles:nil] show];*/
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil message:@"email not configured" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+        [alert addAction:cancelAction];
+        [ROOTVIEW presentViewController:alert animated:YES completion:nil];
         return NO;
     }
 
