@@ -1,38 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="BeO-Yt-c4D">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="BeO-Yt-c4D">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
-    <customFonts key="customFonts">
-        <array key="HelveticaNeue.ttc">
-            <string>HelveticaNeue</string>
-        </array>
-        <array key="HelveticaNeueLights.ttc">
-            <string>HelveticaNeue-Light</string>
-            <string>HelveticaNeue-UltraLight</string>
-        </array>
-        <array key="Menlo.ttc">
-            <string>Menlo-Regular</string>
-        </array>
-    </customFonts>
     <scenes>
         <!--ƀ 0.00 ($0.00)-->
         <scene sceneID="mZ6-bm-XCg">
             <objects>
                 <tableViewController id="6Bl-Zl-U7O" userLabel="ƀ 0.00 ($0.00)" customClass="BRSettingsViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" directionalLockEnabled="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="yY7-Yi-IXT">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="NoTxCell" rowHeight="75" id="bEc-Rc-f4d">
-                                <rect key="frame" x="0.0" y="22" width="375" height="75"/>
+                                <rect key="frame" x="0.0" y="28" width="375" height="75"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bEc-Rc-f4d" id="8ae-W8-F1U">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="75"/>
@@ -54,14 +38,14 @@
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TransactionCell" rowHeight="75" id="apT-vb-EOy">
-                                <rect key="frame" x="0.0" y="97" width="375" height="75"/>
+                                <rect key="frame" x="0.0" y="103" width="375" height="75"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="apT-vb-EOy" id="6S0-4K-BGB">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="75"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="3" contentMode="left" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="unconfirmed" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eJ2-5h-DO2">
-                                            <rect key="frame" x="15" y="20" width="73" height="20"/>
+                                            <rect key="frame" x="15" y="20.5" width="73" height="20"/>
                                             <color key="backgroundColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="alh-vl-szr"/>
@@ -72,7 +56,7 @@
                                             <size key="shadowOffset" width="0.0" height="0.0"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="6" contentMode="left" horizontalHuggingPriority="249" text="sent" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FjB-H2-BnK">
-                                            <rect key="frame" x="15" y="20" width="27.5" height="20"/>
+                                            <rect key="frame" x="15" y="20.5" width="27.5" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="QMP-Yf-1fL"/>
                                             </constraints>
@@ -80,7 +64,7 @@
                                             <size key="shadowOffset" width="0.0" height="0.0"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="left" text="ƀ 1,000,000" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="13" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PSx-oa-hSL">
-                                            <rect key="frame" x="190" y="20" width="87.5" height="20"/>
+                                            <rect key="frame" x="190" y="20.5" width="87.5" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="Cxs-gZ-gbu"/>
                                             </constraints>
@@ -88,7 +72,7 @@
                                             <size key="shadowOffset" width="0.0" height="0.0"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" tag="5" contentMode="left" horizontalCompressionResistancePriority="749" text="($1,000.00)" textAlignment="right" lineBreakMode="clip" baselineAdjustment="alignBaselines" minimumFontSize="13" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qNV-Ka-14n">
-                                            <rect key="frame" x="111" y="20" width="74" height="20"/>
+                                            <rect key="frame" x="111" y="20.5" width="74" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="0sD-qz-01x"/>
                                             </constraints>
@@ -98,20 +82,20 @@
                                             <size key="shadowOffset" width="0.0" height="0.0"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" tag="2" contentMode="left" text="Detail" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pXc-8D-8Gh" customClass="BRCopyLabel">
-                                            <rect key="frame" x="15" y="45" width="31.5" height="15.5"/>
+                                            <rect key="frame" x="15" y="45.5" width="31.5" height="15.5"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="13"/>
                                             <color key="textColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="highlightedColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <size key="shadowOffset" width="0.0" height="0.0"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="7" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ƀ 1,000,000" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ue1-2S-fEr">
-                                            <rect key="frame" x="190" y="45" width="67" height="15.5"/>
+                                            <rect key="frame" x="190" y="45.5" width="67" height="15.5"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
                                             <color key="textColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="8" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="($1,000.00)" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O7K-cF-GAA">
-                                            <rect key="frame" x="120" y="45" width="64.5" height="15.5"/>
+                                            <rect key="frame" x="120.5" y="45.5" width="64.5" height="15.5"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="13"/>
                                             <color key="textColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
@@ -139,10 +123,10 @@
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DisclosureCell" textLabel="ncN-gc-vpQ" style="IBUITableViewCellStyleDefault" id="GAU-kd-By1">
-                                <rect key="frame" x="0.0" y="172" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="178" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="GAU-kd-By1" id="I8K-Tt-SBv">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="348" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ncN-gc-vpQ">
@@ -159,7 +143,7 @@
                                 <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ActionCell" textLabel="fVX-tM-tZx" style="IBUITableViewCellStyleDefault" id="6Ih-4q-iyJ">
-                                <rect key="frame" x="0.0" y="216" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="222" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="6Ih-4q-iyJ" id="F1k-SH-OVa">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -178,10 +162,10 @@
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="SelectorCell" textLabel="byz-51-A0c" detailTextLabel="gQu-dT-kF0" style="IBUITableViewCellStyleValue1" id="Zwn-4M-BtY">
-                                <rect key="frame" x="0.0" y="260" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="266" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Zwn-4M-BtY" id="BU6-Sr-83O">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="44"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="348" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="local currency" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="byz-51-A0c">
@@ -204,7 +188,7 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="ToggleCell" id="Tjx-bA-52c">
-                                <rect key="frame" x="0.0" y="304" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="310" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Tjx-bA-52c" id="kJ0-jp-93T">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -238,7 +222,7 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RestoreCell" textLabel="1Vn-hV-iDI" style="IBUITableViewCellStyleDefault" id="ftT-Iz-Aqa">
-                                <rect key="frame" x="0.0" y="348" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="354" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ftT-Iz-Aqa" id="Cjr-H9-7G3">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -260,7 +244,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="SelectorOptionCell" textLabel="VM4-Ie-x8Z" style="IBUITableViewCellStyleDefault" id="aWE-w4-zCm">
-                                <rect key="frame" x="0.0" y="392" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="398" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aWE-w4-zCm" id="aXe-X0-dtq">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -294,14 +278,14 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T2h-wo-kmJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="719" y="-19"/>
+            <point key="canvasLocation" x="1042.0289855072465" y="-12.723214285714285"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="4aM-cf-dfl">
             <objects>
                 <navigationController definesPresentationContext="YES" id="HCk-Gb-uZI" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="AnC-Sa-145" customClass="BRNavigationBar">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
@@ -315,14 +299,14 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WEV-gE-jux" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1134" y="-19"/>
+            <point key="canvasLocation" x="1643.4782608695652" y="-12.723214285714285"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="iFW-LK-ypD">
             <objects>
                 <navigationController definesPresentationContext="YES" id="zyy-VL-f65" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="36d-sF-8oT">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
@@ -336,14 +320,14 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FWz-d5-Ir3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="303" y="-19"/>
+            <point key="canvasLocation" x="439.13043478260875" y="-12.723214285714285"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="dnG-OK-wXR">
             <objects>
                 <navigationController definesPresentationContext="YES" id="BeO-Yt-c4D" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" hidden="YES" contentMode="scaleToFill" id="BYa-tz-DlK" customClass="BRNavigationBar">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <gestureRecognizers/>
                         <textAttributes key="titleTextAttributes">
@@ -358,7 +342,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mlA-kp-7Ji" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="303" y="666"/>
+            <point key="canvasLocation" x="439.13043478260875" y="445.98214285714283"/>
         </scene>
         <!--ƀ 0.00 ($0.00)-->
         <scene sceneID="rg1-cK-IKM">
@@ -514,7 +498,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Z8K-GT-woD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="719" y="671"/>
+            <point key="canvasLocation" x="1042.0289855072465" y="449.33035714285711"/>
         </scene>
         <!--Scan View Controller-->
         <scene sceneID="2f7-Nl-i6P">
@@ -596,7 +580,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kwG-7M-PRF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1134" y="671"/>
+            <point key="canvasLocation" x="1643.4782608695652" y="449.33035714285711"/>
         </scene>
         <!--ƀ 0.00 ($0.00)-->
         <scene sceneID="53j-BI-jfv">
@@ -986,7 +970,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Eo1-Mc-5Xo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1546" y="671"/>
+            <point key="canvasLocation" x="2240.5797101449275" y="449.33035714285711"/>
         </scene>
         <!--Receive View Controller-->
         <scene sceneID="1OV-CI-Wjb">
@@ -1089,7 +1073,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1134" y="1354"/>
+            <point key="canvasLocation" x="1643.4782608695652" y="906.69642857142856"/>
         </scene>
         <!--Send View Controller-->
         <scene sceneID="sMR-re-NXa">
@@ -1211,7 +1195,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="719" y="1354"/>
+            <point key="canvasLocation" x="1042.0289855072465" y="906.69642857142856"/>
         </scene>
         <!--Page View Controller-->
         <scene sceneID="9U9-46-WI3">
@@ -1221,14 +1205,14 @@
                 </pageViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="n4f-g4-nN4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="303" y="1354"/>
+            <point key="canvasLocation" x="439.13043478260875" y="906.69642857142856"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="c3l-CQ-xKB">
             <objects>
                 <navigationController storyboardIdentifier="NewWalletNav" definesPresentationContext="YES" modalTransitionStyle="flipHorizontal" id="I38-Lg-4a0" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="9fq-wb-Ja5" customClass="BRNavigationBar">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
@@ -1242,7 +1226,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZQo-aR-gVd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="303" y="2045"/>
+            <point key="canvasLocation" x="439.13043478260875" y="1369.4196428571429"/>
         </scene>
         <!--Welcome View Controller-->
         <scene sceneID="vFB-gp-5E6">
@@ -1353,7 +1337,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hTO-3U-AsH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="719" y="2045"/>
+            <point key="canvasLocation" x="1042.0289855072465" y="1369.4196428571429"/>
         </scene>
         <!--confirm:-->
         <scene sceneID="2Hc-ez-bvO">
@@ -1364,7 +1348,7 @@
                         <viewControllerLayoutGuide type="bottom" id="BcR-mZ-OBQ"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="u2L-lU-MXZ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="center" fixedFrame="YES" image="wallpaper-default" translatesAutoresizingMaskIntoConstraints="NO" id="N12-14-Jsp">
@@ -1412,7 +1396,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Fhe-MK-1Of" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1546" y="-19"/>
+            <point key="canvasLocation" x="2240.5797101449275" y="-12.723214285714285"/>
         </scene>
         <!--transaction details-->
         <scene sceneID="QQa-M8-H76">
@@ -1424,14 +1408,14 @@
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TitleCell" id="Fyw-Om-d9p">
-                                <rect key="frame" x="0.0" y="22" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Fyw-Om-d9p" id="lfV-Ow-fYs">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" lineBreakMode="clip" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WsQ-ej-Wh4" customClass="BRCopyLabel">
-                                            <rect key="frame" x="15" y="12" width="31" height="21"/>
+                                            <rect key="frame" x="15" y="11.5" width="31" height="21"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="17"/>
                                             <color key="highlightedColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <size key="shadowOffset" width="0.0" height="0.0"/>
@@ -1464,7 +1448,7 @@
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="TransactionCell" id="xMw-gR-kML">
-                                <rect key="frame" x="0.0" y="66" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="72" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xMw-gR-kML" id="n9h-gA-rtw">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -1510,7 +1494,7 @@
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DetailCell" rowHeight="60" id="Y7v-7K-nUv">
-                                <rect key="frame" x="0.0" y="110" width="375" height="60"/>
+                                <rect key="frame" x="0.0" y="116" width="375" height="60"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Y7v-7K-nUv" id="8N2-YD-eEK">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
@@ -1560,7 +1544,7 @@
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="SubtitleCell" rowHeight="40" id="6ch-Sn-foA">
-                                <rect key="frame" x="0.0" y="170" width="375" height="40"/>
+                                <rect key="frame" x="0.0" y="176" width="375" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="6ch-Sn-foA" id="M2v-gZ-6Uv">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
@@ -1608,7 +1592,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Ca-uh-Ij3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1949" y="-19"/>
+            <point key="canvasLocation" x="2824.6376811594205" y="-12.723214285714285"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="TLa-Oc-b9n">
@@ -1727,7 +1711,7 @@ this app is open source
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Cly-dd-Cif" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="68Y-ha-WTV"/>
             </objects>
-            <point key="canvasLocation" x="1949" y="671"/>
+            <point key="canvasLocation" x="2824.6376811594205" y="449.33035714285711"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="r00-Cf-6PH">
@@ -1850,7 +1834,7 @@ Use it to restore your wallet on another device if this one is ever lost or brok
                     <navigationItem key="navigationItem" id="xhy-mj-rkK">
                         <nil key="title"/>
                         <view key="titleView" contentMode="scaleToFill" id="2TI-4e-OIp">
-                            <rect key="frame" x="138.5" y="13" width="98" height="18"/>
+                            <rect key="frame" x="139" y="13" width="98" height="18"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" image="breadwallet-white" translatesAutoresizingMaskIntoConstraints="NO" id="8lh-UZ-tbs">
@@ -1865,7 +1849,7 @@ Use it to restore your wallet on another device if this one is ever lost or brok
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lwV-64-ncq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1134" y="2045"/>
+            <point key="canvasLocation" x="1643.4782608695652" y="1369.4196428571429"/>
         </scene>
         <!--backup phrase:-->
         <scene sceneID="MGQ-cg-FBt">
@@ -1907,7 +1891,7 @@ Use it to restore your wallet on another device if this one is ever lost or brok
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1tD-Z5-QRo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="303" y="2730"/>
+            <point key="canvasLocation" x="439.13043478260875" y="1828.125"/>
         </scene>
         <!--backup phrase:-->
         <scene sceneID="TqK-4C-NQ0">
@@ -1949,7 +1933,7 @@ Use it to restore your wallet on another device if this one is ever lost or brok
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BmS-zI-nzE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1546" y="2730"/>
+            <point key="canvasLocation" x="2240.5797101449275" y="1828.125"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="Hrb-CJ-hxl">
@@ -2875,14 +2859,14 @@ Cgo
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cip-Sn-1ZH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1134" y="2730"/>
+            <point key="canvasLocation" x="1643.4782608695652" y="1828.125"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="rCK-s1-XbH">
             <objects>
                 <navigationController storyboardIdentifier="PINNav" definesPresentationContext="YES" id="ZPI-JM-Ov5" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="aTJ-F9-vcc" customClass="BRNavigationBar">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
@@ -2896,14 +2880,14 @@ Cgo
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uyG-nL-1e1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="719" y="2730"/>
+            <point key="canvasLocation" x="1042.0289855072465" y="1828.125"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="rwD-Uu-WFw">
             <objects>
                 <navigationController storyboardIdentifier="SeedNav" definesPresentationContext="YES" modalTransitionStyle="flipHorizontal" id="go5-eQ-1NR" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="naK-xP-h9B" customClass="BRNavigationBar">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -2912,7 +2896,7 @@ Cgo
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ov5-cu-6EA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1546" y="2045"/>
+            <point key="canvasLocation" x="2240.5797101449275" y="1369.4196428571429"/>
         </scene>
         <!--Seed View Controller-->
         <scene sceneID="qOk-ov-eSt">
@@ -3022,7 +3006,7 @@ it and you may lose your bitcoins forever.</string>
                                 </connections>
                             </button>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8KJ-Le-F0y">
-                                <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="478" width="320" height="44"/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="tfj-bh-pvf"/>
@@ -3086,19 +3070,19 @@ it and you may lose your bitcoins forever.</string>
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1949" y="2045"/>
+            <point key="canvasLocation" x="2824.6376811594205" y="1369.4196428571429"/>
         </scene>
     </scenes>
     <resources>
-        <image name="breadwallet" width="93" height="15"/>
-        <image name="breadwallet-big" width="257" height="151"/>
-        <image name="breadwallet-white" width="97" height="18"/>
+        <image name="breadwallet" width="93.5" height="15"/>
+        <image name="breadwallet-big" width="257.5" height="151.5"/>
+        <image name="breadwallet-white" width="97.5" height="18"/>
         <image name="burger" width="20" height="16"/>
-        <image name="button-bg-blue" width="10" height="11"/>
-        <image name="button-bg-blue-pressed" width="10" height="44"/>
-        <image name="button-bg-disabled" width="10" height="11"/>
-        <image name="button-bg-white" width="11" height="11"/>
-        <image name="button-bg-white-pressed" width="11" height="10"/>
+        <image name="button-bg-blue" width="10.5" height="11.5"/>
+        <image name="button-bg-blue-pressed" width="10.5" height="44"/>
+        <image name="button-bg-disabled" width="10.5" height="11.5"/>
+        <image name="button-bg-white" width="11" height="11.5"/>
+        <image name="button-bg-white-pressed" width="11" height="10.5"/>
         <image name="cameraguide" width="234" height="234"/>
         <image name="cameraguide-blue-small" width="20" height="20"/>
         <image name="cameraguide-small" width="20" height="20"/>
@@ -3108,7 +3092,7 @@ it and you may lose your bitcoins forever.</string>
         <image name="flash" width="33" height="33"/>
         <image name="refresh" width="9" height="11"/>
         <image name="wallpaper-default" width="480" height="568"/>
-        <image name="wallpaper-welcome" width="757" height="568"/>
+        <image name="wallpaper-welcome" width="757.5" height="568"/>
         <image name="x" width="20" height="16"/>
     </resources>
 </document>
