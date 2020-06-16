@@ -414,11 +414,15 @@ static NSData *getKeychainData(NSString *key)
 
     if (self.reachability.currentReachabilityStatus == NotReachable) return;
 
-    NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:TICKER_URL]
-                         cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10.0];
+    //NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:TICKER_URL]
+                         //cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10.0];
 
-    [NSURLConnection sendAsynchronousRequest:req queue:[NSOperationQueue currentQueue]
-    completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+    //[NSURLConnection sendAsynchronousRequest:req queue:[NSOperationQueue currentQueue]
+    NSURLSession *session = [NSURLSession sharedSession];
+    [[session dataTaskWithURL:[NSURL URLWithString:TICKER_URL]
+      completionHandler:^(NSData *data,
+                              NSURLResponse *response,
+                              NSError *connectionError) {
         if (connectionError) {
             NSLog(@"%@", connectionError);
             return;
@@ -477,7 +481,7 @@ static NSData *getKeychainData(NSString *key)
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName:BRWalletBalanceChangedNotification object:nil];
         });
-    }];
+    }] resume];
 }
 
 // given a private key, queries blockchain for unspent outputs and calls the completion block with a signed transaction

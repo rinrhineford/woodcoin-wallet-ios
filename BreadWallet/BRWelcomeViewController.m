@@ -75,11 +75,20 @@
     if (self.resignActiveObserver) [[NSNotificationCenter defaultCenter] removeObserver:self.resignActiveObserver];
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent; // your own style
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return NO; // your own visibility code
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
 
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:animated];
+    /*[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:animated];*/
+    [self setNeedsStatusBarAppearanceUpdate];
     
     if (self.hasAppeared) {
         self.logoXCenter.constant = self.view.frame.size.width;
@@ -113,7 +122,7 @@
 
             [UIView animateWithDuration:0.35 delay:1.0 usingSpringWithDamping:0.8 initialSpringVelocity:0.0
              options:UIViewAnimationOptionCurveEaseOut animations:^{
-                [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
+                /*[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];*/
                 self.navigationItem.titleView.alpha = 1.0;
                 [self.view.superview layoutIfNeeded];
             } completion:nil];

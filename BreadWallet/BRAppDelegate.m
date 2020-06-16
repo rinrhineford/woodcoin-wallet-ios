@@ -90,7 +90,9 @@ annotation:(id)annotation
         UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil message:@"email not configured" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
         [alert addAction:cancelAction];
-        [ROOTVIEW presentViewController:alert animated:YES completion:nil];
+        /*[ROOTVIEW presentViewController:alert animated:YES completion:nil];*/
+        UIWindow * currentwindow = [[UIApplication sharedApplication] delegate].window;
+        [currentwindow.rootViewController presentViewController:alert animated:YES completion:nil];
         return NO;
     }
 

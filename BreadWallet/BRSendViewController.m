@@ -772,7 +772,11 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                        center:CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2)];
 
     v.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
-    v.customView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    if (@available(iOS 13.0, *)) {
+        v.customView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
+    } else {
+        v.customView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    }
     [(id)v.customView startAnimating];
     [self.view addSubview:[v popIn]];
 

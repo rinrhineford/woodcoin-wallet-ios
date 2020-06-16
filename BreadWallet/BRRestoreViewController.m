@@ -164,7 +164,7 @@ static NSString *normalize_phrase(NSString *phrase)
         if ([s isEqual:@"wipe"]) { // shortcut word to force the wipe option to appear
             [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil)
               destructiveButtonTitle:NSLocalizedString(@"wipe", nil) otherButtonTitles:nil]
-             showInView:[[UIApplication sharedApplication] keyWindow]];
+             showInView:[[UIApplication sharedApplication] delegate].window];
         }
         else if (incorrect) {
             textView.selectedRange = [[textView.text lowercaseString] rangeOfString:incorrect];
@@ -212,7 +212,7 @@ static NSString *normalize_phrase(NSString *phrase)
                     [[[UIActionSheet alloc] initWithTitle:nil delegate:self
                       cancelButtonTitle:NSLocalizedString(@"cancel", nil)
                       destructiveButtonTitle:NSLocalizedString(@"wipe", nil) otherButtonTitles:nil]
-                     showInView:[[UIApplication sharedApplication] keyWindow]];
+                     showInView:[[UIApplication sharedApplication] delegate].window];
                 }
             }
             else {

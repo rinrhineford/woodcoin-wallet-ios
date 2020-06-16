@@ -391,10 +391,19 @@ details:(BRPaymentProtocolDetails *)details signature:(NSData *)sig
         }
 
         SecTrustCreateWithCertificates((__bridge CFArrayRef)certs, (__bridge CFArrayRef)policies, &trust);
-        SecTrustEvaluate(trust, &trustResult); // verify certificate chain
+        BOOL evaluates = NO;
+        if(@available(iOS 13, *)){
+            evaluates = (SecTrustEvaluateWithError(trust, nil));
+        }else{
+            SecTrustEvaluate(trust, &trustResult); // verify certificate chain
+            if (trustResult != kSecTrustResultUnspecified && trustResult != kSecTrustResultProceed) {
+                evaluates = YES;
+            }
+        };
+        
 
         // kSecTrustResultUnspecified indicates a positive result that wasn't decided by the user
-        if (trustResult != kSecTrustResultUnspecified && trustResult != kSecTrustResultProceed) {
+        if (evaluates) {
             _errorMessage = (certs.count > 0) ? NSLocalizedString(@"untrusted certificate", nil) :
                             NSLocalizedString(@"missing certificate", nil);
             return NO;

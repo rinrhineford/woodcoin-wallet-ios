@@ -671,7 +671,7 @@ viewControllerAfterViewController:(UIViewController *)viewController
     if ([[alertView buttonTitleAtIndex:buttonIndex] isEqual:NSLocalizedString(@"wipe", nil)]) {
         [[[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"CONFIRM WIPE", nil) delegate:self
           cancelButtonTitle:NSLocalizedString(@"cancel", nil) destructiveButtonTitle:NSLocalizedString(@"wipe", nil)
-          otherButtonTitles:nil] showInView:[[UIApplication sharedApplication] keyWindow]];
+                            otherButtonTitles:nil] showInView:[[UIApplication sharedApplication] delegate].window];
         return;
     }
     
@@ -692,8 +692,15 @@ viewControllerAfterViewController:(UIViewController *)viewController
 
     [self.navigationController presentViewController:c animated:NO completion:nil];
 
-    [[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"the app will now close", nil) delegate:self
-      cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"close app", nil), nil] show];
+    /*[[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"the app will now close", nil) delegate:self
+      cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"close app", nil), nil] show];*/
+    UIAlertController* alertClose = [UIAlertController alertControllerWithTitle:nil message:NSLocalizedString(@"the app will now close", nil) preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction* sendAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"the app will now close", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) { abort(); }];
+    [alertClose addAction:cancelAction];
+    [alertClose addAction:sendAction];
+    [self presentViewController:alertClose animated:YES completion:nil];
+    
 }
 
 #pragma mark - UIViewControllerAnimatedTransitioning
