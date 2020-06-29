@@ -492,17 +492,42 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
     if (! completion) return;
 
     if ([privKey isValidBitcoinBIP38Key]) {
-        UIAlertView *v = [[UIAlertView alloc] initWithTitle:@"password protected key" message:nil delegate:self
-                          cancelButtonTitle:@"cancel" otherButtonTitles:@"ok", nil];
+        /*UIAlertView *v = [[UIAlertView alloc] initWithTitle:@"password protected key" message:nil delegate:self
+                          cancelButtonTitle:@"cancel" otherButtonTitles:@"ok", nil];*/
 
-        v.alertViewStyle = UIAlertViewStyleSecureTextInput;
-        [v textFieldAtIndex:0].returnKeyType = UIReturnKeyDone;
-        [v textFieldAtIndex:0].placeholder = @"password";
-        [v show];
+        //v.alertViewStyle = UIAlertViewStyleSecureTextInput;
+        UIAlertController *voy = [UIAlertController alertControllerWithTitle:@"password protected key" message:nil  preferredStyle:UIAlertControllerStyleAlert];
+        [voy addTextFieldWithConfigurationHandler:^(UITextField *passTextField) {
+        passTextField.placeholder = @"please input password";
+        passTextField.secureTextEntry = YES;
+        }];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleDefault handler:nil];
+        UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+            self.sweepKey = privKey;
+            self.sweepFee = fee;
+            self.sweepCompletion = completion;
+            NSString *passphrase = [[voy textFields][0] text];
+            dispatch_async(dispatch_get_main_queue(), ^{
+        BRKey *key = [BRKey keyWithBIP38Key:self.sweepKey andPassphrase:passphrase];
 
-        self.sweepKey = privKey;
-        self.sweepFee = fee;
-        self.sweepCompletion = completion;
+        if (! key) {
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"password protected key" message:@"bad password, try again" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+            [alert addAction:cancelAction];
+        }
+        else {
+            [self sweepPrivateKey:key.privateKey withFee:self.sweepFee completion:self.sweepCompletion];
+            self.sweepKey = nil;
+            self.sweepCompletion = nil;
+        }
+    });
+            
+        }];
+        [voy addAction:cancelAction];
+        [voy addAction:okAction];
+        //[v textFieldAtIndex:0].returnKeyType = UIReturnKeyDone;
+        //[v textFieldAtIndex:0].placeholder = @"password";
+        //[v show];
         return;
     }
 
@@ -521,11 +546,15 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
     }
 
     NSURL *u = [NSURL URLWithString:[UNSPENT_URL stringByAppendingString:address]];
-    NSURLRequest *req = [NSURLRequest requestWithURL:u cachePolicy:NSURLRequestReloadIgnoringCacheData
-                         timeoutInterval:20.0];
+    //NSURLRequest *req = [NSURLRequest requestWithURL:u cachePolicy:NSURLRequestReloadIgnoringCacheData
+                         //timeoutInterval:20.0];
 
-    [NSURLConnection sendAsynchronousRequest:req queue:[NSOperationQueue currentQueue]
-    completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+    /*[NSURLConnection sendAsynchronousRequest:req queue:[NSOperationQueue currentQueue]*/
+    NSURLSession *session = [NSURLSession sharedSession];
+    [[session dataTaskWithURL:[NSURL URLWithString:[UNSPENT_URL stringByAppendingString:address]]
+          completionHandler:^(NSData *data,
+                              NSURLResponse *response,
+                              NSError *connectionError) {
         if (connectionError) {
             completion(nil, connectionError);
             return;
@@ -598,7 +627,7 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
         }
 
         completion(tx, nil);
-    }];
+    }] resume];
 }
 
 #pragma mark - string helpers
@@ -675,9 +704,29 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
     return ret;
 }
 
+/*- (void)okButtonPressed{
+    
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BRKey *key = [BRKey keyWithBIP38Key:self.sweepKey andPassphrase:passphrase];
+
+        if (! key) {
+           
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"password protected key" message:@"bad password, try again" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+            [alert addAction:cancelAction];
+        }
+        else {
+            [self sweepPrivateKey:key.privateKey withFee:self.sweepFee completion:self.sweepCompletion];
+            self.sweepKey = nil;
+            self.sweepCompletion = nil;
+        }
+    });
+ }*/
+
 #pragma mark - UIAlertViewDelegate
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+/*- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == alertView.cancelButtonIndex) {
         if ([[alertView buttonTitleAtIndex:buttonIndex] isEqual:@"abort"]) abort();
@@ -696,7 +745,7 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
         BRKey *key = [BRKey keyWithBIP38Key:self.sweepKey andPassphrase:passphrase];
 
         if (! key) {
-            UIAlertView *v = [[UIAlertView alloc] initWithTitle:@"password protected key"
+           UIAlertView *v = [[UIAlertView alloc] initWithTitle:@"password protected key"
                               message:@"bad password, try again" delegate:self cancelButtonTitle:@"cancel"
                               otherButtonTitles:@"ok", nil];
 
@@ -704,6 +753,9 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
             [v textFieldAtIndex:0].returnKeyType = UIReturnKeyDone;
             [v textFieldAtIndex:0].placeholder = @"password";
             [v show];
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"password protected key" message:@"bad password, try again" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+            [alert addAction:cancelAction];
         }
         else {
             [self sweepPrivateKey:key.privateKey withFee:self.sweepFee completion:self.sweepCompletion];
@@ -711,6 +763,6 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
             self.sweepCompletion = nil;
         }
     });
-}
+}*/
 
 @end

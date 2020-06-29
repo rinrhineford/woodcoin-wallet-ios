@@ -392,9 +392,9 @@ details:(BRPaymentProtocolDetails *)details signature:(NSData *)sig
 
         SecTrustCreateWithCertificates((__bridge CFArrayRef)certs, (__bridge CFArrayRef)policies, &trust);
         BOOL evaluates = NO;
-        if(@available(iOS 13, *)){
+        if (@available(iOS 13, *)) {
             evaluates = (SecTrustEvaluateWithError(trust, nil));
-        }else{
+        } else {
             SecTrustEvaluate(trust, &trustResult); // verify certificate chain
             if (trustResult != kSecTrustResultUnspecified && trustResult != kSecTrustResultProceed) {
                 evaluates = YES;

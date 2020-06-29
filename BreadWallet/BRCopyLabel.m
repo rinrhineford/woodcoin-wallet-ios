@@ -108,8 +108,16 @@
     [self.superview insertSubview:self.highlight belowSubview:self];
     [UIView animateWithDuration:0.2 animations:^{ self.highlight.alpha = 1.0; }];
     [self becomeFirstResponder];
-    [[UIMenuController sharedMenuController] setTargetRect:self.copyableFrame inView:self];
-    [[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
+    //[[UIMenuController sharedMenuController] showMenuFromView:self rect:self.copyableFrame inView:self];
+    //[[UIMenuController sharedMenuController] setTargetRect:self.copyableFrame inView:self];
+    //[[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
+    if (@available(iOS 13, *)) {
+        //[[UIMenuController sharedMenuController] setTargetRect:self.copyableFrame inView:self];
+        [[UIMenuController sharedMenuController] showMenuFromView:self rect:self.copyableFrame];
+    } else {
+        [[UIMenuController sharedMenuController] setTargetRect:self.copyableFrame inView:self];
+        [[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
+    }
 
     if (! self.menuHideObserver) {
         self.menuHideObserver =

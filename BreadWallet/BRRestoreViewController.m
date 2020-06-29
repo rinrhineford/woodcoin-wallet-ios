@@ -162,9 +162,33 @@ static NSString *normalize_phrase(NSString *phrase)
         }
 
         if ([s isEqual:@"wipe"]) { // shortcut word to force the wipe option to appear
-            [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil)
+            /*[[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil)
               destructiveButtonTitle:NSLocalizedString(@"wipe", nil) otherButtonTitles:nil]
-             showInView:[[UIApplication sharedApplication] delegate].window];
+             showInView:[[UIApplication sharedApplication] delegate].window];*/
+            UIAlertController *walletController = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+            UIAlertAction * wipe = [UIAlertAction actionWithTitle:@"wipe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+                    [[BRWalletManager sharedInstance] setSeed:nil];
+                    self.textView.text = nil;
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WALLET_NEEDS_BACKUP_KEY];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+
+                    UIViewController *p = self.navigationController.presentingViewController.presentingViewController;
+                    
+                    [p dismissViewControllerAnimated:NO completion:^{
+                        UIViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
+
+                        [[(id)c viewControllers].firstObject setAppeared:YES];
+
+                        [p presentViewController:c animated:NO completion:^{
+                            c.transitioningDelegate = [(id)p viewControllers].firstObject;
+                            [c presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"NewWalletNav"]
+                             animated:NO completion:nil];
+                        }];
+                    }];
+                }];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+            [walletController addAction:wipe];
+            [walletController addAction:cancelAction];
         }
         else if (incorrect) {
             textView.selectedRange = [[textView.text lowercaseString] rangeOfString:incorrect];
@@ -209,15 +233,42 @@ static NSString *normalize_phrase(NSString *phrase)
                     [self.navigationController popToRootViewControllerAnimated:YES];
                 }
                 else {
-                    [[[UIActionSheet alloc] initWithTitle:nil delegate:self
+                    /*[[[UIActionSheet alloc] initWithTitle:nil delegate:self
                       cancelButtonTitle:NSLocalizedString(@"cancel", nil)
                       destructiveButtonTitle:NSLocalizedString(@"wipe", nil) otherButtonTitles:nil]
-                     showInView:[[UIApplication sharedApplication] delegate].window];
+                     showInView:[[UIApplication sharedApplication] delegate].window];*/
+                    UIAlertController *walletController = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+                    UIAlertAction * wipe = [UIAlertAction actionWithTitle:@"wipe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
+                            [[BRWalletManager sharedInstance] setSeed:nil];
+                            self.textView.text = nil;
+                            [[NSUserDefaults standardUserDefaults] removeObjectForKey:WALLET_NEEDS_BACKUP_KEY];
+                            [[NSUserDefaults standardUserDefaults] synchronize];
+
+                            UIViewController *p = self.navigationController.presentingViewController.presentingViewController;
+                            
+                            [p dismissViewControllerAnimated:NO completion:^{
+                                UIViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
+
+                                [[(id)c viewControllers].firstObject setAppeared:YES];
+
+                                [p presentViewController:c animated:NO completion:^{
+                                    c.transitioningDelegate = [(id)p viewControllers].firstObject;
+                                    [c presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"NewWalletNav"]
+                                     animated:NO completion:nil];
+                                }];
+                            }];
+                        }];
+                    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+                    [walletController addAction:wipe];
+                    [walletController addAction:cancelAction];
                 }
             }
             else {
-                [[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"backup phrase doesn't match", nil)
-                  delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];
+                /*[[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"backup phrase doesn't match", nil)
+                  delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
+                UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil message:NSLocalizedString(@"backup phrase doesn't match", nil) preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+                [alert addAction:cancelAction];
             }
         }
         else {
@@ -232,7 +283,7 @@ static NSString *normalize_phrase(NSString *phrase)
 
 #pragma mark - UIActionSheetDelegate
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+/*- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex != actionSheet.destructiveButtonIndex) return;
     
@@ -254,6 +305,6 @@ static NSString *normalize_phrase(NSString *phrase)
              animated:NO completion:nil];
         }];
     }];
-}
+}*/
 
 @end

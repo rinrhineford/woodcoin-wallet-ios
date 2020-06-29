@@ -93,6 +93,14 @@
         }];
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent; // your own style
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return NO; // your own visibility code
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -101,7 +109,8 @@
     self.pin = CFBridgingRelease(CFStringCreateMutable(SecureAllocator(), PIN_LENGTH));
     self.badPins = [NSMutableSet set];
     self.verifyPin = nil;
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:animated];
+    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:animated];
+    [self setNeedsStatusBarAppearanceUpdate];
     
     if (self.appeared) {
         self.logoXCenter.constant = self.view.bounds.size.width;

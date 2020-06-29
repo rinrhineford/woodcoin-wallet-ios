@@ -69,12 +69,15 @@
     return UIStatusBarStyleLightContent;
 }
 
+
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
 
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     //[UIViewController preferredStatusBarStyle];
+    [self setNeedsStatusBarAppearanceUpdate];
     
     BRWalletManager *m = [BRWalletManager sharedInstance];
     NSArray *a = m.wallet.recentTransactions;

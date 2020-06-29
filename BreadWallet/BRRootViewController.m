@@ -266,13 +266,17 @@
         [self.navigationController presentViewController:self.pinNav animated:NO completion:^{
             self.splash.hidden = YES;
             self.navigationController.navigationBar.hidden = NO;
-            [[UIApplication sharedApplication] setStatusBarHidden:NO];
+            //[[UIApplication sharedApplication] setStatusBarHidden:NO];
         }];
         
         self.pinNav.transitioningDelegate = self.pinNav.viewControllers.firstObject;
     }
     
     [self showBackupDialogIfNeeded];
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return NO; // your own visibility code
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -314,6 +318,11 @@
     }
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent; // your own style
+}
+
+
 - (void)viewDidAppear:(BOOL)animated
 {
     if (! self.navBarTap) {
@@ -326,8 +335,9 @@
     if (self.reachability.currentReachabilityStatus == NotReachable) [self showErrorBar];
 
     if (self.navigationController.visibleViewController == self) {
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+        /*[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];*/
+        [self setNeedsStatusBarAppearanceUpdate];
         if (self.url) [self.sendViewController handleURL:self.url];
         if (self.file) [self.sendViewController handleFile:self.file];
         self.url = nil;

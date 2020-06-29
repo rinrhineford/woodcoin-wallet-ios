@@ -137,11 +137,21 @@
     if (self.screenshotObserver) [[NSNotificationCenter defaultCenter] removeObserver:self.screenshotObserver];
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent; // your own style
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return NO; // your own visibility code
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
  
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+    /*[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];*/
+    
+    [self setNeedsStatusBarAppearanceUpdate];
  
     // remove done button if we're not the root of the nav stack
     if (self.navigationController.viewControllers.firstObject != self) {
