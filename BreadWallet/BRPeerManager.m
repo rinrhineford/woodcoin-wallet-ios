@@ -2302,10 +2302,12 @@ static const char *dns_seeds[] = {
 
 - (void)syncStopped
 {
-    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
-        [self.connectedPeers makeObjectsPerformSelector:@selector(disconnect)];
-        [self.connectedPeers removeAllObjects];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
+            [self.connectedPeers makeObjectsPerformSelector:@selector(disconnect)];
+            [self.connectedPeers removeAllObjects];
+        }
+    });
 
     if (self.taskId != UIBackgroundTaskInvalid) {
         [[UIApplication sharedApplication] endBackgroundTask:self.taskId];

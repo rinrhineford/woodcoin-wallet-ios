@@ -484,26 +484,4 @@
     }
 }
 
-#pragma mark - UINavigationControllerDelegate
-
-- (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
-animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC
-toViewController:(UIViewController *)toVC
-{
-    return self;
-}
-
-#pragma mark - UIViewControllerTransitioningDelegate
-
-- (id<UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented
-presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source
-{
-    return self;
-}
-
-- (id<UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed
-{
-    return self;
-}
-
 @end

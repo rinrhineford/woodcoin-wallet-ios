@@ -54,7 +54,7 @@ static NSData *txOutput(NSData *txHash, uint32_t n)
 @property (nonatomic, strong) NSOrderedSet *utxos;
 @property (nonatomic, strong) NSMutableDictionary *allTx;
 @property (nonatomic, strong) NSArray *balanceHistory;
-@property (nonatomic, strong) NSData *(^seed)();
+@property (nonatomic, strong) NSData *(^seed)(void);
 @property (nonatomic, strong) NSManagedObjectContext *moc;
 
 @end
@@ -62,7 +62,7 @@ static NSData *txOutput(NSData *txHash, uint32_t n)
 @implementation BRWallet
 
 - (instancetype)initWithContext:(NSManagedObjectContext *)context sequence:(id<BRKeySequence>)sequence
-seed:(NSData *(^)())seed
+                           seed:(NSData *(^)(void))seed
 {
     if (! (self = [super init])) return nil;
 

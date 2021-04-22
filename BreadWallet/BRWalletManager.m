@@ -163,7 +163,7 @@ static NSData *getKeychainData(NSString *key)
 
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
 
-    _localCurrencyCode = [defs stringForKey:LOCAL_CURRENCY_CODE_KEY],
+    _localCurrencyCode = [defs stringForKey:LOCAL_CURRENCY_CODE_KEY];
     _localCurrencyPrice = [defs doubleForKey:LOCAL_CURRENCY_PRICE_KEY];
     self.localFormat.maximum = @((MAX_MONEY/SATOSHIS)*self.localCurrencyPrice);
     _currencyCodes = [defs arrayForKey:CURRENCY_CODES_KEY];
@@ -204,7 +204,7 @@ static NSData *getKeychainData(NSString *key)
                         BRKey *k = [BRKey keyWithPrivateKey:[self.sequence privateKey:0 internal:NO
                                                              fromSeed:self.seed]];
                     
-                        if (! [_wallet containsAddress:k.address]) {
+                        if (! [self->_wallet containsAddress:k.address]) {
 #if DEBUG
                             abort(); // don't wipe core data for debug builds
 #endif
@@ -214,7 +214,7 @@ static NSData *getKeychainData(NSString *key)
                                 [NSManagedObject saveContext];
                             }];
                         
-                            _wallet = nil;
+                            self->_wallet = nil;
                         
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 [[NSNotificationCenter defaultCenter]
@@ -433,8 +433,8 @@ static NSData *getKeychainData(NSString *key)
         NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
         NSArray *items = [json valueForKeyPath:@"tickers.converted_last"];
         NSLog(@"json test: %@", items[0][@"usd"]);
-        _localCurrencyCode = [defs stringForKey:LOCAL_CURRENCY_CODE_KEY];
-        if (! self.localCurrencyCode) _localCurrencyCode = [[NSLocale currentLocale] objectForKey:NSLocaleCurrencyCode];
+        self->_localCurrencyCode = [defs stringForKey:LOCAL_CURRENCY_CODE_KEY];
+        if (! self.localCurrencyCode) self->_localCurrencyCode = [[NSLocale currentLocale] objectForKey:NSLocaleCurrencyCode];
 
         /*if (error || ! [json isKindOfClass:[NSDictionary class]] ||
             ! [json[DEFAULT_CURRENCY_CODE] isKindOfClass:[NSDictionary class]] ||
@@ -449,7 +449,7 @@ static NSData *getKeychainData(NSString *key)
 
         // if local currency is missing, use default
         if (! [json[self.localCurrencyCode] isKindOfClass:[NSDictionary class]]) {
-            self.localFormat.currencyCode = _localCurrencyCode = DEFAULT_CURRENCY_CODE;
+            self.localFormat.currencyCode = self->_localCurrencyCode = DEFAULT_CURRENCY_CODE;
         }
         else {
             self.localFormat.currencySymbol = json[self.localCurrencyCode][@"symbol"];

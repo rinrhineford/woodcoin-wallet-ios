@@ -39,7 +39,7 @@
 #define BIP38_LOTSEQUENCE_FLAG 0x04
 #define BIP38_INVALID_FLAG     (0x10 | 0x08 | 0x02 | 0x01)
 
-CFAllocatorRef SecureAllocator();
+CFAllocatorRef SecureAllocator(void);
 
 @interface NSString (Base58)
 

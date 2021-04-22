@@ -4,8 +4,6 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
-	<key>NSCameraUsageDescription</key>
-	<string>LogWallet requires to access camera for taking QR code picture</string>
 	<key>CFBundleDisplayName</key>
 	<string>LogWallet</string>
 	<key>CFBundleDocumentTypes</key>
@@ -82,10 +80,15 @@
 	<string>4.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>LogWallet requires to access camera for taking QR code picture</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
+		<string>processing</string>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>Launch Screen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
