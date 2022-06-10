@@ -51,6 +51,7 @@
     // Do any additional setup after loading the view.
         
     self.navigationController.delegate = self;
+    self.view.backgroundColor = [UIColor colorWithRed:37/255.0 green:184/255.0 blue:32/255.0 alpha:0.9];
 
     self.activeObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil

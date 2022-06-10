@@ -26,14 +26,18 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import "BRAmountViewController.h"
+#import "BRPaymentRequest.h"
+#import "BRInputAddressViewController.h"
 
 @interface BRSendViewController : UIViewController <UIAlertViewDelegate, UITextViewDelegate,
-BRAmountViewControllerDelegate, AVCaptureMetadataOutputObjectsDelegate, UIViewControllerTransitioningDelegate,
+BRAmountViewControllerDelegate, BRInputAddressViewControllerDelegate, AVCaptureMetadataOutputObjectsDelegate, UIViewControllerTransitioningDelegate,
 UIViewControllerAnimatedTransitioning>
 
 - (IBAction)tip:(id)sender;
 
 - (void)handleURL:(NSURL *)url;
 - (void)handleFile:(NSData *)file;
+
+//- (void)handleInput:(NSString *)add;
 
 @end

@@ -387,11 +387,11 @@
         m.pinFailHeight = 0;
         self.verifyPin = nil;
         self.dotsLabel.text = DOT @"  " DOT @"  " DOT @"  " DOT;
-
+        NSLog(@"Reset pin successful has been called");
         UIViewController *p = self.navigationController.presentingViewController;
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            [p dismissViewControllerAnimated:YES completion:^{
+            [p dismissViewControllerAnimated:NO completion:^{
                 if (self.changePin) {
                     [p.view addSubview:[[[BRBubbleView viewWithText:NSLocalizedString(@"pin changed", nil)
                                          center:CGPointMake(p.view.bounds.size.width/2, p.view.bounds.size.height/2)]
@@ -427,7 +427,8 @@
         [self.navigationController pushViewController:c animated:YES];
     }
     else if (self.cancelable && ! self.fail) {
-        [self.navigationController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+        NSLog(@"change pin cancel has been called.....");
+        [self.navigationController.presentingViewController dismissViewControllerAnimated:NO completion:nil];
     }
 }
 

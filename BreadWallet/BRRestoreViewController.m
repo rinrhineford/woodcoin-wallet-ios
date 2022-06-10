@@ -71,6 +71,7 @@ static NSString *normalize_phrase(NSString *phrase)
     // TODO: autocomplete based on 4 letter prefixes of mnemonic words
     
     self.textView.layer.cornerRadius = 5.0;
+    self.view.backgroundColor = [UIColor colorWithRed:37/255.0 green:184/255.0 blue:32/255.0 alpha:0.9];
     
     self.keyboardObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillShowNotification object:nil queue:nil
@@ -87,6 +88,7 @@ static NSString *normalize_phrase(NSString *phrase)
     
     self.textView.layer.borderColor = [[UIColor colorWithWhite:0.0 alpha:0.25] CGColor];
     self.textView.layer.borderWidth = 0.5;
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -114,6 +116,7 @@ static NSString *normalize_phrase(NSString *phrase)
 {
     static NSCharacterSet *charset = nil;
     static dispatch_once_t onceToken = 0;
+//    NSLog(@"Text did change called");
     
     dispatch_once(&onceToken, ^{
         NSMutableCharacterSet *set = [NSMutableCharacterSet letterCharacterSet];
@@ -160,6 +163,10 @@ static NSString *normalize_phrase(NSString *phrase)
             incorrect = word;
             break;
         }
+        
+        NSLog(@"s letter value: %@", s);
+//        NSLog(@"phrase letter value: %@", phrase);
+//        NSLog(@"normalize phrase: %@", normalize_phrase(m.seedPhrase));
 
         if ([s isEqual:@"wipe"]) { // shortcut word to force the wipe option to appear
             /*[[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil)
@@ -225,19 +232,23 @@ static NSString *normalize_phrase(NSString *phrase)
             [self presentViewController:alertInvalidPhrase animated:YES completion:nil];
         }
         else if (m.wallet) {
+            NSLog(@"Wallet m.wallet else if has been called");
             if ([phrase isEqual:normalize_phrase(m.seedPhrase)]) {
+                NSLog(@"Wallet m if has been called");
                 if (self.navigationController.viewControllers.firstObject != self) { // reset pin
+                    NSLog(@"reset pin has been called");
                     m.pin = nil;
                     m.pinFailCount = 0;
                     m.pinFailHeight = 0;
                     [self.navigationController popToRootViewControllerAnimated:YES];
                 }
                 else {
+                    NSLog(@"wallet controller alert");
                     /*[[[UIActionSheet alloc] initWithTitle:nil delegate:self
                       cancelButtonTitle:NSLocalizedString(@"cancel", nil)
                       destructiveButtonTitle:NSLocalizedString(@"wipe", nil) otherButtonTitles:nil]
                      showInView:[[UIApplication sharedApplication] delegate].window];*/
-                    UIAlertController *walletController = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+                    UIAlertController *walletController = [UIAlertController alertControllerWithTitle:nil message:@"This action will wipe your wallet." preferredStyle:UIAlertControllerStyleAlert];
                     UIAlertAction * wipe = [UIAlertAction actionWithTitle:@"wipe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
                             [[BRWalletManager sharedInstance] setSeed:nil];
                             self.textView.text = nil;
@@ -261,6 +272,7 @@ static NSString *normalize_phrase(NSString *phrase)
                     UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
                     [walletController addAction:wipe];
                     [walletController addAction:cancelAction];
+                    [self presentViewController:walletController animated:YES completion:nil];
                 }
             }
             else {
@@ -269,10 +281,12 @@ static NSString *normalize_phrase(NSString *phrase)
                 UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil message:NSLocalizedString(@"backup phrase doesn't match", nil) preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
                 [alert addAction:cancelAction];
+                [self presentViewController:alert animated:YES completion:nil];
             }
         }
         else {
             //TODO: offer the user an option to move funds to a new seed if their wallet device was lost or stolen
+            NSLog(@"wallet backup has been called");
             m.seedPhrase = textView.text;
             textView.text = nil;
             

@@ -147,10 +147,10 @@ static NSData *getKeychainData(NSString *key)
                                   stringByReplacingCharactersInRange:[self.format.positiveFormat rangeOfString:@"#"]
                                   withString:@"-#"];
     self.format.currencyCode = @"LOG";
-    self.format.currencySymbol = BITS NARROW_NBSP;
+    self.format.currencySymbol = BITS;
     self.format.internationalCurrencySymbol = self.format.currencySymbol;
     self.format.minimumFractionDigits = 0; // iOS 8 bug, minimumFractionDigits now has to be set after currencySymbol
-    self.format.maximumFractionDigits = 3;
+    self.format.maximumFractionDigits = 2;
 //    self.format.currencySymbol = BTC NARROW_NBSP;
 //    self.format.maximumFractionDigits = 8;
 
@@ -634,8 +634,9 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
 
 - (int64_t)amountForString:(NSString *)string
 {
-    return ([[self.format numberFromString:string] doubleValue] + DBL_EPSILON)*
-    SATOSHIS;
+    NSLog(@"Amount for test yada string: %f", ([[self.format numberFromString:string] doubleValue] + DBL_EPSILON)*
+          SATOSHIS);
+    return ([[self.format numberFromString:string] doubleValue] + DBL_EPSILON)*SATOSHIS;
 }
 
 - (NSString *)stringForAmount:(int64_t)amount
@@ -660,10 +661,11 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
 {
     if (self.localCurrencyPrice <= DBL_EPSILON) return 0;
     if ([string hasPrefix:@"<"]) string = [string substringFromIndex:1];
+    NSLog(@"local currency price string: %@", string);
 
     int64_t local = ([[self.localFormat numberFromString:string] doubleValue] + DBL_EPSILON)*
                      pow(10.0, self.localFormat.maximumFractionDigits);
-
+    NSLog(@"int 64 currency price string: %lld", local);
     if (local == 0) return 0;
 
     int64_t min = llabs(local)*SATOSHIS/

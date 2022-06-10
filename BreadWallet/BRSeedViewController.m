@@ -82,9 +82,12 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    
     self.wallpaper.hidden = (self.navigationController.viewControllers.firstObject != self) ? YES : NO;
     self.doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"done", nil)
                        style:UIBarButtonItemStylePlain target:self action:@selector(done:)];
+    
+
     
     self.resignActiveObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillResignActiveNotification object:nil
@@ -137,23 +140,23 @@
     if (self.screenshotObserver) [[NSNotificationCenter defaultCenter] removeObserver:self.screenshotObserver];
 }
 
--(UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent; // your own style
-}
+//-(UIStatusBarStyle)preferredStatusBarStyle {
+//    return UIStatusBarStyleLightContent; // your own style
+//}
 
-- (BOOL)prefersStatusBarHidden {
-    return NO; // your own visibility code
-}
+//- (BOOL)prefersStatusBarHidden {
+//    return NO; // your own visibility code
+//}
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
  
-    /*[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];*/
+//    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     
     [self setNeedsStatusBarAppearanceUpdate];
  
-    // remove done button if we're not the root of the nav stack
+     //remove done button if we're not the root of the nav stack
     if (self.navigationController.viewControllers.firstObject != self) {
         self.toolbar.hidden = YES;
     }
@@ -165,8 +168,8 @@
     @autoreleasepool {  // @autoreleasepool ensures sensitive data will be dealocated immediately
         self.seedLabel.text = [[BRWalletManager sharedInstance] seedPhrase];
     }
-    
-    [UIView animateWithDuration:0.1 animations:^{
+
+    [UIView animateWithDuration:0.5 animations:^{
         self.seedLabel.alpha = 1.0;
     }];
 }
@@ -174,7 +177,6 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-
     // don't leave the seed phrase laying around in memory any longer than necessary
     self.seedLabel.text = @"";
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
@@ -195,7 +197,6 @@
 - (IBAction)done:(id)sender
 {
     if (self.navigationController.viewControllers.firstObject != self) return;
-    
     self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [self.navigationController.presentingViewController.presentingViewController dismissViewControllerAnimated:YES
      completion:nil];
@@ -204,7 +205,6 @@
 - (IBAction)refresh:(id)sender
 {
     if (! [[UIApplication sharedApplication] isProtectedDataAvailable]) return;
-
     [[BRWalletManager sharedInstance] generateRandomSeed];
     [[BRPeerManager sharedInstance] connect];
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WALLET_NEEDS_BACKUP_KEY];
@@ -248,7 +248,7 @@
 
 #pragma mark - UIAlertViewDelegate
 
-/*- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == alertView.cancelButtonIndex) return;
 
@@ -256,6 +256,6 @@
         [[alertView buttonTitleAtIndex:buttonIndex] isEqual:NSLocalizedString(@"new phrase", nil)]) {
         [self refresh:nil];
     }
-}*/
+}
 
 @end

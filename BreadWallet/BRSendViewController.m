@@ -26,6 +26,7 @@
 #import "BRSendViewController.h"
 #import "BRRootViewController.h"
 #import "BRScanViewController.h"
+#import "BRInputAddressViewController.h"
 #import "BRAmountViewController.h"
 #import "BRSettingsViewController.h"
 #import "BRBubbleView.h"
@@ -66,10 +67,11 @@ static NSString *sanitizeString(NSString *s)
 @property (nonatomic, strong) NSString *okAddress;
 @property (nonatomic, strong) BRBubbleView *tipView;
 @property (nonatomic, strong) BRScanViewController *scanController;
+@property (nonatomic, strong) BRInputAddressViewController *inputAddressController;
 @property (nonatomic, strong) id clipboardObserver;
 
 @property (nonatomic, strong) IBOutlet UILabel *sendLabel;
-@property (nonatomic, strong) IBOutlet UIButton *scanButton, *clipboardButton;
+@property (nonatomic, strong) IBOutlet UIButton *scanButton, *clipboardButton, *inputButton;
 @property (nonatomic, strong) IBOutlet UITextView *clipboardText;
 
 @end
@@ -104,6 +106,10 @@ static NSString *sanitizeString(NSString *s)
 {
     if (! self.scanController) {
         self.scanController = [self.storyboard instantiateViewControllerWithIdentifier:@"ScanViewController"];
+    }
+    
+    if (! self.inputAddressController){
+        self.inputAddressController = [self.storyboard instantiateViewControllerWithIdentifier:@"InputAddressViewController"];
     }
 }
 
@@ -195,6 +201,18 @@ static NSString *sanitizeString(NSString *s)
     [self presentViewController:alertCorrupt animated:YES completion:nil];
 }
 
+//- (void)handleInput:(NSString *)add
+//{
+//    BRPaymentRequest *request = [BRPaymentRequest requestWithString:add];
+//    NSLog(@"BRPaymentRequest on input: %@", request);
+////    BRAmountViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"AmountViewController"];
+////     (@"Req on input: %@", c);
+//    
+//    [self confirmRequest:request];
+////    NSLog(@"Req on input: %@", request);
+//    
+//}
+
 - (void)confirmAmount:(uint64_t)amount fee:(uint64_t)fee address:(NSString *)address name:(NSString *)name
 memo:(NSString *)memo isSecure:(BOOL)isSecure
 {
@@ -247,7 +265,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
             [self.navigationController popToRootViewControllerAnimated:YES];
         }
         
-        NSLog(@"signing transaction");
         [(id)self.parentViewController.parentViewController startActivityWithTimeout:30.0];
         
         //TODO: don't sign on main thread
@@ -263,7 +280,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
             [self presentViewController:alertPayment animated:YES completion:nil];
         }
         
-        NSLog(@"signed transaction:\n%@", [NSString hexWithData:self.tx.data]);
         [[BRPeerManager sharedInstance] publishTransaction:self.tx completion:^(NSError *error) {
             if (protoReq.details.paymentURL.length > 0) return;
             [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
@@ -301,7 +317,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
             [[BRPaymentProtocolPayment alloc] initWithMerchantData:protoReq.details.merchantData
                                                       transactions:@[self.tx] refundToAmounts:@[@(refundAmount)] refundToScripts:@[refundScript] memo:nil];
             
-            NSLog(@"posting payment to: %@", protoReq.details.paymentURL);
             
             [BRPaymentRequest postPayment:payment to:protoReq.details.paymentURL timeout:20.0
                     completion:^(BRPaymentProtocolACK *ack, NSError *error) {
@@ -359,7 +374,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
 
         [BRPaymentRequest fetch:request.r timeout:20.0 completion:^(BRPaymentProtocolRequest *req, NSError *error) {
             [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
-
             if (error) {
                 /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"couldn't make payment", nil)
                   message:error.localizedDescription delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
@@ -414,7 +428,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     }
     else if (request.amount == 0) {
         BRAmountViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"AmountViewController"];
-
         c.info = request;
         c.delegate = self;
         c.to = (request.label.length > 0) ? sanitizeString(request.label) :
@@ -478,7 +491,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                     [self.navigationController popToRootViewControllerAnimated:YES];
                 }
                 
-                NSLog(@"signing transaction");
                 [(id)self.parentViewController.parentViewController startActivityWithTimeout:30.0];
                 
                 //TODO: don't sign on main thread
@@ -494,7 +506,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                     [self presentViewController:alertPayment animated:YES completion:nil];
                 }
                 
-                NSLog(@"signed transaction:\n%@", [NSString hexWithData:self.tx.data]);
                 [[BRPeerManager sharedInstance] publishTransaction:self.tx completion:^(NSError *error) {
                     if (protoReq.details.paymentURL.length > 0) return;
                     [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
@@ -532,7 +543,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                     [[BRPaymentProtocolPayment alloc] initWithMerchantData:protoReq.details.merchantData
                                                               transactions:@[self.tx] refundToAmounts:@[@(refundAmount)] refundToScripts:@[refundScript] memo:nil];
                     
-                    NSLog(@"posting payment to: %@", protoReq.details.paymentURL);
                     
                     [BRPaymentRequest postPayment:payment to:protoReq.details.paymentURL timeout:20.0
                                        completion:^(BRPaymentProtocolACK *ack, NSError *error) {
@@ -834,7 +844,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                     [self.navigationController popToRootViewControllerAnimated:YES];
                 }
                 
-                NSLog(@"signing transaction");
                 [(id)self.parentViewController.parentViewController startActivityWithTimeout:30.0];
                 
                 //TODO: don't sign on main thread
@@ -850,7 +859,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                     [self presentViewController:alertPayment animated:YES completion:nil];
                 }
                 
-                NSLog(@"signed transaction:\n%@", [NSString hexWithData:self.tx.data]);
                 [[BRPeerManager sharedInstance] publishTransaction:self.tx completion:^(NSError *error) {
                     if (protoReq.details.paymentURL.length > 0) return;
                     [(id)self.parentViewController.parentViewController stopActivityWithSuccess:(! error)];
@@ -888,7 +896,6 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                     [[BRPaymentProtocolPayment alloc] initWithMerchantData:protoReq.details.merchantData
                                                               transactions:@[self.tx] refundToAmounts:@[@(refundAmount)] refundToScripts:@[refundScript] memo:nil];
                     
-                    NSLog(@"posting payment to: %@", protoReq.details.paymentURL);
                     
                     [BRPaymentRequest postPayment:payment to:protoReq.details.paymentURL timeout:20.0
                                        completion:^(BRPaymentProtocolACK *ack, NSError *error) {
@@ -1026,6 +1033,18 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     self.scanController.transitioningDelegate = self;
     [self.navigationController presentViewController:self.scanController animated:YES completion:nil];
 }
+- (IBAction)inputAddress:(id)sender
+{
+    
+    if ([self nextTip]) return;
+    
+    [sender setEnabled:NO];
+    self.inputAddressController.delegate = self;
+//    self.inputAddressController.transitioningDelegate = self;
+    [self.navigationController presentViewController:self.inputAddressController animated:YES completion:nil];
+    
+    
+}
 
 - (IBAction)payToClipboard:(id)sender
 {
@@ -1082,8 +1101,10 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
     self.okAddress = nil;
     self.clearClipboard = self.useClipboard = NO;
     self.didAskFee = self.removeFee = NO;
-    self.scanButton.enabled = self.clipboardButton.enabled = YES;
+    self.scanButton.enabled = self.clipboardButton.enabled = self.inputButton.enabled = YES;
     [self updateClipboardText];
+    
+ 
 }
 
 #pragma mark - BRAmountViewControllerDelegate
@@ -1110,6 +1131,7 @@ fromConnection:(AVCaptureConnection *)connection
 
         NSString *s = o.stringValue;
         BRPaymentRequest *request = [BRPaymentRequest requestWithString:s];
+        
 
         if (! [request isValid] && ! [s isValidBitcoinPrivateKey] && ! [s isValidBitcoinBIP38Key]) {
             [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resetQRGuide) object:nil];
@@ -1167,6 +1189,19 @@ fromConnection:(AVCaptureConnection *)connection
 
         break;
     }
+}
+
+#pragma mark - BRInputAddressViewControllerDelegate
+
+- (void)inputAddressViewController:(BRInputAddressViewController *)viewController didChooseValue:(NSString*)value {
+
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        NSString *add = @"bitcoin:";
+        NSString *address = [add stringByAppendingString:value];
+        BRPaymentRequest *request = [BRPaymentRequest requestWithString:address];
+        
+        [self confirmRequest:request];
+    }];
 }
 
 

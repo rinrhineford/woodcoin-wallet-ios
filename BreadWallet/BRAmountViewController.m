@@ -116,6 +116,7 @@
     BRWalletManager *m = [BRWalletManager sharedInstance];
     uint64_t amount = (self.swapped) ? [m amountForLocalCurrencyString:self.amountField.text] :
                       [m amountForString:self.amountField.text];
+    
 
     self.swapLeftLabel.hidden = YES;
     self.localCurrencyLabel.hidden = NO;
@@ -129,7 +130,7 @@
 - (IBAction)number:(id)sender
 {
     NSUInteger l = [self.amountField.text rangeOfCharacterFromSet:self.charset options:NSBackwardsSearch].location;
-
+    
     l = (l < self.amountField.text.length) ? l + 1 : self.amountField.text.length;
     [self textField:self.amountField shouldChangeCharactersInRange:NSMakeRange(l, 0)
      replacementString:[(UIButton *)sender titleLabel].text];
@@ -150,6 +151,7 @@
 
     self.amount = (self.swapped) ? [m amountForLocalCurrencyString:self.amountField.text] :
                   [m amountForString:self.amountField.text];
+    
 
     if (self.amount == 0) return;
     
@@ -189,6 +191,7 @@
 
     self.localCurrencyLabel.text = [NSString stringWithFormat:@"(%@)", (self.swapped) ? [m stringForAmount:amount] :
                                                                        [m localCurrencyStringForAmount:amount]];
+    
     self.amountField.text = (self.swapped) ? [m localCurrencyStringForAmount:amount] : [m stringForAmount:amount];
 
     if (amount == 0) {
@@ -262,7 +265,7 @@
                                     [UIColor colorWithWhite:0.75 alpha:1.0];
 
     [UIView animateWithDuration:0.1 animations:^{
-        //self.swapLeftLabel.transform = CGAffineTransformMakeScale(0.85, 0.85);
+        self.swapLeftLabel.transform = CGAffineTransformMakeScale(0.85, 0.85);
         self.swapLeftLabel.textColor = self.swapRightLabel.textColor;
         self.swapRightLabel.textColor = self.localCurrencyLabel.textColor;
         self.swapLeftLabel.text = [[self.swapLeftLabel.text stringByReplacingOccurrencesOfString:@"(" withString:@""]
@@ -273,7 +276,7 @@
 - (IBAction)releaseSwapButton:(id)sender
 {
     [UIView animateWithDuration:0.1 animations:^{
-        //self.swapLeftLabel.transform = CGAffineTransformIdentity;
+        self.swapLeftLabel.transform = CGAffineTransformIdentity;
         self.swapLeftLabel.textColor = self.localCurrencyLabel.textColor;
     } completion:^(BOOL finished) {
         self.swapLeftLabel.hidden = self.swapRightLabel.hidden = YES;
@@ -339,7 +342,8 @@ replacementString:(NSString *)string
     if (t.length == 0 && textField.placeholder.length == 0) {
         textField.placeholder = (self.swapped) ? [m localCurrencyStringForAmount:0] : [m stringForAmount:0];
     }
-    //self.payButton.enabled = t.length ? YES : NO;
+    
+    self.payButton.enabled = t.length ? YES : NO;
 
     self.swapRightLabel.hidden = YES;
     textField.hidden = NO;

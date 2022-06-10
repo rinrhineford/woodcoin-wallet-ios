@@ -375,12 +375,32 @@
     [self hideErrorBar];
     
     if (sender == self) { // show backup phrase
-        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
-          message:NSLocalizedString(@"\nDO NOT let anyone see your backup phrase or they can spend your bitcoins.\n\n"
-                                    "DO NOT take a screenshot. Screenshots are visible to other apps and devices.\n",
-                                    nil) delegate:[[(id)segue.destinationViewController viewControllers] firstObject]
-          cancelButtonTitle:NSLocalizedString(@"cancel", nil) otherButtonTitles:NSLocalizedString(@"show", nil), nil]
-         show];
+//        [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
+//          message:NSLocalizedString(@"\nDO NOT let anyone see your backup phrase or they can spend your bitcoins.\n\n"
+//                                    "DO NOT take a screenshot. Screenshots are visible to other apps and devices.\n",
+//                                    nil) delegate:[[(id)segue.destinationViewController viewControllers] firstObject]
+//          cancelButtonTitle:NSLocalizedString(@"cancel", nil) otherButtonTitles:NSLocalizedString(@"show", nil), nil]
+//         show];
+        UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"\nDO NOT let anyone see your backup phrase or they can spend your "
+                                 "woodcoins.\n\nDO NOT take a screenshot. Screenshots are visible to "
+                                  "other apps and devices." preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+        
+        UIAlertAction* showAction = [UIAlertAction actionWithTitle:@"show" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+//                           self.pinNav = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
+//                           [self.pinNav.viewControllers.firstObject setAppeared:YES];
+//                           [self.pinNav.viewControllers.firstObject setCancelable:YES];
+//                           self.pinNav.transitioningDelegate = self;
+//                           [self.navigationController presentViewController:self.pinNav animated:YES completion:nil];
+            NSString * storyboardName = @"Main";
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle: nil];
+            UIViewController * vc = [storyboard instantiateViewControllerWithIdentifier:@"ShowSeedViewController"];
+            [self presentViewController:vc animated:YES completion:nil];
+        }];
+        
+        [alert addAction:cancelAction];
+        [alert addAction:showAction];
+        [self presentViewController:alert animated:YES completion:nil];
     }
 }
 

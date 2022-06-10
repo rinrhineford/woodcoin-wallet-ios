@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5DC6AEC7282A405E006B9146 /* BRInputAddressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DC6AEC6282A405E006B9146 /* BRInputAddressViewController.m */; };
+		5DCA171028373501007A816B /* BRShowSeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DCA170F28373501007A816B /* BRShowSeedViewController.m */; };
 		7365C03B26308D8100030431 /* demofile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7365C03A26308D8100030431 /* demofile.swift */; };
 		75242C851968876500CF40E7 /* BRPINViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75242C841968876500CF40E7 /* BRPINViewController.m */; };
 		7525B619192453840041C0F2 /* BRNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 7525B618192453840041C0F2 /* BRNavigationBar.m */; };
@@ -699,6 +701,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5DC6AEC5282A405E006B9146 /* BRInputAddressViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BRInputAddressViewController.h; sourceTree = "<group>"; };
+		5DC6AEC6282A405E006B9146 /* BRInputAddressViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BRInputAddressViewController.m; sourceTree = "<group>"; };
+		5DCA170E28373501007A816B /* BRShowSeedViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BRShowSeedViewController.h; sourceTree = "<group>"; };
+		5DCA170F28373501007A816B /* BRShowSeedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BRShowSeedViewController.m; sourceTree = "<group>"; };
 		65C532C623FA1E400037F3E8 /* breadwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = breadwallet.entitlements; path = breadwallet/breadwallet.entitlements; sourceTree = "<group>"; };
 		7365C03926308D8000030431 /* loughwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "loughwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		7365C03A26308D8100030431 /* demofile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = demofile.swift; sourceTree = "<group>"; };
@@ -2910,6 +2916,10 @@
 				757BE7E8192D4E880061CB20 /* BRSeedViewController.m */,
 				75242C831968876500CF40E7 /* BRPINViewController.h */,
 				75242C841968876500CF40E7 /* BRPINViewController.m */,
+				5DC6AEC5282A405E006B9146 /* BRInputAddressViewController.h */,
+				5DC6AEC6282A405E006B9146 /* BRInputAddressViewController.m */,
+				5DCA170E28373501007A816B /* BRShowSeedViewController.h */,
+				5DCA170F28373501007A816B /* BRShowSeedViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -3170,7 +3180,7 @@
 				ORGANIZATIONNAME = "Aaron Voisine";
 				TargetAttributes = {
 					75D5F3BD191EC270004AB296 = {
-						DevelopmentTeam = LBL5W959W4;
+						DevelopmentTeam = 9NURK56S4W;
 						LastSwiftMigration = 1240;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -3183,7 +3193,7 @@
 						};
 					};
 					75D5F3E4191EC270004AB296 = {
-						DevelopmentTeam = LBL5W959W4;
+						DevelopmentTeam = 9NURK56S4W;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 75D5F3BD191EC270004AB296;
 					};
@@ -3870,6 +3880,7 @@
 				752E28AE19234AE300DB5A3C /* BRTxInputEntity.m in Sources */,
 				752E28AF19234AE300DB5A3C /* BRTxOutputEntity.m in Sources */,
 				758DBD0E1980634900389E2A /* BRTxDetailViewController.m in Sources */,
+				5DCA171028373501007A816B /* BRShowSeedViewController.m in Sources */,
 				7548CF3719556FD700EF827F /* BRCopyLabel.m in Sources */,
 				752E28D119234C3600DB5A3C /* BRKey.m in Sources */,
 				84F68C8A1975E9E2002FC300 /* BRScanViewController.m in Sources */,
@@ -3885,6 +3896,7 @@
 				752E28D819234C3600DB5A3C /* BRPeerManager.m in Sources */,
 				752E28D419234C3600DB5A3C /* BRPaymentProtocol.m in Sources */,
 				75242C851968876500CF40E7 /* BRPINViewController.m in Sources */,
+				5DC6AEC7282A405E006B9146 /* BRInputAddressViewController.m in Sources */,
 				752E28D519234C3600DB5A3C /* BRPaymentRequest.m in Sources */,
 				7525B619192453840041C0F2 /* BRNavigationBar.m in Sources */,
 				75878BC1192AEC3F002505AB /* BRReceiveViewController.m in Sources */,
@@ -4035,7 +4047,8 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LBL5W959W4;
+				CURRENT_PROJECT_VERSION = 1.3;
+				DEVELOPMENT_TEAM = 9NURK56S4W;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BreadWallet/BreadWallet-Prefix.pch";
 				GCC_WARN_PEDANTIC = YES;
@@ -4045,14 +4058,15 @@
 					"$(SRCROOT)/openssl/include",
 				);
 				INFOPLIST_FILE = "BreadWallet/BreadWallet-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bws.breadwallet;
+				PRODUCT_BUNDLE_IDENTIFIER = org.log.woodcoin;
 				PRODUCT_NAME = LoughWallet;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWallet/loughwallet-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = GCov_Build;
@@ -4091,7 +4105,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LBL5W959W4;
+				DEVELOPMENT_TEAM = 9NURK56S4W;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -4275,7 +4289,8 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LBL5W959W4;
+				CURRENT_PROJECT_VERSION = 1.3;
+				DEVELOPMENT_TEAM = 9NURK56S4W;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BreadWallet/BreadWallet-Prefix.pch";
 				GCC_WARN_PEDANTIC = YES;
@@ -4285,14 +4300,15 @@
 					"$(SRCROOT)/openssl/include",
 				);
 				INFOPLIST_FILE = "BreadWallet/BreadWallet-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bws.breadwallet;
+				PRODUCT_BUNDLE_IDENTIFIER = org.log.woodcoin;
 				PRODUCT_NAME = LoughWallet;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWallet/loughwallet-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -4307,7 +4323,8 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LBL5W959W4;
+				CURRENT_PROJECT_VERSION = 1.3;
+				DEVELOPMENT_TEAM = 9NURK56S4W;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BreadWallet/BreadWallet-Prefix.pch";
 				GCC_WARN_PEDANTIC = YES;
@@ -4317,13 +4334,14 @@
 					"$(SRCROOT)/openssl/include",
 				);
 				INFOPLIST_FILE = "BreadWallet/BreadWallet-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bws.breadwallet;
+				PRODUCT_BUNDLE_IDENTIFIER = org.log.woodcoin;
 				PRODUCT_NAME = LoughWallet;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "BreadWallet/loughwallet-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -4336,7 +4354,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LBL5W959W4;
+				DEVELOPMENT_TEAM = 9NURK56S4W;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -4366,7 +4384,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LBL5W959W4;
+				DEVELOPMENT_TEAM = 9NURK56S4W;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",

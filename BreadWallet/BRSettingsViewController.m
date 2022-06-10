@@ -46,7 +46,7 @@
 @property (nonatomic, strong) UITableViewController *selectorController;
 @property (nonatomic, strong) NSArray *selectorOptions;
 @property (nonatomic, strong) NSString *selectedOption;
-@property (nonatomic, strong) UINavigationController *pinNav;
+@property (nonatomic, strong) UINavigationController *pinNav, *seedShow;
 
 @end
 
@@ -667,11 +667,15 @@
                        UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
                        
                        UIAlertAction* showAction = [UIAlertAction actionWithTitle:@"show" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                           self.pinNav = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
-                           [self.pinNav.viewControllers.firstObject setAppeared:YES];
-                           [self.pinNav.viewControllers.firstObject setCancelable:YES];
-                           self.pinNav.transitioningDelegate = self;
-                           [self.navigationController presentViewController:self.pinNav animated:YES completion:nil];
+//                           self.pinNav = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
+//                           [self.pinNav.viewControllers.firstObject setAppeared:YES];
+//                           [self.pinNav.viewControllers.firstObject setCancelable:YES];
+//                           self.pinNav.transitioningDelegate = self;
+//                           [self.navigationController presentViewController:self.pinNav animated:YES completion:nil];
+                           NSString * storyboardName = @"Main";
+                           UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle: nil];
+                           UIViewController * vc = [storyboard instantiateViewControllerWithIdentifier:@"ShowSeedViewController"];
+                           [self presentViewController:vc animated:YES completion:nil];
                        }];
                        
                        [alert addAction:cancelAction];
@@ -758,7 +762,7 @@
 
 #pragma mark - UIAlertViewDelegate
 
-/*- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == alertView.cancelButtonIndex) {
         [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
@@ -770,7 +774,7 @@
     [self.pinNav.viewControllers.firstObject setCancelable:YES];
     self.pinNav.transitioningDelegate = self;
     [self.navigationController presentViewController:self.pinNav animated:YES completion:nil];
-}*/
+}
 
 #pragma mark - UIViewControllerAnimatedTransitioning
 
@@ -795,6 +799,15 @@
          pushViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"SeedViewController"]
          animated:NO];
         [self.pinNav.viewControllers.firstObject animateTransition:transitionContext];
+//        self.seedShow = [self.storyboard instantiateViewControllerWithIdentifier:@"SeedViewController"];
+//        [self.navigationController presentViewController:self.seedShow animated:NO completion:nil];
+//        [self.pinNav.viewControllers.firstObject animateTransition:transitionContext];
+//        NSString * storyboardName = @"Main";
+//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle: nil];
+//        UIViewController * vc = [storyboard instantiateViewControllerWithIdentifier:@"SeedViewController"];
+//        [self presentViewController:vc animated:YES completion:nil];
+//        [self.pinNav.viewControllers.firstObject animateTransition:transitionContext];
+        
     }
     else {
         if (self.wallpaper.superview != v) [v insertSubview:self.wallpaper belowSubview:from.view];

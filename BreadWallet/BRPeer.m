@@ -164,7 +164,6 @@ services:(uint64_t)services
         CFReadStreamRef readStream = NULL;
         CFWriteStreamRef writeStream = NULL;
 
-        NSLog(@"%@:%u connecting", self.host, self.port);
     
         CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)self.host, self.port, &readStream, &writeStream);
         self.inputStream = CFBridgingRelease(readStream);
@@ -240,7 +239,6 @@ services:(uint64_t)services
 {
     if (self.status != BRPeerStatusConnecting || ! self.sentVerack || ! self.gotVerack) return;
 
-    NSLog(@"%@:%d handshake completed", self.host, self.port);
     [NSObject cancelPreviousPerformRequestsWithTarget:self]; // cancel pending handshake timeout
     _status = BRPeerStatusConnected;
     dispatch_async(self.delegateQueue, ^{

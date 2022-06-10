@@ -1801,7 +1801,7 @@ static const struct { uint32_t height; char *hash; time_t timestamp; uint32_t ta
 };
 
 static const char *dns_seeds[] = {
-    "207.246.126.39", "67.207.91.29", "207.102.118.32"
+    "dnsseed.stuffseed.org", "dnsseed.seedfunk.org"
 };
 
 #endif
