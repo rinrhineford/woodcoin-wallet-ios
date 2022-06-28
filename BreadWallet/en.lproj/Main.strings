@@ -201,7 +201,7 @@
 "qel-3J-2VC.text" = "receive money:";
 
 /* Class = "IBUITableViewController"; title = "transaction details"; ObjectID = "s4T-yd-VfX"; */
-"s4T-yd-VfX.title" = "transaction details";
+/*"s4T-yd-VfX.title" = "transaction details";*/
 
 /* Class = "IBUILabel"; text = "no transactions"; ObjectID = "t1j-JZ-FW0"; */
 "t1j-JZ-FW0.text" = "no transactions";

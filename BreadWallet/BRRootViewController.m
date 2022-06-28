@@ -86,6 +86,7 @@
     self.receiveViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ReceiveViewController"];
     self.sendViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"SendViewController"];
     self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageViewController"];
+    self.wallpaper.alpha = 0.0;
 
     self.pageViewController.dataSource = self;
     [self.pageViewController setViewControllers:@[self.sendViewController]
@@ -785,7 +786,7 @@ viewControllerAfterViewController:(UIViewController *)viewController
          belowSubview:self.navigationController.navigationBar];
         to.view.center = CGPointMake(to.view.center.x, v.frame.size.height*3/2);
 
-        BRWalletManager *m = [BRWalletManager sharedInstance];
+//        BRWalletManager *m = [BRWalletManager sharedInstance];
 
         [[(id)to viewControllers].firstObject navigationItem].title = nil;
         [[(id)to viewControllers].firstObject navigationItem].leftBarButtonItem.image = nil;
@@ -793,7 +794,7 @@ viewControllerAfterViewController:(UIViewController *)viewController
         [v addSubview:self.burger];
         [v layoutIfNeeded];
         self.burger.center = CGPointMake(26.0, 40.0);
-        self.burger.hidden = NO;
+        self.burger.hidden = YES;
         [self.burger setX:YES completion:nil];
 
         [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0 usingSpringWithDamping:0.8
@@ -806,9 +807,9 @@ viewControllerAfterViewController:(UIViewController *)viewController
             self.pageViewController.view.center = CGPointMake(self.pageViewController.view.center.x,
                                                               v.frame.size.height/2.0);
             [[(id)to viewControllers].firstObject navigationItem].leftBarButtonItem.image = [UIImage imageNamed:@"x"];
-            [[(id)to viewControllers].firstObject navigationItem].title =
-                [NSString stringWithFormat:@"%@ (%@)", [m stringForAmount:m.wallet.balance],
-                 [m localCurrencyStringForAmount:m.wallet.balance]];
+//            [[(id)to viewControllers].firstObject navigationItem].title =
+//                [NSString stringWithFormat:@"%@ (%@)", [m stringForAmount:m.wallet.balance],
+//                 [m localCurrencyStringForAmount:m.wallet.balance]];
             [v addSubview:to.view];
             [transitionContext completeTransition:finished];
         }];

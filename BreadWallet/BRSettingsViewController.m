@@ -60,6 +60,7 @@
     self.wallpaper = [[UIImageView alloc] initWithFrame:self.navigationController.view.bounds];
     self.wallpaper.image = [UIImage imageNamed:@"wallpaper-default"];
     self.wallpaper.contentMode = UIViewContentModeLeft;
+    self.wallpaper.alpha = 0.0;
     [self.navigationController.view insertSubview:self.wallpaper atIndex:0];
     self.navigationController.delegate = self;
     self.moreTx = ([BRWalletManager sharedInstance].wallet.recentTransactions.count > 5) ? YES : NO;
@@ -75,8 +76,8 @@
 {
     [super viewWillAppear:animated];
 
-    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-    //[UIViewController preferredStatusBarStyle];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+    
     [self setNeedsStatusBarAppearanceUpdate];
     
     BRWalletManager *m = [BRWalletManager sharedInstance];
@@ -457,6 +458,8 @@
                 case 0:
                     cell = [tableView dequeueReusableCellWithIdentifier:selectorIdent];
                     cell.detailTextLabel.text = m.localCurrencyCode;
+                    cell.userInteractionEnabled = NO;
+                    cell.hidden = YES;
                     break;
 
                 case 1:

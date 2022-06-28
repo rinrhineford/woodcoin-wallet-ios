@@ -457,9 +457,9 @@ static NSData *getKeychainData(NSString *key)
         }
 
         //_localCurrencyPrice = [json[self.localCurrencyCode][@"last"] doubleValue];
-        _localCurrencyPrice = [items[0][@"usd"] doubleValue];
+        self->_localCurrencyPrice = [items[0][@"usd"] doubleValue];
         self.localFormat.maximum = @((MAX_MONEY/SATOSHIS)*self.localCurrencyPrice);
-        _currencyCodes = [NSArray arrayWithArray:json.allKeys];
+        self->_currencyCodes = [NSArray arrayWithArray:json.allKeys];
         
         if ([self.localCurrencyCode isEqual:[[NSLocale currentLocale] objectForKey:NSLocaleCurrencyCode]]) {
             [defs removeObjectForKey:LOCAL_CURRENCY_SYMBOL_KEY];
