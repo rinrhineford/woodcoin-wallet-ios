@@ -37,8 +37,15 @@
 
 @property (nonatomic, strong) IBOutlet UITextView *textView;
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint *textViewYBottom;
+@property (weak, nonatomic) IBOutlet UIView *textViewContainer;
 @property (nonatomic, strong) NSArray *words;
-@property (nonatomic, strong) id keyboardObserver;
+@property (nonatomic, strong) id keyboardShowObserver;
+@property (nonatomic, strong) id keyboardDismissObserver;
+@property (weak, nonatomic) CALayer *textViewContainerBorderLayer;
+@property (nonatomic, strong) UITapGestureRecognizer *tapRecognizer;
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *subtitleLable;
+@property (weak, nonatomic) IBOutlet UILabel *infoText;
 
 @end
 
@@ -70,53 +77,115 @@ static NSString *normalize_phrase(NSString *phrase)
     // TODO: create secure versions of keyboard and UILabel and use in place of UITextView
     // TODO: autocomplete based on 4 letter prefixes of mnemonic words
     
-    self.textView.layer.cornerRadius = 5.0;
-    self.view.backgroundColor = [UIColor colorWithRed:37/255.0 green:184/255.0 blue:32/255.0 alpha:0.9];
-    
-    self.keyboardObserver =
-        [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillShowNotification object:nil queue:nil
-        usingBlock:^(NSNotification *note) {
-            [UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue] delay:0.0
-             options:[note.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue] animations:^{
-                 self.textViewYBottom.constant =
-                     [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height + 12.0;
-                 [self.view layoutIfNeeded];
-             } completion:nil];
+    self.keyboardShowObserver =
+        [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillShowNotification
+                                                          object:nil
+                                                           queue:nil
+                                                      usingBlock:^(NSNotification *note) {
+            CGFloat keyboardHeight = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+            [UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue]
+                                  delay:0.0
+                                options:[note.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue]
+                             animations:^{
+                self.view.frame = CGRectOffset(self.view.frame, 0, -keyboardHeight);
+            } completion:nil];
         }];
     
-    if (self.navigationController.viewControllers.firstObject != self) return;
+    self.keyboardDismissObserver =
+        [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillHideNotification
+                                                          object:nil
+                                                           queue:nil
+                                                      usingBlock:^(NSNotification *note) {
+            CGFloat keyboardHeight = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+            [UIView animateWithDuration:[note.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue]
+                                  delay:0.0
+                                options:[note.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue]
+                             animations:^{
+                self.view.frame = CGRectOffset(self.view.frame, 0, keyboardHeight);
+            } completion:nil];
+        }];
     
-    self.textView.layer.borderColor = [[UIColor colorWithWhite:0.0 alpha:0.25] CGColor];
-    self.textView.layer.borderWidth = 0.5;
-
+    self.tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                 action:@selector(didTapAnywhere)];
+    
+    [self.view addGestureRecognizer:self.tapRecognizer];
+    
+    if (self.navigationController.viewControllers.firstObject != self) return;
 }
 
-- (void)viewWillAppear:(BOOL)animated
+-(void)viewDidLayoutSubviews
 {
-    [super viewWillAppear:animated];
-
-    [self.textView becomeFirstResponder];
+    [super viewDidLayoutSubviews];
+    [self configureTextViewContainerIfNeeded];
 }
 
 - (void)dealloc
 {
-    if (self.keyboardObserver) [[NSNotificationCenter defaultCenter] removeObserver:self.keyboardObserver];
+    if (self.keyboardShowObserver) [[NSNotificationCenter defaultCenter] removeObserver:self.keyboardShowObserver];
+}
+
+- (void)didTapAnywhere {
+    [self.textView resignFirstResponder];
+}
+
+- (void)configureTextViewContainerIfNeeded {
+    CAShapeLayer *shapeLayer = [CAShapeLayer new];
+    CGSize frameSize = self.textViewContainer.frame.size;
+    CGRect shapeRect = CGRectMake(0, 0, frameSize.width, frameSize.height);
+    
+    shapeLayer.bounds = shapeRect;
+    shapeLayer.position = CGPointMake(frameSize.width / 2, frameSize.height / 2);
+    shapeLayer.fillColor = UIColor.clearColor.CGColor;
+    shapeLayer.strokeColor = [UIColor colorNamed:@"Pure White"].CGColor;
+    shapeLayer.lineWidth = 2;
+    shapeLayer.lineJoin = kCALineJoinRound;
+    shapeLayer.lineDashPattern = @[@10, @10];
+    shapeLayer.path = [UIBezierPath bezierPathWithRoundedRect:shapeRect cornerRadius:16].CGPath;
+    
+    CALayer *oldShapeLayer = self.textViewContainerBorderLayer;
+    if (oldShapeLayer) {
+        for (CALayer *layer in self.textViewContainer.layer.sublayers) {
+            if ([layer isEqual:oldShapeLayer]) {
+                [layer removeFromSuperlayer];
+            }
+        }
+    }
+    
+    [self.textViewContainer.layer addSublayer:shapeLayer];
+    self.textViewContainerBorderLayer = shapeLayer;
 }
 
 #pragma mark - IBAction
 
 - (IBAction)cancel:(id)sender
 {
-    [self.navigationController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    if (self.shouldPopDismissStyle) {
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        [self.navigationController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+- (IBAction)import:(UIButton *)sender {
+    [self checkInput:YES];
+}
+
+- (IBAction)pasteFromClipboard:(UIButton *)sender {
+    self.textView.text = [[UIPasteboard generalPasteboard] string];
 }
 
 #pragma mark - UITextViewDelegate
 
 - (void)textViewDidChange:(UITextView *)textView
 {
+    [self checkInput:NO];
+}
+
+- (void)checkInput:(BOOL)forceImport {
     static NSCharacterSet *charset = nil;
     static dispatch_once_t onceToken = 0;
-//    NSLog(@"Text did change called");
+    
+    UITextView *textView = self.textView;
     
     dispatch_once(&onceToken, ^{
         NSMutableCharacterSet *set = [NSMutableCharacterSet letterCharacterSet];
@@ -130,7 +199,7 @@ static NSString *normalize_phrase(NSString *phrase)
         NSRange selected = textView.selectedRange;
         NSMutableString *s = CFBridgingRelease(CFStringCreateMutableCopy(SecureAllocator(), 0,
                                                                          (CFStringRef)textView.text));
-        BOOL done = ([s rangeOfString:@"\n"].location != NSNotFound);
+        BOOL done = ([s rangeOfString:@"\n"].location != NSNotFound) || forceImport;
     
         while ([s rangeOfCharacterFromSet:charset].location != NSNotFound) {
             [s deleteCharactersInRange:[s rangeOfCharacterFromSet:charset]];
@@ -165,39 +234,40 @@ static NSString *normalize_phrase(NSString *phrase)
         }
         
         NSLog(@"s letter value: %@", s);
-//        NSLog(@"phrase letter value: %@", phrase);
-//        NSLog(@"normalize phrase: %@", normalize_phrase(m.seedPhrase));
 
-        if ([s isEqual:@"wipe"]) { // shortcut word to force the wipe option to appear
-            /*[[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:NSLocalizedString(@"cancel", nil)
-              destructiveButtonTitle:NSLocalizedString(@"wipe", nil) otherButtonTitles:nil]
-             showInView:[[UIApplication sharedApplication] delegate].window];*/
-            UIAlertController *walletController = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-            UIAlertAction * wipe = [UIAlertAction actionWithTitle:@"wipe" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action){
-                    [[BRWalletManager sharedInstance] setSeed:nil];
-                    self.textView.text = nil;
-                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WALLET_NEEDS_BACKUP_KEY];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
-
-                    UIViewController *p = self.navigationController.presentingViewController.presentingViewController;
+        if ([s isEqual:@"wipe"])
+        {
+            UIAlertController *walletController = [UIAlertController alertControllerWithTitle:nil
+                                                                                      message:nil
+                                                                               preferredStyle:UIAlertControllerStyleActionSheet];
+            UIAlertAction * wipe = [UIAlertAction actionWithTitle:@"wipe"
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                [[BRWalletManager sharedInstance] setSeed:nil];
+                self.textView.text = nil;
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:WALLET_NEEDS_BACKUP_KEY];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                
+                UIViewController *p = self.navigationController.presentingViewController.presentingViewController;
+                
+                [p dismissViewControllerAnimated:NO completion:^{
+                    UIViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
                     
-                    [p dismissViewControllerAnimated:NO completion:^{
-                        UIViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
-
-                        [[(id)c viewControllers].firstObject setAppeared:YES];
-
-                        [p presentViewController:c animated:NO completion:^{
-                            c.transitioningDelegate = [(id)p viewControllers].firstObject;
-                            [c presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"NewWalletNav"]
-                             animated:NO completion:nil];
-                        }];
+                    [[(id)c viewControllers].firstObject setAppeared:YES];
+                    
+                    [p presentViewController:c animated:NO completion:^{
+                        c.transitioningDelegate = [(id)p viewControllers].firstObject;
+                        [c presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"NewWalletNav"]
+                                        animated:NO completion:nil];
                     }];
                 }];
+            }];
             UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
             [walletController addAction:wipe];
             [walletController addAction:cancelAction];
         }
-        else if (incorrect) {
+        else if (incorrect)
+        {
             textView.selectedRange = [[textView.text lowercaseString] rangeOfString:incorrect];
         
             /*[[[UIAlertView alloc] initWithTitle:nil
@@ -207,12 +277,17 @@ static NSString *normalize_phrase(NSString *phrase)
             NSString *backStr = @" is not a backup phrase word";
             NSString *strIncorrect = incorrect;
             NSString *str = [strIncorrect stringByAppendingString:backStr];
-            UIAlertController *alertIncorrect = [UIAlertController alertControllerWithTitle:nil message:str preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
+            UIAlertController *alertIncorrect = [UIAlertController alertControllerWithTitle:nil
+                                                                                    message:str
+                                                                             preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok"
+                                                                   style:UIAlertActionStyleCancel
+                                                                 handler:nil];
             [alertIncorrect addAction:cancelAction];
             [self presentViewController:alertIncorrect animated:YES completion:nil];
         }
-        else if (a.count != PHRASE_LENGTH) {
+        else if (a.count != PHRASE_LENGTH)
+        {
             /*[[[UIAlertView alloc] initWithTitle:nil
               message:[NSString stringWithFormat:NSLocalizedString(@"backup phrase must have %d words", nil),
                        PHRASE_LENGTH] delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil)
@@ -223,7 +298,8 @@ static NSString *normalize_phrase(NSString *phrase)
             [alertPhrase addAction:cancelAction];
             [self presentViewController:alertPhrase animated:YES completion:nil];
         }
-        else if (! [[BRBIP39Mnemonic sharedInstance] phraseIsValid:phrase]) {
+        else if (! [[BRBIP39Mnemonic sharedInstance] phraseIsValid:phrase])
+        {
             /*[[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"bad backup phrase", nil) delegate:nil
               cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
             UIAlertController *alertInvalidPhrase = [UIAlertController alertControllerWithTitle:nil message:@"bad backup phrase" preferredStyle:UIAlertControllerStyleAlert];
@@ -274,17 +350,15 @@ static NSString *normalize_phrase(NSString *phrase)
                     [walletController addAction:cancelAction];
                     [self presentViewController:walletController animated:YES completion:nil];
                 }
-            }
-            else {
-                /*[[[UIAlertView alloc] initWithTitle:nil message:NSLocalizedString(@"backup phrase doesn't match", nil)
-                  delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
+            } else {
                 UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil message:NSLocalizedString(@"backup phrase doesn't match", nil) preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
                 [alert addAction:cancelAction];
                 [self presentViewController:alert animated:YES completion:nil];
             }
         }
-        else {
+        else
+        {
             //TODO: offer the user an option to move funds to a new seed if their wallet device was lost or stolen
             NSLog(@"wallet backup has been called");
             m.seedPhrase = textView.text;
@@ -294,31 +368,5 @@ static NSString *normalize_phrase(NSString *phrase)
         }
     }
 }
-
-#pragma mark - UIActionSheetDelegate
-
-/*- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex != actionSheet.destructiveButtonIndex) return;
-    
-    [[BRWalletManager sharedInstance] setSeed:nil];
-    self.textView.text = nil;
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:WALLET_NEEDS_BACKUP_KEY];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-
-    UIViewController *p = self.navigationController.presentingViewController.presentingViewController;
-    
-    [p dismissViewControllerAnimated:NO completion:^{
-        UIViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
-
-        [[(id)c viewControllers].firstObject setAppeared:YES];
-
-        [p presentViewController:c animated:NO completion:^{
-            c.transitioningDelegate = [(id)p viewControllers].firstObject;
-            [c presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"NewWalletNav"]
-             animated:NO completion:nil];
-        }];
-    }];
-}*/
 
 @end

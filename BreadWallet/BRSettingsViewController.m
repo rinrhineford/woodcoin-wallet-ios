@@ -33,6 +33,9 @@
 #import "BRTransaction.h"
 #import "BRCopyLabel.h"
 #import "BRBubbleView.h"
+#import "BRActionTableViewCell.h"
+#import "BRRestoreViewController.h"
+#import "BRDeleteWalletViewController.h"
 
 #define TRANSACTION_CELL_HEIGHT 75
 
@@ -61,7 +64,6 @@
     self.wallpaper.image = [UIImage imageNamed:@"wallpaper-default"];
     self.wallpaper.contentMode = UIViewContentModeLeft;
     self.wallpaper.alpha = 0.0;
-    [self.navigationController.view insertSubview:self.wallpaper atIndex:0];
     self.navigationController.delegate = self;
     self.moreTx = ([BRWalletManager sharedInstance].wallet.recentTransactions.count > 5) ? YES : NO;
 }
@@ -70,15 +72,9 @@
     return UIStatusBarStyleLightContent;
 }
 
-
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-    
-    [self setNeedsStatusBarAppearanceUpdate];
     
     BRWalletManager *m = [BRWalletManager sharedInstance];
     NSArray *a = m.wallet.recentTransactions;
@@ -100,8 +96,8 @@
                 }
                 else self.transactions = [NSArray arrayWithArray:a];
 
-                self.navigationItem.title = [NSString stringWithFormat:@"%@ (%@)", [m stringForAmount:m.wallet.balance],
-                                             [m localCurrencyStringForAmount:m.wallet.balance]];
+//                self.navigationItem.title = [NSString stringWithFormat:@"%@ (%@)", [m stringForAmount:m.wallet.balance],
+//                                             [m localCurrencyStringForAmount:m.wallet.balance]];
 
                 if (self.transactions.firstObject != tx) {
                     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0]
@@ -215,15 +211,12 @@
 
 - (IBAction)scanQR:(id)sender
 {
-    //TODO: show scanner in settings rather than dismissing
-    UINavigationController *nav = (id)self.navigationController.presentingViewController;
-
-    nav.view.alpha = 0.0;
-
-    [nav dismissViewControllerAnimated:NO completion:^{
-        [(id)[nav.viewControllers.firstObject sendViewController] scanQR:nil];
-        [UIView animateWithDuration:0.1 delay:1.5 options:0 animations:^{ nav.view.alpha = 1.0; } completion:nil];
-    }];
+    [self.tabBarController setSelectedIndex:1];
+    NSArray * navvcs = [((id)self.tabBarController.viewControllers[1]) viewControllers];
+    [navvcs.firstObject prepareForRestorePrivateKeys];
+    id vc = [navvcs.firstObject sendViewController];
+    [vc scanQR:nil];
+    
 }
 
 - (IBAction)toggle:(id)sender
@@ -265,14 +258,12 @@
 
     switch (section) {
         case 0:
-            if (self.transactions.count == 0) return 1;
-            return (self.moreTx) ? self.transactions.count + 1 : self.transactions.count;
-
+            return 0;
         case 1:
-            return 2;
+            return 0;
 
         case 2:
-            return 3;
+            return 4;
 
         case 3:
             return 2;
@@ -410,11 +401,11 @@
 
             switch (indexPath.row) {
                 case 0:
-                    cell.textLabel.text = NSLocalizedString(@"about", nil);
+                    cell.textLabel.text = NSLocalizedString(@"About", nil);
                     break;
 
                 case 1:
-                    cell.textLabel.text = NSLocalizedString(@"backup phrase", nil);
+                    cell.textLabel.text = NSLocalizedString(@"Backup phrase", nil);
                     break;
 
                 default:
@@ -424,36 +415,40 @@
 
             break;
 
-        case 2:
+        case 2: {
             cell = [tableView dequeueReusableCellWithIdentifier:actionIdent];
+            if ([cell isKindOfClass:[BRActionTableViewCell class]] == false) { return cell; }
+            BRActionTableViewCell *actionCell = (BRActionTableViewCell *)cell;
 
             switch (indexPath.row) {
-                case 0:
-                    cell.textLabel.text = NSLocalizedString(@"change pin", nil);
-                    cell.imageView.image = [UIImage imageNamed:@"pin"];
-                    cell.imageView.alpha = 0.75;
+                case 0: {
+                    actionCell.actionLabel.text = NSLocalizedString(@"change pin", nil);
+                    actionCell.iconView.image = [[UIImage imageNamed:@"pin"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
                     break;
-
-                case 1:
-                    cell.textLabel.text = NSLocalizedString(@"import private key", nil);
-                    cell.imageView.image = [UIImage imageNamed:@"cameraguide-blue-small"];
-                    cell.imageView.alpha = 1.0;
+                }
+                case 1: {
+                    actionCell.actionLabel.text = NSLocalizedString(@"rescan blockchain", nil);
+                    actionCell.iconView.image = [[UIImage imageNamed:@"rescan"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
                     break;
-
-                case 2:
-                    cell.textLabel.text = NSLocalizedString(@"rescan blockchain", nil);
-                    cell.imageView.image = [UIImage imageNamed:@"rescan"];
-                    cell.imageView.alpha = 0.75;
+                }
+                case 2: {
+                    actionCell.actionLabel.text = NSLocalizedString(@"Backup phrase", nil);
+                    actionCell.iconView.image = [UIImage imageNamed:@"Lock_fill"];
                     break;
-
+                }
+                case 3: {
+                    actionCell.actionLabel.text = NSLocalizedString(@"About", nil);
+                    actionCell.iconView.image = [UIImage imageNamed:@"Layers_fill"];
+                    break;
+                }
                 default:
                     NSAssert(FALSE, @"%s:%d %s: unkown indexPath.row %d", __FILE__, __LINE__,  __func__,
                              (int)indexPath.row);
             }
             
             break;
-
-        case 3:
+        }
+        case 3: {
             switch (indexPath.row) {
                 case 0:
                     cell = [tableView dequeueReusableCellWithIdentifier:selectorIdent];
@@ -476,7 +471,7 @@
             }
 
             break;
-
+        }
         case 4:
             cell = [tableView dequeueReusableCellWithIdentifier:restoreIdent];
             break;
@@ -505,12 +500,14 @@
             return nil;
 
         case 3:
-            return NSLocalizedString(@"rescan blockchain if you think you may have missing transactions, "
-                                     "or are having trouble sending (rescaning can take several minutes)", nil);
+//            return NSLocalizedString(@"rescan blockchain if you think you may have missing transactions, "
+//                                     "or are having trouble sending (rescaning can take several minutes)", nil);
+            return nil;
 
         case 4:
-            return NSLocalizedString(@"woodcoin network fees are only optional for high priority transactions "
-                                     "(removal may cause delays)", nil);
+//            return NSLocalizedString(@"woodcoin network fees are only optional for high priority transactions "
+//                                     "(removal may cause delays)", nil);
+            return nil;
 
         default:
             NSAssert(FALSE, @"%s:%d %s: unkown section %d", __FILE__, __LINE__,  __func__, (int)section);
@@ -528,60 +525,65 @@
     switch (indexPath.section) {
         case 0: return (indexPath.row == 0 || indexPath.row < self.transactions.count) ? TRANSACTION_CELL_HEIGHT : 44.0;
         case 1: return 44.0;
-        case 2: return 44.0;
-        case 3: return 44.0;
-        case 4: return 44.0;
+        case 2: return 64.0;
+        case 3: {
+            switch (indexPath.row) {
+                case 1: return 72.0;
+                default: return 44.0;
+            }
+        }
+        case 4: return 56.0;
         default: NSAssert(FALSE, @"%s:%d %s: unkown section %d", __FILE__, __LINE__,  __func__, (int)indexPath.section);
     }
     
     return 44.0;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    NSString *s = [self tableView:tableView titleForHeaderInSection:section];
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+//{
+//    NSString *s = [self tableView:tableView titleForHeaderInSection:section];
+//
+//    if (s.length == 0) return 22.0;
+//
+//    CGRect r = [s boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 20.0, CGFLOAT_MAX)
+//                options:NSStringDrawingUsesLineFragmentOrigin
+//                attributes:@{NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue" size:13]} context:nil];
+//
+//    return r.size.height + 22.0 + 10.0;
+//}
 
-    if (s.length == 0) return 22.0;
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+//{
+//    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width,
+//                                                         [self tableView:tableView heightForHeaderInSection:section])];
+//    UILabel *l = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0.0, v.frame.size.width - 20.0,
+//                                                           v.frame.size.height - 22.0)];
+//
+//    l.text = [self tableView:tableView titleForHeaderInSection:section];
+//    l.backgroundColor = [UIColor clearColor];
+//    l.font = [UIFont fontWithName:@"HelveticaNeue" size:13];
+//    l.textColor = [UIColor grayColor];
+//    l.shadowColor = [UIColor whiteColor];
+//    l.shadowOffset = CGSizeMake(0.0, 1.0);
+//    l.numberOfLines = 0;
+//    v.backgroundColor = [UIColor clearColor];
+//    [v addSubview:l];
+//
+//    return v;
+//}
+//
+//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+//{
+//    return (section + 1 == [self numberOfSectionsInTableView:tableView]) ? 22.0 : 0.0;
+//}
 
-    CGRect r = [s boundingRectWithSize:CGSizeMake(self.view.frame.size.width - 20.0, CGFLOAT_MAX)
-                options:NSStringDrawingUsesLineFragmentOrigin
-                attributes:@{NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue" size:13]} context:nil];
-    
-    return r.size.height + 22.0 + 10.0;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width,
-                                                         [self tableView:tableView heightForHeaderInSection:section])];
-    UILabel *l = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0.0, v.frame.size.width - 20.0,
-                                                           v.frame.size.height - 22.0)];
-    
-    l.text = [self tableView:tableView titleForHeaderInSection:section];
-    l.backgroundColor = [UIColor clearColor];
-    l.font = [UIFont fontWithName:@"HelveticaNeue" size:13];
-    l.textColor = [UIColor grayColor];
-    l.shadowColor = [UIColor whiteColor];
-    l.shadowOffset = CGSizeMake(0.0, 1.0);
-    l.numberOfLines = 0;
-    v.backgroundColor = [UIColor clearColor];
-    [v addSubview:l];
-
-    return v;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-{
-    return (section + 1 == [self numberOfSectionsInTableView:tableView]) ? 22.0 : 0.0;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width,
-                                                         [self tableView:tableView heightForFooterInSection:section])];
-    v.backgroundColor = [UIColor clearColor];
-    return v;
-}
+//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+//{
+//    UIView *v = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width,
+//                                                         [self tableView:tableView heightForFooterInSection:section])];
+//    v.backgroundColor = [UIColor clearColor];
+//    return v;
+//}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -704,15 +706,57 @@
                     [self.navigationController presentViewController:self.pinNav animated:YES completion:nil];
                     [self.pinNav.viewControllers.firstObject setAppeared:YES];
                     break;
-
-                case 1: // import private key
-                    [self scanQR:nil];
-                    break;
-
-                case 2: // rescan blockchain
+                case 1: // rescan blockchain
                     [[BRPeerManager sharedInstance] rescan];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"BRNewSyncStartedNotification" object:nil];
                     [self done:nil];
                     break;
+                case 2: // backup
+                {
+                    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"\nDO NOT let anyone see your backup phrase or they can spend your "
+                                             "woodcoins.\n\nDO NOT take a screenshot. Screenshots are visible to "
+                                              "other apps and devices." preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+                    
+                    UIAlertAction* showAction = [UIAlertAction actionWithTitle:@"show" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+//                           self.pinNav = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
+//                           [self.pinNav.viewControllers.firstObject setAppeared:YES];
+//                           [self.pinNav.viewControllers.firstObject setCancelable:YES];
+//                           self.pinNav.transitioningDelegate = self;
+//                           [self.navigationController presentViewController:self.pinNav animated:YES completion:nil];
+                        NSString * storyboardName = @"Main";
+                        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:storyboardName bundle: nil];
+                        UIViewController * vc = [storyboard instantiateViewControllerWithIdentifier:@"ShowSeedViewController"];
+                        [self presentViewController:vc animated:YES completion:nil];
+                    }];
+                    
+                    [alert addAction:cancelAction];
+                    [alert addAction:showAction];
+                    [self presentViewController:alert animated:YES completion:nil];
+                }
+                case 3: // about
+                {
+                    c = [self.storyboard instantiateViewControllerWithIdentifier:@"AboutViewController"];
+                    l = (id)[c.view viewWithTag:411];
+                    s = [[NSMutableAttributedString alloc] initWithAttributedString:l.attributedText];
+#if BITCOIN_TESTNET
+                    [s replaceCharactersInRange:[s.string rangeOfString:@"%net%"] withString:@"%net% (testnet)"];
+#endif
+                    [s replaceCharactersInRange:[s.string rangeOfString:@"%ver%"]
+                     withString:NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"]];
+                    [s replaceCharactersInRange:[s.string rangeOfString:@"%net%"] withString:@""];
+                    l.attributedText = s;
+                    [l.superview.gestureRecognizers.firstObject addTarget:self action:@selector(about:)];
+                    
+#ifdef DEBUG
+                    [(UITextView *)[c.view viewWithTag:412]
+                     setText:[[[NSUserDefaults standardUserDefaults] objectForKey:@"debug_backgroundfetch"]
+                              description]];
+#endif
+                    
+                    [self.navigationController pushViewController:c animated:YES];
+                    break;
+                }
 
                 default:
                     NSAssert(FALSE, @"%s:%d %s: unkown indexPath.row %d", __FILE__, __LINE__,  __func__,
@@ -755,7 +799,16 @@
             break;
 
         case 4: // start/restore another wallet (handled by storyboard)
+        {
+            
+//            BRRestoreViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"EnterRecoveryPhrase"];
+//            [self presentViewController:vc animated:YES completion:nil];
+//            vc.shouldPopDismissStyle = YES;
+//            [self.navigationController pushViewController:vc animated:true];
+            BRDeleteWalletViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"DeleteWalletVC"];
+            [self presentViewController:vc animated:YES completion:nil];
             break;
+        }
 
         default:
             NSAssert(FALSE, @"%s:%d %s: unkown indexPath.section %d", __FILE__, __LINE__,  __func__,

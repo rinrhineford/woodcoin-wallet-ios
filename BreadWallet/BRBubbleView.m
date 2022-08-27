@@ -61,13 +61,13 @@
     if (! (self = [super initWithFrame:frame])) return nil;
 
     self.layer.cornerRadius = RADIUS;
-    self.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.8];
+    self.backgroundColor = [UIColor colorNamed:@"Kryptonite"];//[UIColor colorWithWhite:0.0 alpha:0.8];
     self.label = [[UILabel alloc] initWithFrame:CGRectMake(MARGIN, MARGIN, frame.size.width - MARGIN*2,
                                                            frame.size.height - MARGIN*2)];
     self.label.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.label.textAlignment = NSTextAlignmentCenter;
     self.label.textColor = [UIColor whiteColor];
-    self.label.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.0];
+    self.label.font = [UIFont fontWithName:@"Inter-Medium" size:17.0];
     self.label.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.15];
     self.label.shadowOffset = CGSizeMake(0.0, 1.0);
     self.label.numberOfLines = 0;

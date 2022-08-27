@@ -17,6 +17,7 @@
 
 @property (nonatomic, strong) BRPaymentRequest *request;
 @property (strong, nonatomic) IBOutlet UIToolbar *toolbar;
+@property (weak, nonatomic) IBOutlet UIView *textFieldContainer;
 
 @end
 
@@ -33,6 +34,19 @@
     self.addressField.text = @"";
     [self.toolbar setBackgroundImage:[UIImage new] forToolbarPosition:UIBarPositionAny barMetrics:UIBarMetricsDefault];
     [self.toolbar setShadowImage:[UIImage new] forToolbarPosition:UIToolbarPositionAny];
+    
+    self.addressField.borderStyle = UITextBorderStyleNone;
+    NSString *placeholderStr = @"Woodcoin address ex W7hdsu...........";
+    NSDictionary<NSAttributedStringKey, id> *attributes = @{
+        NSForegroundColorAttributeName: [UIColor colorNamed:@"Pure White"]
+    };
+    NSAttributedString *placeholderText = [[NSAttributedString alloc] initWithString:placeholderStr
+                                                                          attributes:attributes];
+    [self.addressField setAttributedPlaceholder: placeholderText];
+    
+    self.textFieldContainer.layer.cornerRadius = 16;
+    self.textFieldContainer.layer.borderWidth = 4;
+    self.textFieldContainer.layer.borderColor = [UIColor colorNamed:@"DarkTileorButton"].CGColor;
 }
 
 -(void)viewWillAppear:(BOOL)animated

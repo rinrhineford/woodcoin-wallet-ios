@@ -48,6 +48,7 @@
 + (instancetype)sharedInstance;
 
 - (void)generateRandomSeed;
+- (void)eraseSeedPhrase;
 
 // given a private key, queries blockchain for unspent outputs and calls the completion block with a signed transaction
 // that will sweep the balance into wallet (doesn't publish the tx)

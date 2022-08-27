@@ -205,9 +205,6 @@ static NSData *getKeychainData(NSString *key)
                                                              fromSeed:self.seed]];
                     
                         if (! [self->_wallet containsAddress:k.address]) {
-#if DEBUG
-                            abort(); // don't wipe core data for debug builds
-#endif
                             [[NSManagedObject context] performBlockAndWait:^{
                                 [BRAddressEntity deleteObjects:[BRAddressEntity allObjects]];
                                 [BRTransactionEntity deleteObjects:[BRTransactionEntity allObjects]];
@@ -381,6 +378,28 @@ static NSData *getKeychainData(NSString *key)
     }
 }
 
+- (void)eraseSeedPhrase {
+    [[NSManagedObject context] performBlockAndWait:^{
+        [BRAddressEntity deleteObjects:[BRAddressEntity allObjects]];
+        [BRTransactionEntity deleteObjects:[BRTransactionEntity allObjects]];
+        [NSManagedObject saveContext];
+    }];
+    setKeychainData(nil, PIN_KEY);
+    setKeychainData(nil, PIN_FAIL_COUNT_KEY);
+    setKeychainData(nil, PIN_FAIL_HEIGHT_KEY);
+    setKeychainData(nil, MNEMONIC_KEY);
+    setKeychainData(nil, CREATION_TIME_KEY);
+    _wallet = nil;
+    self.seed = nil;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:BRWalletManagerSeedChangedNotification object:nil];
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:BRWalletBalanceChangedNotification object:nil];
+    });
+}
+
 - (NSTimeInterval)seedCreationTime
 {
     NSData *d = getKeychainData(CREATION_TIME_KEY);
@@ -551,7 +570,8 @@ completion:(void (^)(BRTransaction *tx, NSError *error))completion
 
     /*[NSURLConnection sendAsynchronousRequest:req queue:[NSOperationQueue currentQueue]*/
     NSURLSession *session = [NSURLSession sharedSession];
-    [[session dataTaskWithURL:[NSURL URLWithString:[UNSPENT_URL stringByAppendingString:address]]
+    NSURL *targetURL = [NSURL URLWithString:[UNSPENT_URL stringByAppendingString:address]];
+    [[session dataTaskWithURL:targetURL
           completionHandler:^(NSData *data,
                               NSURLResponse *response,
                               NSError *connectionError) {

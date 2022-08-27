@@ -35,13 +35,13 @@
 "\"%@\" is not a backup phrase word" = "\"%@\" is not a backup phrase word";
 
 /* No comment provided by engineer. */
-"about" = "about";
+"About" = "About";
 
 /* No comment provided by engineer. */
 "backup" = "backup";
 
 /* No comment provided by engineer. */
-"backup phrase" = "backup phrase";
+"Backup phrase" = "Backup phrase";
 
 /* No comment provided by engineer. */
 "backup phrase doesn't match" = "backup phrase doesn't match";
@@ -92,13 +92,13 @@
 "caution" = "caution";
 
 /* No comment provided by engineer. */
-"change pin" = "change pin";
+"change pin" = "Change pin";
 
 /* No comment provided by engineer. */
 "checking private key balance..." = "checking private key balance...";
 
 /* No comment provided by engineer. */
-"choose a pin" = "choose a pin";
+"choose a pin" = "Create a PIN Code";
 
 /* No comment provided by engineer. */
 "clipboard doesn't contain a valid bitcoin address" = "clipboard doesn't contain a valid bitcoin address";
@@ -164,10 +164,10 @@
 "email not configured" = "email not configured";
 
 /* No comment provided by engineer. */
-"enter current pin" = "enter current pin";
+"enter current pin" = "Enter current PIN code";
 
 /* No comment provided by engineer. */
-"enter pin" = "enter pin";
+"enter pin" = "Enter PIN Code";
 
 /* No comment provided by engineer. */
 "error signing bitcoin transaction" = "error signing bitcoin transaction";
@@ -191,7 +191,7 @@
 "ignore" = "ignore";
 
 /* No comment provided by engineer. */
-"import private key" = "import private key";
+"import private key" = "Import private key";
 
 /* No comment provided by engineer. */
 "insufficient funds" = "insufficient funds";
@@ -272,7 +272,7 @@
 "recieved" = "recieved";
 
 /* No comment provided by engineer. */
-"reenter pin" = "reenter pin";
+"reenter pin" = "Confirm your PIN Code";
 
 /* No comment provided by engineer. */
 "remove fee" = "remove fee";
@@ -287,7 +287,7 @@
 "rescan" = "rescan";
 
 /* No comment provided by engineer. */
-"rescan blockchain" = "rescan blockchain";
+"rescan blockchain" = "Rescan blockchain";
 
 /* No comment provided by engineer. */
 "rescan blockchain if you think you may have missing transactions, or are having trouble sending (rescaning can take several minutes)" = "rescan blockchain if you think you may have missing transactions, or are having trouble sending (rescaning can take several minutes)";
@@ -344,7 +344,7 @@
 "swept!" = "swept!";
 
 /* No comment provided by engineer. */
-"syncing..." = "syncing...";
+"syncing..." = "Syncing...";
 
 /* No comment provided by engineer. */
 "the app will now close" = "the app will now close";

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "75D5F3BD191EC270004AB296"
-               BuildableName = "LoughWallet.app"
-               BlueprintName = "loughwallet"
+               BuildableName = "WoodcoinWallet.app"
+               BlueprintName = "WoodcoinWallet"
                ReferencedContainer = "container:BreadWallet.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -55,8 +55,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "75D5F3BD191EC270004AB296"
-            BuildableName = "LoughWallet.app"
-            BlueprintName = "loughwallet"
+            BuildableName = "WoodcoinWallet.app"
+            BlueprintName = "WoodcoinWallet"
             ReferencedContainer = "container:BreadWallet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -72,8 +72,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "75D5F3BD191EC270004AB296"
-            BuildableName = "LoughWallet.app"
-            BlueprintName = "loughwallet"
+            BuildableName = "WoodcoinWallet.app"
+            BlueprintName = "WoodcoinWallet"
             ReferencedContainer = "container:BreadWallet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

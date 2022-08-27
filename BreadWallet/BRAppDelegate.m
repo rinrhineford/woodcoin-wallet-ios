@@ -25,6 +25,7 @@
 
 #import "BRAppDelegate.h"
 #import "BRPeerManager.h"
+@import Firebase;
 
 #if BITCOIN_TESTNET
 #warning testnet build
@@ -34,19 +35,28 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [FIRApp configure];
+    
     // Override point for customization after application launch.
 
     // use background fetch to stay synced with the blockchain
     // BUG: XXXX this doesn't seem to work, is it compatible with data protection settings?
     [[UIApplication sharedApplication] setMinimumBackgroundFetchInterval:UIApplicationBackgroundFetchIntervalMinimum];
 
-    UIPageControl.appearance.pageIndicatorTintColor = [UIColor lightGrayColor];
-    UIPageControl.appearance.currentPageIndicatorTintColor = [UIColor blackColor];
+//    UIPageControl.appearance.pageIndicatorTintColor = [UIColor lightGrayColor];
+//    UIPageControl.appearance.currentPageIndicatorTintColor = [UIColor blackColor];
+//
+    [[UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[
+        [UINavigationBar class]
+    ]] setTitleTextAttributes:@{
+        NSFontAttributeName:[UIFont fontWithName:@"Inter-Semibold" size:16.0],
+        NSForegroundColorAttributeName: [UIColor colorNamed:@"Pure White"]
+    }  forState:UIControlStateNormal];
 
-    [[UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[[UINavigationBar class]]]
-     setTitleTextAttributes:@{NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue-Light" size:17.0]}
-     forState:UIControlStateNormal];
-
+    [[UIBarButtonItem appearanceWhenContainedInInstancesOfClasses:@[
+            [UINavigationBar class]
+    ]] setTintColor:[UIColor colorNamed:@"Pure White"]];
+    
     if (launchOptions[UIApplicationLaunchOptionsURLKey]) {
         NSData *file = [NSData dataWithContentsOfURL:launchOptions[UIApplicationLaunchOptionsURLKey]];
 

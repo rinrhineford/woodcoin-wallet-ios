@@ -357,11 +357,9 @@
     l.text = [self tableView:tableView titleForHeaderInSection:section];
     l.backgroundColor = [UIColor clearColor];
     l.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:17];
-    l.textColor = [UIColor blackColor];
-    l.shadowColor = [UIColor whiteColor];
-    l.shadowOffset = CGSizeMake(0.0, 1.0);
+    l.textColor = [UIColor colorNamed:@"Pure White"];
     l.numberOfLines = 0;
-    v.backgroundColor = [UIColor clearColor];
+    v.backgroundColor = [UIColor colorNamed:@"Backgrounnd"];
     [v addSubview:l];
     
     return v;

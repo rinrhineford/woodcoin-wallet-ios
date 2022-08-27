@@ -28,7 +28,7 @@
 @class BRReceiveViewController, BRSendViewController;
 
 @interface BRRootViewController : UIViewController <UIAlertViewDelegate, UIActionSheetDelegate,
-UIPageViewControllerDataSource, UIScrollViewDelegate, UINavigationControllerDelegate,
+UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UINavigationControllerDelegate,
 UIViewControllerTransitioningDelegate, UIViewControllerAnimatedTransitioning>
 
 @property (nonatomic, strong) IBOutlet BRReceiveViewController *receiveViewController;
@@ -39,5 +39,6 @@ UIViewControllerTransitioningDelegate, UIViewControllerAnimatedTransitioning>
 
 - (void)startActivityWithTimeout:(NSTimeInterval)timeout;
 - (void)stopActivityWithSuccess:(BOOL)success;
+- (void)prepareForRestorePrivateKeys;
 
 @end

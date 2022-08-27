@@ -12,7 +12,7 @@
 "3hG-i3-g4Y.title" = "ƀ 0.00 ($0.00)";
 
 /* Class = "IBUIButton"; normalTitle = "restore from backup"; ObjectID = "4w7-k8-9wY"; */
-"4w7-k8-9wY.normalTitle" = "restore from backup";
+"4w7-k8-9wY.normalTitle" = "Import wallet";
 
 /* Class = "IBUILabel"; text = "ask"; ObjectID = "9B6-kc-khb"; */
 "9B6-kc-khb.text" = "ask";
@@ -21,7 +21,7 @@
 "9L3-gM-TgP.title" = " ";
 
 /* Class = "IBUIButton"; normalTitle = "generate backup phrase"; ObjectID = "A4M-yq-26d"; */
-"A4M-yq-26d.normalTitle" = "generate backup phrase";
+"A4M-yq-26d.normalTitle" = "Generate backup phrase";
 
 /* Class = "IBUITextField"; placeholder = "ƀ 0.00"; ObjectID = "DLS-lz-uxJ"; */
 "DLS-lz-uxJ.placeholder" = "ƀ 0.00";
@@ -138,7 +138,7 @@
 "dBP-3X-1o6.normalTitle" = "9";
 
 /* Class = "IBUIButton"; normalTitle = "new wallet"; ObjectID = "dOa-zm-TDG"; */
-"dOa-zm-TDG.normalTitle" = "new wallet";
+"dOa-zm-TDG.normalTitle" = "New wallet";
 
 /* Class = "IBUILabel"; text = "unconfirmed"; ObjectID = "eJ2-5h-DO2"; */
 "eJ2-5h-DO2.text" = "unconfirmed";
@@ -150,7 +150,7 @@
 "f0J-5L-WJY.normalTitle" = "        ";
 
 /* Class = "IBUIBarButtonItem"; title = "pay"; ObjectID = "f4B-BU-eu2"; */
-"f4B-BU-eu2.title" = "pay";
+"f4B-BU-eu2.title" = "Pay";
 
 /* Class = "IBUINavigationItem"; title = "confirm:"; ObjectID = "fQN-xb-SYb"; */
 "fQN-xb-SYb.title" = "confirm:";

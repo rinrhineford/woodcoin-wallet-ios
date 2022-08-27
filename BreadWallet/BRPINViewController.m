@@ -29,7 +29,8 @@
 #import "BRPeerManager.h"
 #import "BRTransaction.h"
 #import "NSString+Base58.h"
-#import <AudioToolbox/AudioServices.h>
+
+@import AudioToolbox;
 
 #define PIN_LENGTH 4
 #define CIRCLE     @"\xE2\x97\x8B" // white (empty) circle, unicode U+25CB (utf-8)
@@ -60,31 +61,10 @@
 
     self.navigationController.delegate = self;
     
-    NSShadow *shadow = [NSShadow new];
     NSMutableAttributedString *s = [[NSMutableAttributedString alloc]
                                     initWithAttributedString:self.lockLabel.attributedText];
 
-    [shadow setShadowColor:[UIColor colorWithWhite:0.0 alpha:0.15]];
-    [shadow setShadowBlurRadius:1.0];
-    [shadow setShadowOffset:CGSizeMake(0.0, 1.0)];
-
-    [s addAttribute:NSShadowAttributeName value:shadow range:NSMakeRange(0, s.length)];
     self.lockLabel.attributedText = s;
-
-    for (UIButton *b in self.padButtons) {
-        s = [[NSMutableAttributedString alloc]
-             initWithAttributedString:[b attributedTitleForState:UIControlStateNormal]];
-        [s addAttribute:NSShadowAttributeName value:shadow range:NSMakeRange(0, s.length)];
-        [b setAttributedTitle:s forState:UIControlStateNormal];
-    }
-
-    if (self.appeared) {
-        self.logoXCenter.constant = self.view.bounds.size.width;
-        self.wallpaperXLeft.constant = self.view.bounds.size.width*PARALAX_RATIO;
-    }
-    else {
-        self.titleXCenter.constant = self.dotsXCenter.constant = self.padXCenter.constant = self.view.bounds.size.width;
-    }
 
     self.txStatusObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:BRPeerManagerTxStatusNotification object:nil
@@ -111,11 +91,6 @@
     self.verifyPin = nil;
     //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:animated];
     [self setNeedsStatusBarAppearanceUpdate];
-    
-    if (self.appeared) {
-        self.logoXCenter.constant = self.view.bounds.size.width;
-        self.wallpaperXLeft.constant = self.view.bounds.size.width*PARALAX_RATIO;
-    }
 
     [self checkLockout];
 }
@@ -127,12 +102,13 @@
     [[BRPeerManager sharedInstance] connect];
 
     if (! self.appeared) {
-        self.titleXCenter.constant = self.dotsXCenter.constant = self.padXCenter.constant = 0.0;
-        self.logoXCenter.constant = self.view.bounds.size.width;
-        self.wallpaperXLeft.constant = self.view.bounds.size.width*PARALAX_RATIO;
-
-        [UIView animateWithDuration:0.35 delay:0.1 usingSpringWithDamping:0.8 initialSpringVelocity:0 options:0
-        animations:^{ [self.view layoutIfNeeded]; } completion:nil];
+        [UIView animateWithDuration:0.35
+                              delay:0.1
+             usingSpringWithDamping:0.8
+              initialSpringVelocity:0
+                            options:0
+                         animations:^{ [self.view layoutIfNeeded]; }
+                         completion:nil];
     }
 
     [self performSelector:@selector(checkLockout) withObject:nil afterDelay:0.0];
@@ -207,6 +183,7 @@
             self.lockLabel.attributedText = t;
             [self.cancelButton setTitle:NSLocalizedString(@"reset pin", nil) forState:UIControlStateNormal];
             self.cancelButton.enabled = YES;
+            [self.cancelButton setHidden:NO];
             [self.padButtons makeObjectsPerformSelector:@selector(setEnabled:) withObject:nil];
 
             if (self.lockLabel.hidden) {
@@ -234,7 +211,8 @@
     [self.cancelButton setTitle:(self.cancelable && ! self.fail) ? NSLocalizedString(@"cancel", key) : @""
      forState:UIControlStateNormal];
     self.cancelButton.enabled = (self.cancelable && ! self.fail) ? YES : NO;
-
+    [self.cancelButton setHidden:(self.cancelable && ! self.fail) ? NO : YES];
+    
     for (UIButton *b in self.padButtons) {
         b.enabled = YES;
     }
@@ -251,10 +229,10 @@
 
 #pragma mark - IBAction
 
-- (IBAction)number:(id)sender
+- (IBAction)number:(UIButton *)sender
 {
     if (self.pin.length >= PIN_LENGTH) return;
-    [self.pin appendFormat:@"%C", [[sender currentAttributedTitle].string characterAtIndex:0]];
+    [self.pin appendFormat:@"%C", [[sender currentTitle] characterAtIndex:0]];
 
     BRWalletManager *m = [BRWalletManager sharedInstance];
 
@@ -269,6 +247,7 @@
         if (! [self.cancelButton.currentTitle isEqual:NSLocalizedString(@"delete", nil)]) {
             [self.cancelButton setTitle:NSLocalizedString(@"delete", nil) forState:UIControlStateNormal];
             self.cancelButton.enabled = YES;
+            [self.cancelButton setHidden: NO];
         }
     }
     else if (! self.success && [self.pin isEqual:m.pin]) { // successful pin attempt
@@ -402,7 +381,7 @@
     }
 }
 
-- (IBAction)cancel:(id)sender
+- (IBAction)cancel:(UIButton *)sender
 {
     if (self.pin.length > 0) {
         [self.pin deleteCharactersInRange:NSMakeRange(self.pin.length - 1, 1)];
@@ -420,9 +399,10 @@
         [sender setTitle:(self.cancelable && ! self.fail) ? NSLocalizedString(@"cancel", nil) : @""
          forState:UIControlStateNormal];
         [sender setEnabled:(self.cancelable && ! self.fail) ? YES : NO];
+        [sender setHidden:(self.cancelable && ! self.fail) ? NO : YES];
     }
     else if ([[sender currentTitle] isEqual:NSLocalizedString(@"reset pin", nil)]) {
-        UIViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"PINResetController"];
+        UIViewController *c = [self.storyboard instantiateViewControllerWithIdentifier:@"EnterRecoveryPhrase"];
 
         [self.navigationController pushViewController:c animated:YES];
     }

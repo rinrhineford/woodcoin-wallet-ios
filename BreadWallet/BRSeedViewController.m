@@ -34,14 +34,10 @@
 
 @interface BRSeedViewController ()
 
-//TODO: create a secure version of UILabel and use it for seedLabel, but make sure there's an accessibility work around
-@property (nonatomic, strong) IBOutlet UILabel *seedLabel, *writeLabel;
-@property (nonatomic, strong) IBOutlet UIButton *writeButton;
-@property (nonatomic, strong) IBOutlet UIToolbar *toolbar;
-@property (nonatomic, strong) IBOutlet UIBarButtonItem *remindButton, *doneButton;
-@property (nonatomic, strong) IBOutlet UIImageView *wallpaper;
-
 @property (nonatomic, strong) id resignActiveObserver, screenshotObserver;
+@property (weak, nonatomic) IBOutlet UIView *textViewContainer;
+@property (weak, nonatomic) CALayer *textViewContainerBorderLayer;
+@property (weak, nonatomic) IBOutlet UITextView *seedTextView;
 
 @end
 
@@ -52,8 +48,6 @@
     if ([[UIApplication sharedApplication] isProtectedDataAvailable] && ! [[BRWalletManager sharedInstance] wallet]) {
         [[BRWalletManager sharedInstance] generateRandomSeed];
         [[BRPeerManager sharedInstance] connect];
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WALLET_NEEDS_BACKUP_KEY];
-        [[NSUserDefaults standardUserDefaults] synchronize];
     }
 
     return self;
@@ -80,18 +74,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
-    
-    self.wallpaper.hidden = (self.navigationController.viewControllers.firstObject != self) ? YES : NO;
-    self.doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"done", nil)
-                       style:UIBarButtonItemStylePlain target:self action:@selector(done:)];
-    
 
-    
     self.resignActiveObserver =
-        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillResignActiveNotification object:nil
-        queue:nil usingBlock:^(NSNotification *note) {
+        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillResignActiveNotification
+                                                          object:nil
+                                                           queue:nil
+                                                      usingBlock:
+         ^(NSNotification *note) {
             if (self.navigationController.viewControllers.firstObject != self) {
                 [self.navigationController popViewControllerAnimated:NO];
             }
@@ -101,18 +90,16 @@
     //TODO: make it easy to create a new wallet and transfer balance
     self.screenshotObserver =
         [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationUserDidTakeScreenshotNotification
-        object:nil queue:nil usingBlock:^(NSNotification *note) {
+                                                          object:nil
+                                                           queue:nil
+                                                      usingBlock:
+         ^(NSNotification *note) {
             if ([[[BRWalletManager sharedInstance] wallet] balance] == 0) {
-                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
-                  message:NSLocalizedString(@"Screenshots are visible to other apps and devices. "
-                                            "Generate a new backup phrase and keep it secret.", nil)
-                  delegate:self cancelButtonTitle:NSLocalizedString(@"ignore", nil)
-                  otherButtonTitles:NSLocalizedString(@"new phrase", nil), nil] show];*/
                 UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"Screenshots are visible to other apps and devices. "
                                             "Generate a new backup phrase and keep it secret." preferredStyle:UIAlertControllerStyleAlert];
                 UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
                 UIAlertAction* showAction = [UIAlertAction actionWithTitle:@"show" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-                     [self refresh:nil];
+                     [self refreshSeedPhrase];
                 }];
                 [alert addAction:cancelAction];
                 [alert addAction:showAction];
@@ -120,18 +107,52 @@
 
             }
             else {
-                /*[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"WARNING", nil)
-                  message:NSLocalizedString(@"Screenshots are visible to other apps and devices. "
-                                            "Your funds are at risk. Transfer your balance to another wallet.", nil)
-                  delegate:nil cancelButtonTitle:NSLocalizedString(@"ok", nil) otherButtonTitles:nil] show];*/
-                UIAlertController* alertS = [UIAlertController alertControllerWithTitle:@"Warning" message:@"Screenshots are visible to other apps and devices. "
-                                             "Your funds are at risk. Transfer your balance to another wallet." preferredStyle:UIAlertControllerStyleAlert];
-                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+                UIAlertController* alertS = [UIAlertController alertControllerWithTitle:@"Warning"
+                                                                                message:@"Screenshots are visible to other apps and devices. "
+                                             "Your funds are at risk. Transfer your balance to another wallet."
+                                                                         preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"cancel"
+                                                                       style:UIAlertActionStyleCancel
+                                                                     handler:nil];
                 [alertS addAction:cancelAction];
                 [self presentViewController:alertS animated:YES completion:nil];
             }
         }];
 }
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    [self configureTextViewContainerIfNeeded];
+}
+
+- (void)configureTextViewContainerIfNeeded {
+    CAShapeLayer *shapeLayer = [CAShapeLayer new];
+    CGSize frameSize = self.textViewContainer.frame.size;
+    CGRect shapeRect = CGRectMake(0, 0, frameSize.width, frameSize.height);
+    
+    shapeLayer.bounds = shapeRect;
+    shapeLayer.position = CGPointMake(frameSize.width / 2, frameSize.height / 2);
+    shapeLayer.fillColor = UIColor.clearColor.CGColor;
+    shapeLayer.strokeColor = [UIColor colorNamed:@"Pure White"].CGColor;
+    shapeLayer.lineWidth = 2;
+    shapeLayer.lineJoin = kCALineJoinRound;
+    shapeLayer.lineDashPattern = @[@10, @10];
+    shapeLayer.path = [UIBezierPath bezierPathWithRoundedRect:shapeRect cornerRadius:16].CGPath;
+    
+    CALayer *oldShapeLayer = self.textViewContainerBorderLayer;
+    if (oldShapeLayer) {
+        for (CALayer *layer in self.textViewContainer.layer.sublayers) {
+            if ([layer isEqual:oldShapeLayer]) {
+                [layer removeFromSuperlayer];
+            }
+        }
+    }
+    
+    [self.textViewContainer.layer addSublayer:shapeLayer];
+    self.textViewContainerBorderLayer = shapeLayer;
+}
+
 
 - (void)dealloc
 {
@@ -140,108 +161,55 @@
     if (self.screenshotObserver) [[NSNotificationCenter defaultCenter] removeObserver:self.screenshotObserver];
 }
 
-//-(UIStatusBarStyle)preferredStatusBarStyle {
-//    return UIStatusBarStyleLightContent; // your own style
-//}
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
 
-//- (BOOL)prefersStatusBarHidden {
-//    return NO; // your own visibility code
-//}
+- (BOOL)prefersStatusBarHidden {
+    return NO;
+}
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
- 
-//    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     
     [self setNeedsStatusBarAppearanceUpdate];
- 
-     //remove done button if we're not the root of the nav stack
-    if (self.navigationController.viewControllers.firstObject != self) {
-        self.toolbar.hidden = YES;
-    }
-    
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:WALLET_NEEDS_BACKUP_KEY]) {
-        [self performSelector:@selector(showWriteToggle) withObject:nil afterDelay:WRITE_TOGGLE_DELAY];
-    }
     
     @autoreleasepool {  // @autoreleasepool ensures sensitive data will be dealocated immediately
-        self.seedLabel.text = [[BRWalletManager sharedInstance] seedPhrase];
+        self.seedTextView.text = [[BRWalletManager sharedInstance] seedPhrase];
     }
-
-    [UIView animateWithDuration:0.5 animations:^{
-        self.seedLabel.alpha = 1.0;
-    }];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     // don't leave the seed phrase laying around in memory any longer than necessary
-    self.seedLabel.text = @"";
+    self.seedTextView.text = @"";
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-}
-
-- (void)showWriteToggle
-{
-    self.writeLabel.alpha = self.writeButton.alpha = 0.0;
-    self.writeLabel.hidden = self.writeButton.hidden = NO;
-    
-    [UIView animateWithDuration:0.5 animations:^{
-        self.writeLabel.alpha = self.writeButton.alpha = 1.0;
-    }];
 }
 
 #pragma mark - IBAction
 
-- (IBAction)done:(id)sender
-{
-    if (self.navigationController.viewControllers.firstObject != self) return;
-    self.navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self.navigationController.presentingViewController.presentingViewController dismissViewControllerAnimated:YES
-     completion:nil];
-}
-
-- (IBAction)refresh:(id)sender
+- (void)refreshSeedPhrase
 {
     if (! [[UIApplication sharedApplication] isProtectedDataAvailable]) return;
     [[BRWalletManager sharedInstance] generateRandomSeed];
     [[BRPeerManager sharedInstance] connect];
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WALLET_NEEDS_BACKUP_KEY];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     
-    [UIView animateWithDuration:0.1 animations:^{
-        self.seedLabel.alpha = 0.0;
-    } completion:^(BOOL finished) {
-        @autoreleasepool {
-            self.seedLabel.text = [[BRWalletManager sharedInstance] seedPhrase];
-        }
+    @autoreleasepool {
+        self.seedTextView.text = [[BRWalletManager sharedInstance] seedPhrase];
+    }
+}
 
-        [UIView animateWithDuration:0.1 animations:^{
-            self.seedLabel.alpha = 1.0;
-        }];
+- (IBAction)didTapNext:(UIButton *)sender {
+    UIViewController *pinNavigationController = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
+    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+        [self presentViewController:pinNavigationController animated:YES completion:^{}];
     }];
-}
-
-- (IBAction)toggleWrite:(id)sender
-{
-    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-
-    if ([defs boolForKey:WALLET_NEEDS_BACKUP_KEY]) {
-        [self.toolbar setItems:@[self.toolbar.items[0], self.doneButton] animated:YES];
-        [self.writeButton setImage:[UIImage imageNamed:@"checkbox-checked"] forState:UIControlStateNormal];
-        [defs removeObjectForKey:WALLET_NEEDS_BACKUP_KEY];
-    }
-    else {
-        [self.toolbar setItems:@[self.toolbar.items[0], self.remindButton] animated:YES];
-        [self.writeButton setImage:[UIImage imageNamed:@"checkbox-empty"] forState:UIControlStateNormal];
-        [defs setBool:YES forKey:WALLET_NEEDS_BACKUP_KEY];
-    }
     
-    [defs synchronize];
 }
 
-- (IBAction)copy:(id)sender
+- (IBAction)copy:(UIButton *)sender
 {
     [[UIPasteboard generalPasteboard] setString:[[BRWalletManager sharedInstance] seedPhrase]];
 }
@@ -254,7 +222,7 @@
 
     if ([[[BRWalletManager sharedInstance] wallet] balance] == 0 &&
         [[alertView buttonTitleAtIndex:buttonIndex] isEqual:NSLocalizedString(@"new phrase", nil)]) {
-        [self refresh:nil];
+        [self refreshSeedPhrase];
     }
 }
 

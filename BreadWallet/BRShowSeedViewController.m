@@ -14,49 +14,58 @@
 
 @interface BRShowSeedViewController ()
 
+@property (weak, nonatomic) IBOutlet UIView *textViewContainer;
+@property (weak, nonatomic) CAShapeLayer *textViewContainerBorderLayer;
+
 @end
 
 @implementation BRShowSeedViewController
 
-//- (instancetype)customInit
-//{
-//    if ([[UIApplication sharedApplication] isProtectedDataAvailable] && ! [[BRWalletManager sharedInstance] wallet]) {
-//        [[BRWalletManager sharedInstance] generateRandomSeed];
-//        [[BRPeerManager sharedInstance] connect];
-//    }
-//
-//    return self;
-//}
-//
-//- (instancetype)init
-//{
-//    if (! (self = [super init])) return nil;
-//    return [self customInit];
-//}
-//
-//- (instancetype)initWithCoder:(NSCoder *)aDecoder
-//{
-//    if (! (self = [super initWithCoder:aDecoder])) return nil;
-//    return [self customInit];
-//}
-//
-//- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-//{
-//    if (! (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) return nil;
-//    return [self customInit];
-//}
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     @autoreleasepool {  // @autoreleasepool ensures sensitive data will be dealocated immediately
         self.seedOutlet.text = [[BRWalletManager sharedInstance] seedPhrase];
     }
 }
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    [self configureTextViewContainerIfNeeded];
+}
+
+- (void)configureTextViewContainerIfNeeded {
+    CAShapeLayer *shapeLayer = [CAShapeLayer new];
+    CGSize frameSize = self.textViewContainer.frame.size;
+    CGRect shapeRect = CGRectMake(0, 0, frameSize.width, frameSize.height);
+    
+    shapeLayer.bounds = shapeRect;
+    shapeLayer.position = CGPointMake(frameSize.width / 2, frameSize.height / 2);
+    shapeLayer.fillColor = UIColor.clearColor.CGColor;
+    shapeLayer.strokeColor = [UIColor colorNamed:@"Pure White"].CGColor;
+    shapeLayer.lineWidth = 2;
+    shapeLayer.lineJoin = kCALineJoinRound;
+    shapeLayer.lineDashPattern = @[@10, @10];
+    shapeLayer.path = [UIBezierPath bezierPathWithRoundedRect:shapeRect cornerRadius:16].CGPath;
+    
+    CALayer *oldShapeLayer = self.textViewContainerBorderLayer;
+    if (oldShapeLayer) {
+        for (CALayer *layer in self.textViewContainer.layer.sublayers) {
+            if ([layer isEqual:oldShapeLayer]) {
+                [layer removeFromSuperlayer];
+            }
+        }
+    }
+    
+    [self.textViewContainer.layer addSublayer:shapeLayer];
+    self.textViewContainerBorderLayer = shapeLayer;
+}
 
 - (IBAction)doneAction:(id)sender {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)copy:(id)sender {
+    [[UIPasteboard generalPasteboard] setString:self.seedOutlet.text];
 }
 @end

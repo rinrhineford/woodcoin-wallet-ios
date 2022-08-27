@@ -40,7 +40,6 @@
 @property (nonatomic, strong) BRBubbleView *tipView;
 @property (nonatomic, assign) BOOL showTips, updated;
 
-@property (nonatomic, strong) IBOutlet UILabel *label;
 @property (nonatomic, strong) IBOutlet UIButton *addressButton;
 @property (nonatomic, strong) IBOutlet UIImageView *qrView;
 
@@ -53,13 +52,18 @@
     [super viewDidLoad];
 
     self.addressButton.titleLabel.adjustsFontSizeToFitWidth = YES;
-    [self updateAddress];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
 
+    [self updateAddress];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
     [self updateAddress];
 }
 
@@ -163,7 +167,7 @@
                     tipPoint:[self.qrView.superview convertPoint:self.qrView.center toView:self.view]
                     tipDirection:BRBubbleTipDirectionUp];
     if (self.showTips) self.tipView.text = [self.tipView.text stringByAppendingString:@" (3/6)"];
-    self.tipView.backgroundColor = [UIColor orangeColor];
+    self.tipView.backgroundColor = [UIColor colorNamed:@"Kryptonite"];
     self.tipView.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
     [self.view addSubview:[self.tipView popIn]];
 }

@@ -69,10 +69,13 @@ static NSString *sanitizeString(NSString *s)
 @property (nonatomic, strong) BRScanViewController *scanController;
 @property (nonatomic, strong) BRInputAddressViewController *inputAddressController;
 @property (nonatomic, strong) id clipboardObserver;
-
-@property (nonatomic, strong) IBOutlet UILabel *sendLabel;
 @property (nonatomic, strong) IBOutlet UIButton *scanButton, *clipboardButton, *inputButton;
 @property (nonatomic, strong) IBOutlet UITextView *clipboardText;
+//@property (strong, nonatomic) IBOutletCollection(UIView) NSArray *textFieldContainers;
+//@property (weak, nonatomic) IBOutlet UIImageView *qrIcon;
+//@property (weak, nonatomic) IBOutlet UITextField *addressTextField;
+//@property (weak, nonatomic) IBOutlet UITextField *amountTextField;
+//@property (weak, nonatomic) IBOutlet UILabel *transferAmountInDollars;
 
 @end
 
@@ -93,6 +96,28 @@ static NSString *sanitizeString(NSString *s)
             }
             else [self updateClipboardText];
         }];
+    
+//    [@[self.addressTextField, self.amountTextField] enumerateObjectsUsingBlock:^(UITextField*  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        obj.borderStyle = UITextBorderStyleNone;
+//        NSString *placeholderStr;
+//        if (idx == 0) {
+//            placeholderStr = @"Destination address";
+//        } else {
+//            placeholderStr = @"LOG amount";
+//        }
+//        NSDictionary<NSAttributedStringKey, id> *attributes = @{
+//            NSForegroundColorAttributeName: [UIColor colorNamed:@"Pure White"]
+//        };
+//        NSAttributedString *placeholderText = [[NSAttributedString alloc] initWithString:placeholderStr
+//                                                                              attributes:attributes];
+//        [obj setAttributedPlaceholder: placeholderText];
+//    }];
+//
+//    [self.textFieldContainers enumerateObjectsUsingBlock:^(UIView* _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        obj.layer.cornerRadius = 16;
+//        obj.layer.borderWidth = 4;
+//        obj.layer.borderColor = [UIColor colorNamed:@"DarkTileorButton"].CGColor;
+//    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -800,7 +825,9 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
             UIAlertController* alertErr = [UIAlertController alertControllerWithTitle:nil message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"ok" style:UIAlertActionStyleCancel handler:nil];
             [alertErr addAction:cancelAction];
-            [self presentViewController:alertErr animated:YES completion:nil];
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                [self presentViewController:alertErr animated:YES completion:nil];
+            });
         }
         else if (tx) {
             uint64_t fee = tx.standardFee, amount = fee;
@@ -1019,7 +1046,7 @@ memo:(NSString *)memo isSecure:(BOOL)isSecure
                     tipPoint:CGPointMake(self.scanButton.center.x, self.scanButton.center.y - 10.0)
                     tipDirection:BRBubbleTipDirectionDown];
     if (self.showTips) self.tipView.text = [self.tipView.text stringByAppendingString:@" (5/6)"];
-    self.tipView.backgroundColor = [UIColor orangeColor];
+    self.tipView.backgroundColor = [UIColor colorNamed:@"Kryptonite"];
     self.tipView.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
     [self.view addSubview:[self.tipView popIn]];
 }
@@ -1363,7 +1390,6 @@ fromConnection:(AVCaptureConnection *)connection
     
     [UIView animateWithDuration:0.35 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.view.center = CGPointMake(self.view.center.x, self.view.bounds.size.height/2.0 - 100.0);
-        self.sendLabel.alpha = 0.0;
     } completion:nil];
 }
 
@@ -1371,7 +1397,6 @@ fromConnection:(AVCaptureConnection *)connection
 {
     [UIView animateWithDuration:0.35 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
         self.view.center = CGPointMake(self.view.center.x, self.view.bounds.size.height/2.0);
-        self.sendLabel.alpha = 1.0;
     } completion:nil];
     
     if (! self.useClipboard) [[UIPasteboard generalPasteboard] setString:textView.text];

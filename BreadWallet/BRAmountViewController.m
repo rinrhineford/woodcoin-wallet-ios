@@ -59,18 +59,25 @@
     [charset addCharactersInString:m.format.currencyDecimalSeparator];
     self.charset = charset;
 
-    self.amountField.placeholder = [m stringForAmount:0];
+    NSString *placeholderStr = [m stringForAmount:0];
+    NSDictionary<NSAttributedStringKey, id> *attributes = @{
+        NSForegroundColorAttributeName: [UIColor colorNamed:@"Pure White"]
+    };
+    NSAttributedString *placeholderText = [[NSAttributedString alloc] initWithString:placeholderStr
+                                                                          attributes:attributes];
+    [self.amountField setAttributedPlaceholder: placeholderText];
+    
     [self.decimalButton setTitle:m.format.currencyDecimalSeparator forState:UIControlStateNormal];
 
     self.swapLeftLabel = [UILabel new];
     self.swapLeftLabel.font = self.localCurrencyLabel.font;
-    self.swapLeftLabel.alpha = self.localCurrencyLabel.alpha;
+//    self.swapLeftLabel.alpha = self.localCurrencyLabel.alpha;
     self.swapLeftLabel.textAlignment = self.localCurrencyLabel.textAlignment;
     self.swapLeftLabel.hidden = YES;
 
     self.swapRightLabel = [UILabel new];
     self.swapRightLabel.font = self.amountField.font;
-    self.swapRightLabel.alpha = self.amountField.alpha;
+//    self.swapRightLabel.alpha = self.amountField.alpha;
     self.swapRightLabel.textAlignment = self.amountField.textAlignment;
     self.swapRightLabel.hidden = YES;
 
@@ -122,7 +129,7 @@
     self.localCurrencyLabel.hidden = NO;
     self.localCurrencyLabel.text = [NSString stringWithFormat:@"(%@)", (self.swapped) ? [m stringForAmount:amount] :
                                                                        [m localCurrencyStringForAmount:amount]];
-    self.localCurrencyLabel.textColor = (amount > 0) ? [UIColor grayColor] : [UIColor colorWithWhite:0.75 alpha:1.0];
+    self.localCurrencyLabel.textColor = [UIColor colorNamed:@"Pure White"];
 }
 
 #pragma mark - IBAction
@@ -164,8 +171,7 @@
 
     if (self.swapLeftLabel.hidden) {
         self.swapLeftLabel.text = self.localCurrencyLabel.text;
-        self.swapLeftLabel.textColor = (self.amountField.text.length > 0) ? self.amountField.textColor :
-                                       [UIColor colorWithWhite:0.75 alpha:1.0];
+        self.swapLeftLabel.textColor = [UIColor colorNamed:@"Pure White"];
         self.swapLeftLabel.frame = self.localCurrencyLabel.frame;
         [self.localCurrencyLabel.superview addSubview:self.swapLeftLabel];
         self.swapLeftLabel.hidden = NO;
@@ -175,8 +181,7 @@
     if (self.swapRightLabel.hidden) {
         self.swapRightLabel.text = (self.amountField.text.length > 0) ? self.amountField.text :
                                    self.amountField.placeholder;
-        self.swapRightLabel.textColor = (self.amountField.text.length > 0) ? self.amountField.textColor :
-                                        [UIColor colorWithWhite:0.75 alpha:1.0];
+        self.swapRightLabel.textColor = [UIColor colorNamed:@"Pure White"];
         self.swapRightLabel.frame = self.amountField.frame;
         [self.amountField.superview addSubview:self.swapRightLabel];
         self.swapRightLabel.hidden = NO;
@@ -195,6 +200,13 @@
     self.amountField.text = (self.swapped) ? [m localCurrencyStringForAmount:amount] : [m stringForAmount:amount];
 
     if (amount == 0) {
+        NSString *placeholderStr = self.amountField.text;
+        NSDictionary<NSAttributedStringKey, id> *attributes = @{
+            NSForegroundColorAttributeName: [UIColor colorNamed:@"Pure White"]
+        };
+        NSAttributedString *placeholderText = [[NSAttributedString alloc] initWithString:placeholderStr
+                                                                              attributes:attributes];
+        [self.amountField setAttributedPlaceholder: placeholderText];
         self.amountField.placeholder = self.amountField.text;
         self.amountField.text = nil;
     }
@@ -219,9 +231,8 @@
         self.swapLeftLabel.text = self.localCurrencyLabel.text;
         self.swapRightLabel.text = (self.amountField.text.length > 0) ? self.amountField.text :
                                    self.amountField.placeholder;
-        self.swapLeftLabel.textColor = self.localCurrencyLabel.textColor;
-        self.swapRightLabel.textColor = (self.amountField.text.length > 0) ? self.amountField.textColor :
-                                        [UIColor colorWithWhite:0.75 alpha:1.0];
+        self.swapLeftLabel.textColor = [UIColor colorNamed:@"Pure White"];
+        self.swapRightLabel.textColor = [UIColor colorNamed:@"Pure White"];
         [self.swapLeftLabel sizeToFit];
         [self.swapRightLabel sizeToFit];
         self.swapLeftLabel.center = self.swapRightLabel.center = p;
@@ -250,7 +261,7 @@
         self.localCurrencyLabel.hidden = YES;
     }
 
-    self.swapLeftLabel.textColor = self.localCurrencyLabel.textColor;
+    self.swapLeftLabel.textColor = [UIColor colorNamed:@"Pure White"];
 
     if (self.swapRightLabel.hidden) {
         self.swapRightLabel.text = (self.amountField.text.length > 0) ? self.amountField.text :
@@ -261,13 +272,12 @@
         self.amountField.hidden = YES;
     }
 
-    self.swapRightLabel.textColor = (self.amountField.text.length > 0) ? self.amountField.textColor :
-                                    [UIColor colorWithWhite:0.75 alpha:1.0];
+    self.swapRightLabel.textColor = [UIColor colorNamed:@"Pure White"];;
 
     [UIView animateWithDuration:0.1 animations:^{
         self.swapLeftLabel.transform = CGAffineTransformMakeScale(0.85, 0.85);
-        self.swapLeftLabel.textColor = self.swapRightLabel.textColor;
-        self.swapRightLabel.textColor = self.localCurrencyLabel.textColor;
+        self.swapLeftLabel.textColor = [UIColor colorNamed:@"Pure White"];
+        self.swapRightLabel.textColor = [UIColor colorNamed:@"Pure White"];
         self.swapLeftLabel.text = [[self.swapLeftLabel.text stringByReplacingOccurrencesOfString:@"(" withString:@""]
                                    stringByReplacingOccurrencesOfString:@")" withString:@""];
     }];
@@ -277,7 +287,7 @@
 {
     [UIView animateWithDuration:0.1 animations:^{
         self.swapLeftLabel.transform = CGAffineTransformIdentity;
-        self.swapLeftLabel.textColor = self.localCurrencyLabel.textColor;
+        self.swapLeftLabel.textColor = [UIColor colorNamed:@"Pure White"];
     } completion:^(BOOL finished) {
         self.swapLeftLabel.hidden = self.swapRightLabel.hidden = YES;
         self.localCurrencyLabel.hidden = self.amountField.hidden = NO;

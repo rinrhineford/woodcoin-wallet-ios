@@ -46,9 +46,11 @@
 
 @property (nonatomic, strong) IBOutlet UIProgressView *progress, *pulse;
 @property (nonatomic, strong) IBOutlet UILabel *percent;
-@property (nonatomic, strong) IBOutlet UIView *errorBar, *wallpaper, *splash;
+@property (nonatomic, strong) IBOutlet UIView *errorBar;
 @property (nonatomic, strong) IBOutlet UIGestureRecognizer *navBarTap;
 @property (nonatomic, strong) IBOutlet BRBouncyBurgerButton *burger;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
+@property (weak, nonatomic) IBOutlet UIView *pageViewContainer;
 
 @property (nonatomic, strong) UINavigationController *pinNav;
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -68,6 +70,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    UIFont *font = [UIFont fontWithName:@"Inter-Bold" size:12.0];
+    NSMutableDictionary *attributes = [NSMutableDictionary new];
+    attributes[NSFontAttributeName] = font;
+    attributes[NSForegroundColorAttributeName] = [UIColor colorNamed:@"Pure White"];
+    [self.segmentedControl setTitleTextAttributes:attributes
+                                         forState:UIControlStateNormal];
+    [self.segmentedControl setTitleTextAttributes:attributes
+                                         forState:UIControlStateSelected];
+    [self.segmentedControl setTitleTextAttributes:attributes
+                                         forState:UIControlStateHighlighted];
     // Do any additional setup after loading the view.
 
     // detect jailbreak so we can throw up an idiot warning, in viewDidLoad so it can't easily be swizzled out
@@ -86,15 +99,19 @@
     self.receiveViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"ReceiveViewController"];
     self.sendViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"SendViewController"];
     self.pageViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"PageViewController"];
-    self.wallpaper.alpha = 0.0;
 
     self.pageViewController.dataSource = self;
+    self.pageViewController.delegate = self;
     [self.pageViewController setViewControllers:@[self.sendViewController]
-     direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
-    self.pageViewController.view.frame = self.view.bounds;
+                                      direction:UIPageViewControllerNavigationDirectionReverse
+                                       animated:NO
+                                     completion:nil];
+    self.segmentedControl.selectedSegmentIndex = 0;
+    
     [self addChildViewController:self.pageViewController];
-    [self.view insertSubview:self.pageViewController.view belowSubview:self.splash];
+    [self.view addSubview:self.pageViewController.view];
     [self.pageViewController didMoveToParentViewController:self];
+    
 
     for (UIView *view in self.pageViewController.view.subviews) {
         if (! [view isKindOfClass:[UIScrollView class]]) continue;
@@ -111,7 +128,7 @@
         usingBlock:^(NSNotification *note) {
             self.url = note.userInfo[@"url"];
             [self.pageViewController setViewControllers:@[self.sendViewController]
-             direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+             direction:UIPageViewControllerNavigationDirectionReverse animated:NO completion:nil];
         }];
 
     self.fileObserver =
@@ -119,7 +136,7 @@
         usingBlock:^(NSNotification *note) {
             self.file = note.userInfo[@"file"];
             [self.pageViewController setViewControllers:@[self.sendViewController]
-             direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+             direction:UIPageViewControllerNavigationDirectionReverse animated:NO completion:nil];
         }];
 
     self.activeObserver =
@@ -265,7 +282,6 @@
         self.pinNav = [self.storyboard instantiateViewControllerWithIdentifier:@"PINNav"];
 
         [self.navigationController presentViewController:self.pinNav animated:NO completion:^{
-            self.splash.hidden = YES;
             self.navigationController.navigationBar.hidden = NO;
             //[[UIApplication sharedApplication] setStatusBarHidden:NO];
         }];
@@ -273,7 +289,23 @@
         self.pinNav.transitioningDelegate = self.pinNav.viewControllers.firstObject;
     }
     
+    [[NSNotificationCenter defaultCenter] addObserverForName:@"BRNewSyncStartedNotification"
+                                                      object:nil
+                                                       queue:nil
+                                                  usingBlock:^(NSNotification * _Nonnull note) {
+        self.tabBarController.selectedIndex = 1;
+    }];
+    
     [self showBackupDialogIfNeeded];
+}
+- (IBAction)didTapSegmentedControl:(UISegmentedControl *)sender {
+    if (sender.selectedSegmentIndex == 0) {
+        [self.pageViewController setViewControllers:@[self.sendViewController] direction:UIPageViewControllerNavigationDirectionReverse
+        animated:YES completion:nil];
+    } else {
+        [self.pageViewController setViewControllers:@[self.receiveViewController]
+         direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
+    }
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -293,7 +325,6 @@
             self.pinNav.transitioningDelegate = self.pinNav.viewControllers.firstObject;
             [self.pinNav presentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"NewWalletNav"]
             animated:NO completion:^{
-                self.splash.hidden = YES;
                 self.navigationController.navigationBar.hidden = NO;
                 [self.pinNav.viewControllers.firstObject setAppeared:YES];
             }];
@@ -303,7 +334,7 @@
         return;
     }
 
-    self.navigationItem.leftBarButtonItem.image = [UIImage imageNamed:@"burger"];
+//    self.navigationItem.leftBarButtonItem.image = [UIImage imageNamed:@"burger"];
     self.pageViewController.view.alpha = 1.0;
     [[BRPeerManager sharedInstance] connect];
 
@@ -315,14 +346,14 @@
         if (m.wallet.balance == 0) {
             [self.pageViewController setViewControllers:@[self.receiveViewController]
              direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+            self.segmentedControl.selectedSegmentIndex = 1;
         }
     }
 }
 
--(UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent; // your own style
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
-
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -331,7 +362,6 @@
         [self.navigationController.navigationBar addGestureRecognizer:self.navBarTap];
     }
 
-    self.splash.hidden = YES;
     self.navigationController.navigationBar.hidden = NO;
     if (self.reachability.currentReachabilityStatus == NotReachable) [self showErrorBar];
 
@@ -345,7 +375,7 @@
         self.file = nil;
 
         if (self.showTips) [self performSelector:@selector(tip:) withObject:nil afterDelay:0.3];
-        [self showBackupDialogIfNeeded];
+//        [self showBackupDialogIfNeeded];
     }
 
     [super viewDidAppear:animated];
@@ -407,7 +437,10 @@
 
 - (void)viewDidLayoutSubviews
 {
-    self.wallpaper.center = CGPointMake(self.wallpaper.center.x, self.wallpaper.superview.frame.size.height/2);
+    [super viewDidLayoutSubviews];
+    
+    self.pageViewController.view.frame = self.pageViewContainer.frame;
+    
     [self scrollViewDidScroll:self.scrollView];
 }
 
@@ -610,6 +643,14 @@
      show];
 }
 
+- (void)prepareForRestorePrivateKeys {
+    [self.pageViewController setViewControllers:@[self.sendViewController]
+                                      direction:UIPageViewControllerNavigationDirectionReverse
+                                       animated:NO
+                                     completion:nil];
+    self.segmentedControl.selectedSegmentIndex = 0;
+}
+
 #pragma mark - IBAction
 
 - (IBAction)tip:(id)sender
@@ -634,7 +675,7 @@
                     tipPoint:CGPointMake(b.center.x, b.frame.origin.y + b.frame.size.height - 10)
                     tipDirection:BRBubbleTipDirectionUp];
     if (self.showTips) self.tipView.text = [self.tipView.text stringByAppendingString:@" (1/6)"];
-    self.tipView.backgroundColor = [UIColor orangeColor];
+    self.tipView.backgroundColor = [UIColor colorNamed:@"Kryptonite"];
     self.tipView.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
     self.tipView.userInteractionEnabled = NO;
     [self.view addSubview:[self.tipView popIn]];
@@ -674,21 +715,30 @@ viewControllerAfterViewController:(UIViewController *)viewController
 
 - (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController
 {
-    return 2;
+    return 0;
 }
 
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
 {
-    return (pageViewController.viewControllers.lastObject == self.receiveViewController) ? 1 : 0;
+    return 2;
+}
+
+#pragma mark - UIPageViewControllerDelegate
+
+- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray<UIViewController *> *)previousViewControllers transitionCompleted:(BOOL)completed {
+    if (!completed) return;
+    
+    if (previousViewControllers.lastObject == self.sendViewController) {
+        self.segmentedControl.selectedSegmentIndex = 1;
+    } else {
+        self.segmentedControl.selectedSegmentIndex = 0;
+    }
 }
 
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    CGFloat off = scrollView.contentOffset.x + (scrollView.contentInset.left < 0 ? scrollView.contentInset.left : 0);
-    
-    self.wallpaper.center = CGPointMake(self.wallpaper.frame.size.width/2 - PARALAX_RATIO*off, self.wallpaper.center.y);
 }
 
 #pragma mark - UIAlertViewDelegate
@@ -751,12 +801,6 @@ viewControllerAfterViewController:(UIViewController *)viewController
                      *from = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
 
     if (to == self || from == self) { // nav stack push/pop
-        if (self.wallpaper.superview != v) {
-            v.backgroundColor = self.view.backgroundColor;
-            self.view.backgroundColor = [UIColor clearColor];
-            [v insertSubview:self.wallpaper belowSubview:from.view];
-        }
-
         self.progress.hidden = self.pulse.hidden = YES;
         [v addSubview:to.view];
         to.view.center = CGPointMake(v.frame.size.width*(to == self ? -1 : 3)/2, to.view.center.y);
@@ -765,9 +809,6 @@ viewControllerAfterViewController:(UIViewController *)viewController
         initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
             to.view.center = from.view.center;
             from.view.center = CGPointMake(v.frame.size.width*(to == self ? 3 : -1)/2, from.view.center.y);
-            self.wallpaper.center = CGPointMake(self.wallpaper.frame.size.width/2 -
-                                                v.frame.size.width*(to == self ? 0 : 1)*PARALAX_RATIO,
-                                                self.wallpaper.center.y);
         } completion:^(BOOL finished) {
             if (to == self) {
                 [from.view removeFromSuperview];
