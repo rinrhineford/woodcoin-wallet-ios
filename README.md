@@ -1,4 +1,4 @@
-![ƀ](/images/icon.png) breadwallet
+WoodCoin Wallet for iOS
 ----------------------------------
 
 [![download](/images/Download_on_the_App_Store_Badge_US-UK_135x40.png)]
